@@ -1,0 +1,37 @@
+buildscript {
+    dependencies {
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'java-library'
+}
+
+apply plugin: 'java'
+apply plugin: 'javafx-gradle-plugin'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    api 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'com.google.guava:guava:23.0'
+    testImplementation 'junit:junit:4.12'
+}
+
+repositories {
+    jcenter()
+}
+
+jfx {
+    mainClass = 'com.meksula.chat.client.Main'
+    vendor = 'Karol Meksuła'
+}
