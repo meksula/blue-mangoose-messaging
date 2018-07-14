@@ -1,0 +1,35 @@
+.background {
+    -fx-background-color: rgba(4, 8, 41, 0.87);
+}
+
+.text_label {
+    -fx-text-fill: #f4f4ef;
+}
+
+.username {
+    -fx-text-fill: #f4f4ef;
+    -fx-font-size: 16px;
+}
+
+.menu_button {
+    -fx-font-size: 16px;
+    -fx-text-fill: #f4f4ef;
+}
+
+.menu_button_shine {
+    -fx-font-size: 16px;
+    -fx-background-color: #f8f0e0;
+    -fx-text-fill: #040829;
+    -fx-cursor: hand;
+}
+
+.message {
+    -fx-font-size: 12;
+    -fx-text-fill: #f8f0e0;
+}
+
+.contact {
+    -fx-font-size: 12;
+    -fx-font-style: italic;
+    -fx-text-fill: #f8f0e0;
+}
