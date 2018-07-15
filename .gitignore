@@ -16,7 +16,9 @@
 *.iws
 *.iml
 *.ipr
-/out/
+/client/out/
+/server/out/
+out/
 
 ### NetBeans ###
 /nbproject/private/

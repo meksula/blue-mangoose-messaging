@@ -1,5 +1,7 @@
 package com.meksula.chat.client.controller;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -22,8 +24,9 @@ import java.util.ResourceBundle;
  * 14-07-2018
  * */
 
-public class MainController implements Initializable {
+public class MainController implements Initializable, Observable {
     private String who = "Karol";
+    private List<Label> messagesCache = new ArrayList<>();
 
     @FXML
     private ImageView loupeButton;
@@ -59,6 +62,7 @@ public class MainController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         addButtonActions();
         sendMessageAction();
+        searchingAction();
         contactDisplay(new ArrayList<>(Arrays.asList("Adaś", "Karol", "Alek", "Tosiek")));
 
         usernameField.setText(who);
@@ -123,7 +127,7 @@ public class MainController implements Initializable {
         return label;
     }
 
-    private List<Label> messagesCache = new ArrayList<>();
+
 
     private void chatWindowMoving() {
         int amount = chatWindow.getChildren().size();
@@ -147,4 +151,29 @@ public class MainController implements Initializable {
 
     }
 
+    private void searchingAction() {
+        loupeButton.setOnMouseClicked(event -> {
+            displaySearch(loupeField.getText());
+        });
+
+        loupeField.setOnKeyReleased(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                displaySearch(loupeField.getText());
+            }
+        });
+    }
+
+    private void displaySearch(String text) {
+        new FxmlLoaderTemplate().loadFxml("/templates/search_contacts.fxml", text);
+    }
+
+    @Override
+    public void addListener(InvalidationListener listener) {
+
+    }
+
+    @Override
+    public void removeListener(InvalidationListener listener) {
+
+    }
 }

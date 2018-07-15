@@ -41,7 +41,8 @@ public class HomeController implements Initializable {
         registerButton.setOnMouseExited(event -> registerButton.setImage(new Image("/img/register.png")));
 
         registerButton.setOnMouseClicked(event -> {
-
+            final String path = "/templates/registration.fxml";
+            new FxmlLoaderTemplate().loadFxml(path, event);
         });
     }
 

@@ -34,4 +34,29 @@ public class FxmlLoaderTemplate {
         stage.show();
     }
 
+    public void loadFxml(String path, Object data) {
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource(path));
+
+        Parent parent = null;
+        try {
+            parent = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Scene scene = null;
+        if (parent != null) {
+            scene = new Scene(parent);
+        }
+
+        SearchContactWindowController controller = loader.<SearchContactWindowController>getController();
+        controller.initData(data);
+
+
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.show();
+    }
+
 }

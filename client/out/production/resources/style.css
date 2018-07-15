@@ -33,3 +33,9 @@
     -fx-font-style: italic;
     -fx-text-fill: #f8f0e0;
 }
+
+.contact_search {
+    -fx-font-size: 15;
+    -fx-font-style: italic;
+    -fx-text-fill: #f8f0e0;
+}
