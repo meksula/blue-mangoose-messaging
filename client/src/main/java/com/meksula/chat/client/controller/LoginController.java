@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
  * */
 
 public class LoginController implements Initializable {
+    private FxmlLoader fxmlLoader;
 
     @FXML
     private TextField usernameField;
@@ -28,13 +29,14 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.fxmlLoader = new FxmlLoaderTemplate();
         loginHandler();
     }
 
     private void loginHandler() {
         loginConfirm.setOnMouseClicked(event -> {
             final String path = "/templates/main.fxml";
-            new FxmlLoaderTemplate().loadFxml(path, event);
+            fxmlLoader.loadSameStage(path, event);
         });
     }
 

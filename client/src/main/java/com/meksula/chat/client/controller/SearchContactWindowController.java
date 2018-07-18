@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
  * 15-07-2018
  * */
 
-public class SearchContactWindowController implements Initializable {
+public class SearchContactWindowController implements Initializable, DataInitializable {
     private ContactSearcher contactSearcher;
     private ContactsManager contactsManager;
     private String initData;
@@ -51,11 +51,17 @@ public class SearchContactWindowController implements Initializable {
         addToContactsAction();
     }
 
+    @Override
     public void initData(Object searchPhrase) {
         this.initData = searchPhrase.toString();
     }
 
     private void drawData(List<Contact> contactList) {
+
+        if(contactList.isEmpty()) {
+            new Alerts().emptySearchResult();
+            return;
+        }
 
         contactList.forEach(item -> {
             Label label = new Label();

@@ -1,7 +1,7 @@
 package com.meksula.chat.client.controller;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
+import com.meksula.chat.client.model.personal.DefaultUser;
+import com.meksula.chat.client.model.personal.User;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -24,9 +24,10 @@ import java.util.ResourceBundle;
  * 14-07-2018
  * */
 
-public class MainController implements Initializable, Observable {
-    private String who = "Karol";
+public class MainController implements Initializable, DataInitializable {
     private List<Label> messagesCache = new ArrayList<>();
+    private User user = new DefaultUser(); // temporary setted
+    private FxmlLoader fxmlLoader;
 
     @FXML
     private ImageView loupeButton;
@@ -60,12 +61,20 @@ public class MainController implements Initializable, Observable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.fxmlLoader = new FxmlLoaderTemplate();
+
+        addControllPanelButtonsActions();
         addButtonActions();
         sendMessageAction();
         searchingAction();
         contactDisplay(new ArrayList<>(Arrays.asList("Adaś", "Karol", "Alek", "Tosiek")));
 
-        usernameField.setText(who);
+        usernameField.setText(user.getUsername());
+    }
+
+    @Override
+    public void initData(Object data) {
+        this.user = (User) data;
     }
 
     private void addButtonActions() {
@@ -123,7 +132,7 @@ public class MainController implements Initializable, Observable {
 
         LocalTime localTime = LocalTime.now();
         String time = localTime.format(DateTimeFormatter.ofPattern("k:m:s"));
-        label.setText(time + "\n" + who + " said:         " + text);
+        label.setText(time + "\n" + user.getUsername() + " said:         " + text);
         return label;
     }
 
@@ -164,16 +173,13 @@ public class MainController implements Initializable, Observable {
     }
 
     private void displaySearch(String text) {
-        new FxmlLoaderTemplate().loadFxml("/templates/search_contacts.fxml", text);
+        fxmlLoader.loadNewStageWithData(FxmlLoaderTemplate.SceneType.SEARCH_CONTACTS, text);
     }
 
-    @Override
-    public void addListener(InvalidationListener listener) {
+    private void addControllPanelButtonsActions() {
+        settingButton.setOnMouseClicked(event -> fxmlLoader.loadSameStageWithData(FxmlLoaderTemplate.SceneType.SETTINGS, user, event));
+
 
     }
 
-    @Override
-    public void removeListener(InvalidationListener listener) {
-
-    }
 }

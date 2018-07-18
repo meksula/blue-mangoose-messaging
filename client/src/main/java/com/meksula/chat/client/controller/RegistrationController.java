@@ -17,6 +17,7 @@ import java.util.ResourceBundle;
  * */
 
 public class RegistrationController implements Initializable {
+    private FxmlLoader fxmlLoader;
 
     @FXML
     private TextField emailField;
@@ -32,13 +33,14 @@ public class RegistrationController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.fxmlLoader = new FxmlLoaderTemplate();
         setRegistrationAction();
     }
 
     private void setRegistrationAction() {
         registerButton.setOnMouseClicked(event -> {
             final String path = "/templates/home.fxml";
-            new FxmlLoaderTemplate().loadFxml(path, event);
+            fxmlLoader.loadSameStage(path, event);
             new Alerts().registrationSuccessfullAlert();
         });
     }

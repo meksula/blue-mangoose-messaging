@@ -15,12 +15,14 @@ import java.util.ResourceBundle;
  * */
 
 public class HomeController implements Initializable {
+    private FxmlLoader fxmlLoader;
 
     @FXML
     private ImageView registerButton, loginButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.fxmlLoader = new FxmlLoaderTemplate();
         setLoginAction();
         setRegisterAction();
     }
@@ -31,7 +33,7 @@ public class HomeController implements Initializable {
 
         loginButton.setOnMouseClicked(event -> {
             final String path = "/templates/login.fxml";
-            new FxmlLoaderTemplate().loadFxml(path, event);
+            fxmlLoader.loadSameStage(path, event);
         });
 
     }
@@ -42,7 +44,7 @@ public class HomeController implements Initializable {
 
         registerButton.setOnMouseClicked(event -> {
             final String path = "/templates/registration.fxml";
-            new FxmlLoaderTemplate().loadFxml(path, event);
+            fxmlLoader.loadSameStage(path, event);
         });
     }
 
