@@ -1,5 +1,8 @@
 package com.meksula.chat.client.controller;
 
+import com.meksula.chat.client.controller.loader.DataInitializable;
+import com.meksula.chat.client.controller.loader.FxmlLoader;
+import com.meksula.chat.client.controller.loader.FxmlLoaderTemplate;
 import com.meksula.chat.client.model.personal.User;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

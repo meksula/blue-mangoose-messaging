@@ -1,5 +1,6 @@
 package com.meksula.chat.client.controller;
 
+import com.meksula.chat.client.controller.loader.DataInitializable;
 import com.meksula.chat.client.model.alert.Alerts;
 import com.meksula.chat.client.model.dto.Contact;
 import com.meksula.chat.client.model.logic.ContactSearcher;

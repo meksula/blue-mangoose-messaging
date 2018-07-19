@@ -1,5 +1,7 @@
 package com.meksula.chat.client.controller;
 
+import com.meksula.chat.client.controller.loader.FxmlLoader;
+import com.meksula.chat.client.controller.loader.FxmlLoaderTemplate;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;

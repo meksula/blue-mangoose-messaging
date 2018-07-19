@@ -1,4 +1,4 @@
-package com.meksula.chat.client.controller;
+package com.meksula.chat.client.controller.loader;
 
 /**
  * @Author
