@@ -1,9 +1,6 @@
 package com.meksula.chat.client.controller.loader;
 
-import com.meksula.chat.client.controller.MainController;
-import com.meksula.chat.client.controller.RoomSearchController;
-import com.meksula.chat.client.controller.SearchContactWindowController;
-import com.meksula.chat.client.controller.SettingsController;
+import com.meksula.chat.client.controller.*;
 import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -129,6 +126,19 @@ public class FxmlLoaderTemplate implements FxmlLoader {
             @Override
             protected String getPath() {
                 return "/templates/room_search.fxml";
+            }
+        },
+
+        ROOM_CREATION {
+            @Override
+            protected void loadData(FXMLLoader loader, Object object) {
+                RoomCreationController controller = loader.getController();
+                controller.initData(object);
+            }
+
+            @Override
+            protected String getPath() {
+                return "/templates/room_new.fxml";
             }
         };
 

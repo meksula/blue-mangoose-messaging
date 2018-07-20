@@ -17,6 +17,7 @@
 *.iml
 *.ipr
 /client/out/
+client/out
 /server/out/
 out/
 

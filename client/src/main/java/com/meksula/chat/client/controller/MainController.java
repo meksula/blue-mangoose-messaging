@@ -184,6 +184,7 @@ public class MainController implements Initializable, DataInitializable {
 
         lookForRoom.setOnMouseClicked(event -> fxmlLoader.loadSameStageWithData(FxmlLoaderTemplate.SceneType.ROOM_SEARCH, user, event));
 
+        newRoom.setOnMouseClicked(event -> fxmlLoader.loadSameStageWithData(FxmlLoaderTemplate.SceneType.ROOM_CREATION, user, event));
     }
 
 }
