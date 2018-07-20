@@ -7,27 +7,29 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="607.0" prefWidth="665.0" styleClass="background" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.meksula.chat.client.controller.RegistrationController">
     <children>
-        <ImageView fitHeight="142.0" fitWidth="437.0" layoutX="135.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="226.0" fitWidth="293.0" layoutX="205.0" layoutY="-33.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../img/logo.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="44.0" fitWidth="308.0" layoutY="563.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-                <Image url="@../img/author.png" />
-            </image>
-        </ImageView>
-        <TextField fx:id="usernameForm" layoutX="228.0" layoutY="198.0" prefHeight="26.0" prefWidth="193.0" />
-        <PasswordField fx:id="passwordForm" layoutX="228.0" layoutY="263.0" prefHeight="26.0" prefWidth="193.0" />
-        <Label layoutX="227.0" layoutY="178.0" styleClass="menu_button" text="Nazwa użytkownika" />
-        <Label layoutX="227.0" layoutY="243.0" styleClass="menu_button" text="Hasło" />
-        <Button fx:id="registerButton" layoutX="281.0" layoutY="460.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="87.0" text="Rejestruj" />
-      <PasswordField fx:id="passwordConfirmForm" layoutX="228.0" layoutY="323.0" prefHeight="26.0" prefWidth="193.0" />
-      <Label layoutX="227.0" layoutY="304.0" styleClass="menu_button" text="Powtórz hasło" />
-      <TextField fx:id="emailField" layoutX="228.0" layoutY="384.0" prefHeight="26.0" prefWidth="193.0" />
-      <Label layoutX="227.0" layoutY="364.0" styleClass="menu_button" text="e-mail" />
+        <TextField fx:id="usernameForm" layoutX="228.0" layoutY="249.0" prefHeight="26.0" prefWidth="193.0" />
+        <PasswordField fx:id="passwordForm" layoutX="228.0" layoutY="304.0" prefHeight="26.0" prefWidth="193.0" />
+        <Label layoutX="225.0" layoutY="229.0" styleClass="menu_button" text="Nazwa użytkownika" />
+        <Label layoutX="228.0" layoutY="284.0" styleClass="menu_button" text="Hasło" />
+        <Button fx:id="registerButton" layoutX="281.0" layoutY="483.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="87.0" text="Rejestruj" />
+      <PasswordField fx:id="passwordConfirmForm" layoutX="228.0" layoutY="366.0" prefHeight="26.0" prefWidth="193.0" />
+      <Label layoutX="225.0" layoutY="346.0" styleClass="menu_button" text="Powtórz hasło" />
+      <TextField fx:id="emailField" layoutX="228.0" layoutY="423.0" prefHeight="26.0" prefWidth="193.0" />
+      <Label layoutX="225.0" layoutY="403.0" styleClass="menu_button" text="e-mail" />
+      <Label layoutX="251.0" layoutY="163.0" text="Rejestracja" textFill="#fcfcfc">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label layoutX="6.0" layoutY="585.0" text="Karol Meksuła 2018" textFill="WHITE" />
     </children>
 </AnchorPane>
