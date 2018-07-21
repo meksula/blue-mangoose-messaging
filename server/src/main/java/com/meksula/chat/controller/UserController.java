@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
  * */
 
 @RestController
-@RequestMapping(value = "/api/v1/registration")
+@RequestMapping(value = "/api/v1")
 public class UserController {
     private RegistrationService registrationService;
 
@@ -22,10 +22,15 @@ public class UserController {
         this.registrationService = registrationService;
     }
 
-    @PostMapping
+    @PostMapping("/registration")
     @ResponseStatus(HttpStatus.OK)
     public boolean register(@RequestBody ChatUserForm chatUserForm) {
         return registrationService.registerUser(chatUserForm);
+    }
+
+    @GetMapping("/test")
+    public String accessTest() {
+        return "Masz dostęp.";
     }
 
 }

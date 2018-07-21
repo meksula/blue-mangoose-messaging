@@ -31,7 +31,8 @@ public class ChatUser implements UserDetails, Serializable {
     private String password;
     private boolean enable;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "authorities", joinColumns = @JoinColumn(name = "userId"))
     private Set<String> authorities;
 
     @Override

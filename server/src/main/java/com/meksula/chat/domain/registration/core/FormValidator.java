@@ -1,5 +1,7 @@
 package com.meksula.chat.domain.registration.core;
 
+import com.meksula.chat.domain.registration.RegistrationValidator;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,14 +11,15 @@ import java.util.regex.Pattern;
  * 20-07-2018
  * */
 
-public class FormValidator {
+public class FormValidator implements RegistrationValidator {
     private ChatUserForm chatUserForm;
 
     private final String USERNAME_PATTERN = "[0-9a-zA-Z]{6,25}";
     private final String EMAIL_PATTERN = ".+@{1}.+\\.[a-z]{2,}";
 
-    public boolean access(ChatUserForm chatUserForm) {
-        this.chatUserForm = chatUserForm;
+    @Override
+    public boolean access(RegistrationForm registrationForm) {
+        this.chatUserForm = (ChatUserForm) registrationForm;
 
         return usernameMatch() && passwordMatch() && emailMatch();
     }

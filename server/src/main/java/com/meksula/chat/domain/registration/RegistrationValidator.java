@@ -5,9 +5,9 @@ import com.meksula.chat.domain.registration.core.RegistrationForm;
 /**
  * @Author
  * Karol Meksuła
- * 20-07-2018
+ * 21-07-2018
  * */
 
-public interface RegistrationService {
-    boolean registerUser(RegistrationForm registrationForm);
+public interface RegistrationValidator {
+    boolean access(RegistrationForm registrationForm);
 }

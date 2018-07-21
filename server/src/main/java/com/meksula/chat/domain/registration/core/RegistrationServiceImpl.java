@@ -4,6 +4,7 @@ import com.meksula.chat.domain.registration.RegistrationService;
 import com.meksula.chat.domain.user.ChatUser;
 import com.meksula.chat.repository.ChatUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -18,9 +19,15 @@ import java.util.Collections;
 public class RegistrationServiceImpl implements RegistrationService {
     private ChatUserRepository chatUserRepository;
     private FormValidator formValidator;
+    private DatabaseValidator databaseValidator;
 
     public RegistrationServiceImpl() {
         this.formValidator = new FormValidator();
+    }
+
+    @Autowired
+    public void setDatabaseValidator(DatabaseValidator databaseValidator) {
+        this.databaseValidator = databaseValidator;
     }
 
     @Autowired
@@ -29,11 +36,12 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public boolean registerUser(final ChatUserForm chatUserForm) {
-        boolean access = formValidator.access(chatUserForm);
+    public boolean registerUser(final RegistrationForm registrationForm) {
+        boolean accessForm = formValidator.access(registrationForm);
+        boolean accessDb = databaseValidator.access(registrationForm);
 
-        if (access) {
-            ChatUser chatUser = buildChatUser(chatUserForm);
+        if (accessForm && accessDb) {
+            ChatUser chatUser = buildChatUser((ChatUserForm) registrationForm);
             chatUserRepository.save(chatUser);
             return true;
         }
@@ -44,7 +52,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     private ChatUser buildChatUser(ChatUserForm chatUserForm) {
         ChatUser chatUser = new ChatUser();
         chatUser.setUsername(chatUserForm.getUsername());
-        chatUser.setPassword(chatUserForm.getPassword());
+        chatUser.setPassword(new BCryptPasswordEncoder().encode(chatUserForm.getPassword()));
         chatUser.setEmail(chatUserForm.getEmail());
         chatUser.setAuthorities(Collections.singleton("chatter"));
         chatUser.setEnable(false);

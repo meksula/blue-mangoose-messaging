@@ -13,9 +13,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public class ChatUserForm {
-    private String username;
-    private String password;
-    private String passwordRepetition;
-    private String email;
+public class ChatUserForm extends RegistrationForm {
+
 }
