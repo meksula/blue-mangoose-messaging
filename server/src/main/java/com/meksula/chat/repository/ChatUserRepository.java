@@ -11,6 +11,8 @@ import java.util.Optional;
  * 20-07-2018
  * */
 
-public interface ChatUserRepository extends JpaRepository<ChatUser, String> {
+public interface ChatUserRepository extends JpaRepository<ChatUser, Long> {
     Optional<ChatUser> findByUsername(String username);
+
+    Optional<ChatUser> findByUserId(long userId);
 }

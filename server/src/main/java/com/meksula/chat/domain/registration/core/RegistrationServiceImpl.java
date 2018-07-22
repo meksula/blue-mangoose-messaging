@@ -1,6 +1,8 @@
 package com.meksula.chat.domain.registration.core;
 
 import com.meksula.chat.domain.registration.RegistrationService;
+import com.meksula.chat.domain.registration.verification.UserVerification;
+import com.meksula.chat.domain.user.ApplicationUser;
 import com.meksula.chat.domain.user.ChatUser;
 import com.meksula.chat.repository.ChatUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     private ChatUserRepository chatUserRepository;
     private FormValidator formValidator;
     private DatabaseValidator databaseValidator;
+    private UserVerification userVerification;
 
     public RegistrationServiceImpl() {
         this.formValidator = new FormValidator();
@@ -35,6 +38,11 @@ public class RegistrationServiceImpl implements RegistrationService {
         this.chatUserRepository = chatUserRepository;
     }
 
+    @Autowired
+    public void setUserVerification(UserVerification userVerification) {
+        this.userVerification = userVerification;
+    }
+
     @Override
     public boolean registerUser(final RegistrationForm registrationForm) {
         boolean accessForm = formValidator.access(registrationForm);
@@ -43,6 +51,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (accessForm && accessDb) {
             ChatUser chatUser = buildChatUser((ChatUserForm) registrationForm);
             chatUserRepository.save(chatUser);
+            makeVerifProcess(chatUser);
             return true;
         }
 
@@ -57,6 +66,10 @@ public class RegistrationServiceImpl implements RegistrationService {
         chatUser.setAuthorities(Collections.singleton("chatter"));
         chatUser.setEnable(false);
         return chatUser;
+    }
+
+    private void makeVerifProcess(ApplicationUser applicationUser) {
+        userVerification.makeVerificationProcess(applicationUser);
     }
 
 }

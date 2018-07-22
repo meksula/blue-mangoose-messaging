@@ -17,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * 20-07-2018
  */
 
-
 @Configuration
 @EnableWebSecurity
 public class SecurityCustomConfiguration extends WebSecurityConfigurerAdapter {
@@ -46,7 +45,7 @@ public class SecurityCustomConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/", "/api/v1/registration", "/api/v1/verification", "/error", "/logout").permitAll()
+                .antMatchers("/", "/api/v1/registration", "/api/v1/verification/**", "/error", "/logout").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

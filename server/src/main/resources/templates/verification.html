@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmation</title>
+</head>
+<body>
+<h4>Dziękujemy za skorzystanie z komunikatora Blue Mangoose.</h4>
+    <p>Gwarantujemy, że nasza usługa jest bezpieczna, szybka i w pełni darmowa.</p>
+        <hr>
+    <p>Kliknij w link jeśli chcesz włączyć swoje konto:</p>
+        <br>
+    <span th:text="${link}"></span>
+
+    <p>Jeśli wolisz weryfikację ręcznie, oto Twój kod, który wprowadź w aplikacji. </p>
+        <br>Twoje ID: <span th:text="${userId}"></span>
+        <br>Kod weryfikacyjny: <span th:text="${code}"></span>
+</body>
+</html>

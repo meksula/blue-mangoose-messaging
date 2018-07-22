@@ -20,7 +20,7 @@ import java.util.*;
 @Setter
 @Entity
 @Table(name = "chat_users")
-public class ChatUser implements UserDetails, Serializable {
+public class ChatUser implements UserDetails, Serializable, ApplicationUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
