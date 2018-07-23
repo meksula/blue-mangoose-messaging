@@ -16,13 +16,30 @@ public enum ApiPath {
     LOGIN {
         @Override
         public String getPath() {
-            return "http://localhost:8060/login";
+            return "http://localhost:8060/api/v1/login";
         }
     },
     PROFILE {
         @Override
         public String getPath() {
             return "http://localhost:8060/api/v1/profile/" + username;
+        }
+    },
+    VERIFICATION {
+        private String userId;
+        private String code;
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        @Override
+        public String getPath() {
+            return "http://localhost:8060/api/v1/verification/" + userId + "/" + code;
         }
     };
 

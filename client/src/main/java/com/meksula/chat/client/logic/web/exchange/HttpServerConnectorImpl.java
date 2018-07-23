@@ -16,11 +16,9 @@ import javax.ws.rs.core.Response;
  * 23-07-2018
  * */
 
-//TODO zrób singletona !!!
-
 public class HttpServerConnectorImpl<T> implements HttpServerConnector<T> {
     private Class<T> type;
-    private ClientConfig clientConfig = new ClientConfig();
+    private static ClientConfig clientConfig;
 
     public HttpServerConnectorImpl(Class<T> entityType) {
         this.type = entityType;
@@ -28,29 +26,19 @@ public class HttpServerConnectorImpl<T> implements HttpServerConnector<T> {
 
     @Override
     public String login(String username, String password) {
-        this.clientConfig = buildConfiguration(username, password);
+        clientConfig = buildConfiguration(username, password);
 
-        Client client = ClientBuilder.newClient(clientConfig);
-        WebTarget webTarget = client.target(ApiPath.LOGIN.getPath());
-
-        Invocation.Builder invocationBuilder =  webTarget.request(MediaType.APPLICATION_JSON);
-
-        Response response = invocationBuilder
+        Response response = clientPrepare(ApiPath.LOGIN)
                 .cookie("param1","value1")
                 .cookie(new Cookie("param2", "value2"))
                 .get();
 
-        return response.getStatusInfo().toString();
+        return response.readEntity(String.class);
     }
 
     @Override
     public T post(Object entity, ApiPath apiPath) {
-        Client client = ClientBuilder.newClient(clientConfig);
-        WebTarget webTarget = client.target(apiPath.getPath());
-
-        Invocation.Builder inv = webTarget.request(MediaType.APPLICATION_JSON_TYPE);
-        Response response = inv.post(Entity.entity(entity, MediaType.APPLICATION_JSON_TYPE));
-
+        Response response = clientPrepare(apiPath).post(Entity.entity(entity, MediaType.APPLICATION_JSON_TYPE));
         return response.readEntity(type);
     }
 
@@ -61,13 +49,19 @@ public class HttpServerConnectorImpl<T> implements HttpServerConnector<T> {
 
     @Override
     public T get(ApiPath apiPath) {
+        Response response = clientPrepare(apiPath).get();
+        return response.readEntity(type);
+    }
+
+    private Invocation.Builder clientPrepare(ApiPath apiPath) {
+        if (clientConfig == null) {
+            clientConfig = new ClientConfig();
+        }
+
         Client client = ClientBuilder.newClient(clientConfig);
         WebTarget webTarget = client.target(apiPath.getPath());
 
-        Invocation.Builder inv = webTarget.request(MediaType.APPLICATION_JSON_TYPE);
-        Response response = inv.get();
-
-        return response.readEntity(type);
+        return webTarget.request(MediaType.APPLICATION_JSON_TYPE);
     }
 
     private ClientConfig buildConfiguration(String username, String password) {

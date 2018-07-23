@@ -1,5 +1,7 @@
 package com.meksula.chat.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,6 +22,7 @@ import java.util.*;
 @Setter
 @Entity
 @Table(name = "chat_users")
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class ChatUser implements UserDetails, Serializable, ApplicationUser {
 
     @Id
@@ -31,6 +34,7 @@ public class ChatUser implements UserDetails, Serializable, ApplicationUser {
     private String password;
     private boolean enable;
 
+    @JsonIgnore
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "authorities", joinColumns = @JoinColumn(name = "userId"))
     private Set<String> authorities;
