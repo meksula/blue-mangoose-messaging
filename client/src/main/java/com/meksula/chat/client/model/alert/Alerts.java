@@ -46,9 +46,15 @@ public class Alerts {
 
     public void emptySearchResult() {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Brak kontaktów.");
-        alert.setHeaderText("Przykro mi. Nie znalazłem żadnych pasujących kontaktów");
+        alert.setTitle("Brak kontaktów");
+        alert.setHeaderText("Przykro mi. Nie znalazłem żadnych pasujących kontaktów/");
         alert.showAndWait();
     }
 
+    public void loginFailed() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Błąd logowania");
+        alert.setHeaderText("Logowanie się nie powiodło. Spróbuj jeszcze raz.");
+        alert.showAndWait();
+    }
 }

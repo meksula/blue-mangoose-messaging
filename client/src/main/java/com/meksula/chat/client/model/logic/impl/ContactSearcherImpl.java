@@ -17,6 +17,7 @@ public class ContactSearcherImpl implements ContactSearcher {
     public List<Contact> searchContacts(String tag) {
         //TODO
 
+
         return new ArrayList<>();
     }
 }
