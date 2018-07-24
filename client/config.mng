@@ -1,0 +1,8 @@
+# Main application settings
+# Notice that someone can steal your credentials
+
+setting_enabled=false;
+default_chat_room=404ro5om;
+
+saved_user=;
+password=;

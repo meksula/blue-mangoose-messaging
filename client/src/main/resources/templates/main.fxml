@@ -36,7 +36,7 @@
             <Label fx:id="lookForRoom" layoutX="10.0" layoutY="37.0" prefHeight="16.0" prefWidth="157.0" styleClass="menu_button" text="Szukaj pokoju" />
          </children>
       </VBox>
-      <TitledPane animated="false" layoutX="220.0" layoutY="150.0" prefHeight="358.0" prefWidth="440.0" text="Czat lokalny">
+      <TitledPane fx:id="chatPane" animated="false" layoutX="220.0" layoutY="150.0" prefHeight="358.0" prefWidth="440.0" >
          <content>
             <HBox styleClass="background">
                <children>

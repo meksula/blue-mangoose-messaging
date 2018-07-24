@@ -6,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.net.ConnectException;
+
 /**
  * @Author
  * Karol Meksuła
@@ -25,6 +27,7 @@ public class Main extends Application {
     }
 
     public static void main(String[]args) {
+
         launch(args);
     }
 

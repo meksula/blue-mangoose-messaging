@@ -62,6 +62,9 @@ public class MainController implements Initializable, DataInitializable {
     @FXML
     private TitledPane contacts;
 
+    @FXML
+    private TitledPane chatPane;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.fxmlLoader = new FxmlLoaderTemplate();
