@@ -3,7 +3,11 @@ package com.bluemangoose.client.controller;
 import com.bluemangoose.client.controller.loader.DataInitializable;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
 import com.bluemangoose.client.controller.loader.FxmlLoader;
+import com.bluemangoose.client.logic.web.ChatRoomManager;
+import com.bluemangoose.client.logic.web.impl.DefaultRoomManager;
 import com.bluemangoose.client.logic.web.socket.ChatClient;
+import com.bluemangoose.client.logic.web.socket.ChatMessage;
+import com.bluemangoose.client.model.alert.Alerts;
 import com.bluemangoose.client.model.personal.DefaultUser;
 import com.bluemangoose.client.model.personal.User;
 import javafx.fxml.FXML;
@@ -30,8 +34,9 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable, DataInitializable {
     private List<Label> messagesCache = new ArrayList<>();
-    private User user = new DefaultUser(); // temporary setted
+    private User user;
     private FxmlLoader fxmlLoader;
+    private ChatRoomManager chatRoomManager;
 
     @FXML
     private ImageView loupeButton;
@@ -80,6 +85,7 @@ public class MainController implements Initializable, DataInitializable {
     @Override
     public void initData(Object data) {
         this.user = (User) data;
+        this.chatRoomManager = DefaultRoomManager.getInstance(user);
 
         usernameField.setText(user.getUsername());
     }
@@ -130,6 +136,13 @@ public class MainController implements Initializable, DataInitializable {
         chatWindow.getChildren().add(message);
         this.messageField.clear();
         chatWindowMoving();
+
+        try {
+            chatRoomManager.postMessage(text);
+        } catch (IllegalAccessException e) {
+            String exceptionText = e.getMessage();
+            new Alerts().websocketClosed(exceptionText);
+        }
     }
 
     private Label displayMessage(String text) {

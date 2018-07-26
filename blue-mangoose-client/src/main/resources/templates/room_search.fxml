@@ -12,18 +12,28 @@
 <AnchorPane fx:id="pane" prefHeight="607.0" prefWidth="665.0" styleClass="background" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bluemangoose.client.controller.RoomSearchController">
     <children>
         <Button fx:id="back" layoutX="307.0" layoutY="522.0" mnemonicParsing="false" text="Wróć" />
-      <Label layoutX="32.0" layoutY="30.0" text="Wybierz pokój:" textFill="WHITE">
+      <Label layoutX="23.0" layoutY="8.0" text="Wybierz pokój:" textFill="WHITE">
          <font>
             <Font size="29.0" />
          </font>
       </Label>
       <HBox layoutX="91.0" layoutY="86.0" prefHeight="419.0" prefWidth="507.0">
          <children>
-            <VBox fx:id="idVbox" prefHeight="419.0" prefWidth="48.0" />
-            <VBox fx:id="authorVBox" layoutX="10.0" layoutY="10.0" prefHeight="419.0" prefWidth="174.0" />
-            <VBox fx:id="peopleNumVbox" layoutX="58.0" layoutY="10.0" prefHeight="419.0" prefWidth="69.0" />
-            <VBox fx:id="passwordVbox" layoutX="127.0" layoutY="10.0" prefHeight="419.0" prefWidth="78.0" />
-            <VBox fx:id="buttonList" layoutX="196.0" layoutY="10.0" prefHeight="419.0" prefWidth="69.0" />
+            <VBox fx:id="idVbox" prefHeight="419.0" prefWidth="117.0">
+               <children>
+               </children></VBox>
+            <VBox fx:id="authorVBox" layoutX="10.0" layoutY="10.0" prefHeight="419.0" prefWidth="174.0">
+               <children>
+               </children></VBox>
+            <VBox fx:id="peopleNumVbox" layoutX="58.0" layoutY="10.0" prefHeight="419.0" prefWidth="60.0">
+               <children>
+               </children></VBox>
+            <VBox fx:id="passwordVbox" layoutX="127.0" layoutY="10.0" prefHeight="419.0" prefWidth="78.0">
+               <children>
+               </children></VBox>
+            <VBox fx:id="buttonList" layoutX="196.0" layoutY="10.0" prefHeight="419.0" prefWidth="69.0">
+               <children>
+               </children></VBox>
          </children>
       </HBox>
       <ImageView fx:id="next" fitHeight="43.0" fitWidth="40.0" layoutX="578.0" layoutY="385.0" pickOnBounds="true" preserveRatio="true">
@@ -31,5 +41,10 @@
             <Image url="@../img/next-inactive.png" />
          </image>
       </ImageView>
+      <Label layoutX="86.0" layoutY="62.0" text="Nazwa pokoju" textFill="WHITE" />
+      <Label layoutX="206.0" layoutY="62.0" text="Twórca" textFill="WHITE" />
+      <Label layoutX="388.0" layoutY="62.0" text="lp" textFill="WHITE" />
+      <Label layoutX="448.0" layoutY="62.0" text="Hasło" textFill="WHITE" />
+      <Label layoutX="522.0" layoutY="62.0" text="Dołącz" textFill="WHITE" />
     </children>
 </AnchorPane>

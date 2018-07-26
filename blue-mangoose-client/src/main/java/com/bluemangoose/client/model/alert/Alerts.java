@@ -57,4 +57,11 @@ public class Alerts {
         alert.setHeaderText("Logowanie się nie powiodło. Spróbuj jeszcze raz.");
         alert.showAndWait();
     }
+
+    public void websocketClosed(String exceptionText) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Websocket zamknięty");
+        alert.setHeaderText(exceptionText);
+        alert.showAndWait();
+    }
 }

@@ -56,6 +56,18 @@ public class FxmlLoaderTemplate implements FxmlLoader {
         loadSameStage(scene, event);
     }
 
+    @Override
+    public void loadSameStageWithData(final FxmlLoaderTemplate.SceneType sceneType, final Object DATA, final Node node) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(sceneType.getPath()));
+        Scene scene = sceneLoad(loader);
+
+        sceneType.loadData(loader, DATA);
+
+        Stage stage = (Stage) node.getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
+
     private Scene sceneLoad(FXMLLoader loader) {
         Parent parent = null;
         try {

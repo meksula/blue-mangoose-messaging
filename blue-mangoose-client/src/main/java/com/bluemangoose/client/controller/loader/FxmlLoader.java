@@ -1,6 +1,7 @@
 package com.bluemangoose.client.controller.loader;
 
 import javafx.event.Event;
+import javafx.scene.Node;
 
 /**
  * @Author
@@ -16,4 +17,6 @@ public interface FxmlLoader {
     void loadNewStageWithData(final FxmlLoaderTemplate.SceneType sceneType, final Object DATA);
 
     void loadSameStageWithData(final FxmlLoaderTemplate.SceneType sceneType, final Object DATA, final Event event);
+
+    void loadSameStageWithData(final FxmlLoaderTemplate.SceneType sceneType, final Object DATA, final Node node);
 }

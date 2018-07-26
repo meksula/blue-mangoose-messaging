@@ -4,7 +4,6 @@ import com.bluemangoose.client.controller.loader.FxmlLoader;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
 import com.bluemangoose.client.logic.web.ApiPath;
 import com.bluemangoose.client.logic.web.impl.UserCredentialExchange;
-import com.bluemangoose.client.logic.web.socket.BaeldungClient;
 import com.bluemangoose.client.model.alert.Alerts;
 import com.bluemangoose.client.model.personal.LoginCredential;
 import com.bluemangoose.client.model.personal.User;
@@ -58,7 +57,11 @@ public class LoginController implements Initializable {
 
     private boolean access() {
         LoginCredential loginCredential = new LoginCredential(usernameField.getText(), passwordForm.getText());
-        return userCredentialExchange.login(loginCredential, ApiPath.LOGIN);
+        try {
+            return userCredentialExchange.login(loginCredential, ApiPath.LOGIN);
+        } catch (RuntimeException re) {
+            return false;
+        }
     }
 
     private User fetchUser() {

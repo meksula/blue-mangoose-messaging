@@ -3,12 +3,13 @@ package com.bluemangoose.client.controller;
 import com.bluemangoose.client.controller.loader.DataInitializable;
 import com.bluemangoose.client.controller.loader.FxmlLoader;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
-import com.bluemangoose.client.model.dto.Room;
-import com.bluemangoose.client.model.logic.RoomSearcher;
-import com.bluemangoose.client.model.logic.impl.RoomSearcherImpl;
+import com.bluemangoose.client.logic.web.ChatRoomManager;
+import com.bluemangoose.client.logic.web.impl.DefaultRoomManager;
+import com.bluemangoose.client.model.dto.ChatRoom;
 import com.bluemangoose.client.model.personal.User;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.AccessibleAction;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -16,8 +17,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -28,8 +29,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class RoomSearchController implements Initializable, DataInitializable {
     private FxmlLoader loader = new FxmlLoaderTemplate();
-    private RoomSearcher roomSearcher;
-    private Set<Room> roomSet;
+    private ChatRoomManager chatRoomManager;
+    private List<ChatRoom> roomList;
     private User user;
     private final int ROOM_AMOUNT = 15;
     private int currentRoomPage = 0;
@@ -46,6 +47,10 @@ public class RoomSearchController implements Initializable, DataInitializable {
     @Override
     public void initData(Object data) {
         this.user = (User) data;
+
+        this.chatRoomManager = DefaultRoomManager.getInstance(user);
+        this.roomList = chatRoomManager.fetchChatRoomList();
+        drawRooms(0, ROOM_AMOUNT);
     }
 
     @Override
@@ -56,12 +61,8 @@ public class RoomSearchController implements Initializable, DataInitializable {
             vBox.setSpacing(5);
         }
 
-        this.roomSearcher = new RoomSearcherImpl();
-        this.roomSet = roomSearcher.searchRooms(ROOM_AMOUNT);
-
         addBackButtonAction();
         addNextStyle();
-        drawRooms(0, ROOM_AMOUNT);
     }
 
     private void addNextStyle() {
@@ -85,14 +86,14 @@ public class RoomSearchController implements Initializable, DataInitializable {
     private void drawRooms(int begin, int end) {
         AtomicInteger count = new AtomicInteger(0);
 
-        roomSet.forEach(room -> {
+        roomList.forEach(room -> {
             if (count.intValue() >= begin && count.intValue() < end) {
-                idVbox.getChildren().add(createLabel(String.valueOf(room.getRoomId())));
-                authorVBox.getChildren().add(createLabel(room.getAuthor()));
+                idVbox.getChildren().add(createLabel(String.valueOf(room.getName())));
+                authorVBox.getChildren().add(createLabel(room.getCreatorUsername()));
                 peopleNumVbox.getChildren().add(createLabel(String.valueOf(room.getPeople())));
                 passwordVbox.getChildren().add(createLabel(String.valueOf(room.isPasswordRequired())));
 
-                buttonList.getChildren().add(createJoinButton(room.getRoomId()).imageView);
+                buttonList.getChildren().add(createJoinButton(String.valueOf(room.getId())).imageView);
             }
             count.incrementAndGet();
         });
@@ -119,9 +120,20 @@ public class RoomSearchController implements Initializable, DataInitializable {
         return imageButton;
     }
 
-    private void joinRoom(String roomId) {
-        //TODO logika przechodzenia do pokoju
-        System.out.println(roomId);
+    private void joinRoom(String id) {
+        String roomTarget = roomList.stream()
+                .filter(r -> r.getId() == Long.valueOf(id))
+                .findFirst()
+                .orElseThrow(IllegalArgumentException::new)
+                .getName();
+
+        boolean isJoined = chatRoomManager.joinRoom(roomTarget);
+
+        if (!isJoined) {
+            return;
+        }
+
+        loader.loadSameStageWithData(FxmlLoaderTemplate.SceneType.MAIN, user, back);
     }
 
     class ImageButton {

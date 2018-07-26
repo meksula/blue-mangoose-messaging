@@ -41,6 +41,12 @@ public enum ApiPath {
         public String getPath() {
             return "http://localhost:8060/api/v1/verification/" + userId + "/" + code;
         }
+    },
+    CHAT_ROOM_LIST {
+        @Override
+        public String getPath() {
+            return "http://localhost:8060/api/v1/room/list";
+        }
     };
 
     public String username;
@@ -50,4 +56,5 @@ public enum ApiPath {
     }
 
     public abstract String getPath();
+
 }

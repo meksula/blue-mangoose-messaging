@@ -17,16 +17,17 @@ public class ChatClient {
     private WebSocketStompClient stompClient;
     private MyStompSessionHandler sessionHandler;
 
-    public ChatClient() {
+    public ChatClient(String roomTarget) {
         this.client = new StandardWebSocketClient();
         this.stompClient = new WebSocketStompClient(client);
         this.stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-        this.sessionHandler = new MyStompSessionHandler();
+        this.sessionHandler = new MyStompSessionHandler(roomTarget);
     }
 
-    public void connect() {
+    public MyStompSessionHandler connect() {
         stompClient.connect(URL, sessionHandler);
         stompClient.start();
+        return sessionHandler;
     }
 
     public void disconnect() {
