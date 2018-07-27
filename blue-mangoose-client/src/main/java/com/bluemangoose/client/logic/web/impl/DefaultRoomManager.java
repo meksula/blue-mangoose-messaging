@@ -1,12 +1,11 @@
 package com.bluemangoose.client.logic.web.impl;
 
+import com.bluemangoose.client.controller.MainController;
 import com.bluemangoose.client.logic.web.ApiPath;
 import com.bluemangoose.client.logic.web.ChatRoomManager;
 import com.bluemangoose.client.logic.web.exchange.HttpServerConnector;
 import com.bluemangoose.client.logic.web.exchange.HttpServerConnectorImpl;
-import com.bluemangoose.client.logic.web.socket.ChatClient;
-import com.bluemangoose.client.logic.web.socket.ChatMessage;
-import com.bluemangoose.client.logic.web.socket.MyStompSessionHandler;
+import com.bluemangoose.client.logic.web.socket.*;
 import com.bluemangoose.client.model.dto.ChatRoom;
 import com.bluemangoose.client.model.personal.User;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -30,6 +29,7 @@ public class DefaultRoomManager implements ChatRoomManager {
     private String roomTarget;
     private boolean isConnected;
     private static User user;
+    private WebsocketReceiver websocketReceiver;
 
     private DefaultRoomManager() {
         this.connector = new HttpServerConnectorImpl<>(String.class);
@@ -75,9 +75,20 @@ public class DefaultRoomManager implements ChatRoomManager {
 
         if (isConnected) {
             this.sessionHandler.postMessage(chatMessage);
+        } else {
+            throw new IllegalAccessException("Cannot post message because websocket is disconnected.");
         }
 
-        throw new IllegalAccessException("Cannot post message because websocket is disconnected.");
+    }
+
+    @Override
+    public boolean isConnected() {
+        return isConnected;
+    }
+
+    @Override
+    public String getRoomTarget() {
+        return roomTarget;
     }
 
 }

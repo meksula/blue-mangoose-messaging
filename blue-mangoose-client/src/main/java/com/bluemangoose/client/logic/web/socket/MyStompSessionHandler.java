@@ -1,5 +1,7 @@
 package com.bluemangoose.client.logic.web.socket;
 
+import com.bluemangoose.client.controller.LoginController;
+import com.bluemangoose.client.logic.web.ApiPath;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -16,6 +18,7 @@ import java.lang.reflect.Type;
 public class MyStompSessionHandler extends StompSessionHandlerAdapter {
     private StompSession session;
     private String roomTarget;
+    private ConversationHandler conversationHandler;
 
     public MyStompSessionHandler(String roomTarget) {
         this.roomTarget = roomTarget;
@@ -24,10 +27,8 @@ public class MyStompSessionHandler extends StompSessionHandlerAdapter {
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         this.session = session;
-        System.out.println("New session established : " + session.getSessionId());
-
         session.subscribe("/topic/" + roomTarget, this);
-        System.out.println("Subscribed to /topic/" + roomTarget);
+        this.conversationHandler = ConversationHandler.getInstance(roomTarget, 100);
     }
 
     @Override
@@ -43,7 +44,11 @@ public class MyStompSessionHandler extends StompSessionHandlerAdapter {
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
         ChatMessage message = (ChatMessage) payload;
-        System.out.println("Server: " + message.getContent());
+
+        if (!message.getUsernmame().equals(LoginController.username)) {
+            conversationHandler.insertMessage(message);
+        }
+
     }
 
     public void postMessage(ChatMessage chatMessage) {
@@ -58,4 +63,7 @@ public class MyStompSessionHandler extends StompSessionHandlerAdapter {
         this.session.disconnect();
     }
 
+    public ConversationHandler getConversationHandler() {
+        return conversationHandler;
+    }
 }

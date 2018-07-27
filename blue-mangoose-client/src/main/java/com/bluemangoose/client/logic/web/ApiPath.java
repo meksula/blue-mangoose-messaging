@@ -10,19 +10,19 @@ public enum ApiPath {
     REGISTRATION {
         @Override
         public String getPath() {
-            return "http://localhost:8060/api/v1/registration";
+            return "http://51.38.129.50:8060/api/v1/registration";
         }
     },
     LOGIN {
         @Override
         public String getPath() {
-            return "http://localhost:8060/api/v1/login";
+            return "http://51.38.129.50:8060/api/v1/login";
         }
     },
     PROFILE {
         @Override
         public String getPath() {
-            return "http://localhost:8060/api/v1/profile/" + username;
+            return "http://51.38.129.50:8060/api/v1/profile/" + username;
         }
     },
     VERIFICATION {
@@ -39,13 +39,13 @@ public enum ApiPath {
 
         @Override
         public String getPath() {
-            return "http://localhost:8060/api/v1/verification/" + userId + "/" + code;
+            return "http://51.38.129.50:8060//api/v1/verification/" + userId + "/" + code;
         }
     },
     CHAT_ROOM_LIST {
         @Override
         public String getPath() {
-            return "http://localhost:8060/api/v1/room/list";
+            return "http://51.38.129.50:8060/api/v1/room/list";
         }
     };
 

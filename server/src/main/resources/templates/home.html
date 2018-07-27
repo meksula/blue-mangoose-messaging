@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Blue Mangoose</title>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=divice-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <h2>Witaj w komunikatorze Blue Mangoose!</h2>
+        <h3>PS: Nie przejmuj się dość surowym wyglądem strony - może kiedyś to się zmieni :D</h3>
+            <hr>
+    </header>
+    
+    <div class="banner">
+        <img th:src="@{/images/logo.png}" />
+    </div>
+
+    <div class="contentM">
+        <p>Jeśli chcesz pobrać komunikator, kliknij w poniższy link:</p>
+            <br>
+        <a th:href="@{/download}" style="color: #fdff6e">Pobierz Blue Mangoose (Executable .jar)</a>
+            <br>
+        <p>Pamiętaj, że musisz zainstalować Java Runtime Environment na swoim kompie, zanim uruchomisz aplikację.
+            <br>
+            Chociaż za pewne już ją dawno masz zainstalowaną.
+        </p>
+        <br><br><br><br>
+    </div>
+
+    <footer>
+        <p>Blue Mangoose by Karol Meksuła 2018</p>
+    </footer>
+
+</body>
+</html>

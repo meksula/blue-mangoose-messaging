@@ -16,9 +16,12 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class ChatController {
+    private SimpMessageSendingOperations messaging;
 
     @Autowired
-    SimpMessageSendingOperations messaging;
+    public void setMessaging(SimpMessageSendingOperations messaging) {
+        this.messaging = messaging;
+    }
 
     private Message lastMessage;
 

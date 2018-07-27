@@ -36,6 +36,9 @@ dependencies {
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.11'
     compile group: 'com.wix', name: 'wix-embedded-mysql', version: '4.1.2'
 
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
+
     compileOnly('org.projectlombok:lombok')
     compile group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.0.11.Final'
     testCompile('org.springframework.boot:spring-boot-starter-test')

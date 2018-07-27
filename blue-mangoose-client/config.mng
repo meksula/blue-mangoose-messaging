@@ -1,0 +1,8 @@
+# Main application settings
+# Notice that someone can steal your credentials
+
+setting_enabled=true;
+default_chat_room=default;
+
+saved_user=karoladmin;
+password=karoladmin;

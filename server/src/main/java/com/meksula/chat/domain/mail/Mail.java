@@ -24,7 +24,7 @@ public class Mail {
                 VerificationEntity verificationEntity = (VerificationEntity) attachment;
 
                 String link = new StringBuilder()
-                        .append("http://localhost:8060/api/v1/verification")
+                        .append("http://51.38.129.50:8060/api/v1/verification")
                         .append("/")
                         .append(verificationEntity.getUserId())
                         .append("/")

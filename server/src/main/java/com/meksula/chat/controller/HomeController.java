@@ -1,9 +1,14 @@
 package com.meksula.chat.controller;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * @Author
@@ -11,13 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
  * 20-07-2018
  * */
 
-@RestController
+@Controller
 public class HomeController {
 
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
     public String home() {
-        return "Mangoose eye chat application.\nLook at reference: ...";
+        return "home";
     }
+
+
 
 }

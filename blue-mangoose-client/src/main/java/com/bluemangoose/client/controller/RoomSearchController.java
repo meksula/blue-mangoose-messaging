@@ -9,7 +9,7 @@ import com.bluemangoose.client.model.dto.ChatRoom;
 import com.bluemangoose.client.model.personal.User;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.AccessibleAction;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -112,6 +112,7 @@ public class RoomSearchController implements Initializable, DataInitializable {
         ImageButton imageButton = new ImageButton(roomId);
         ImageView imageView = imageButton.getImageView();
         imageView.setImage(inactive);
+        imageView.setCursor(Cursor.HAND);
 
         imageView.setOnMouseEntered(event -> imageView.setImage(active));
         imageView.setOnMouseExited(event -> imageView.setImage(inactive));

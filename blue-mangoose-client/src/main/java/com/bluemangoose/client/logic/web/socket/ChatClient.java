@@ -12,7 +12,7 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
  * */
 
 public class ChatClient {
-    private static String URL = "ws://localhost:8060/chat";
+    private static String URL = "ws://51.38.129.50:8060/chat";
     private WebSocketClient client;
     private WebSocketStompClient stompClient;
     private MyStompSessionHandler sessionHandler;

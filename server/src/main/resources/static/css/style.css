@@ -1,0 +1,25 @@
+body {
+    background: rgba(4, 8, 41, 0.87);
+    -webkit-text-fill-color: #f4f4ef;
+}
+
+header {
+    text-align: center;
+}
+
+footer {
+    text-align: center;
+    font-size: 12px;
+}
+
+.banner {
+    left: 0;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+}
+
+.contentM {
+    text-align: center;
+    font-size: 18px;
+}

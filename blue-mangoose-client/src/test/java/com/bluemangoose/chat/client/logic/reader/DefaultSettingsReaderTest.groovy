@@ -1,14 +1,14 @@
-//package com.meksula.chat.client.logic.reader
+package com.bluemangoose.chat.client.logic.reader;
 
-/*
+import com.bluemangoose.client.logic.reader.DefaultSettingsManager
+import com.bluemangoose.client.logic.reader.SettingsProperties
 import spock.lang.Specification
 
-*/
 /**
  * @Author
  * Karol Meksuła
  * 24-07-2018
- * *//*
+ * */
 
 
 class DefaultSettingsReaderTest extends Specification {
@@ -44,4 +44,3 @@ class DefaultSettingsReaderTest extends Specification {
     }
 
 }
-*/

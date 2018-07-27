@@ -2,7 +2,6 @@ package com.meksula.chat.domain.room;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.meksula.chat.domain.chat.ChatMessage;
 import com.meksula.chat.domain.user.ApplicationUser;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +9,6 @@ import lombok.Setter;
 import javax.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * @Author
@@ -38,10 +36,6 @@ public class ChatRoom {
     @JsonIgnore
     @Transient
     private String password;
-
-    @Transient
-    @JsonIgnore
-    private List<ChatMessage> chatMessages;
 
     public ChatRoom(String name, ApplicationUser user, boolean passwordRequired) {
         this.name = name;

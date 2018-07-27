@@ -16,4 +16,9 @@ public interface ChatRoomManager {
     boolean joinRoom(String roomId);
 
     void postMessage(String text) throws IllegalAccessException;
+
+    boolean isConnected();
+
+    String getRoomTarget();
+
 }

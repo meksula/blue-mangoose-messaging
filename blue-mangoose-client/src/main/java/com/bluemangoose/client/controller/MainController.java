@@ -5,13 +5,15 @@ import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
 import com.bluemangoose.client.controller.loader.FxmlLoader;
 import com.bluemangoose.client.logic.web.ChatRoomManager;
 import com.bluemangoose.client.logic.web.impl.DefaultRoomManager;
-import com.bluemangoose.client.logic.web.socket.ChatClient;
 import com.bluemangoose.client.logic.web.socket.ChatMessage;
+import com.bluemangoose.client.logic.web.socket.ConversationHandler;
+import com.bluemangoose.client.logic.web.socket.WebsocketReceiver;
 import com.bluemangoose.client.model.alert.Alerts;
-import com.bluemangoose.client.model.personal.DefaultUser;
 import com.bluemangoose.client.model.personal.User;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -32,14 +34,15 @@ import java.util.ResourceBundle;
  * 14-07-2018
  * */
 
-public class MainController implements Initializable, DataInitializable {
+public class MainController implements Initializable, DataInitializable, WebsocketReceiver {
     private List<Label> messagesCache = new ArrayList<>();
     private User user;
     private FxmlLoader fxmlLoader;
     private ChatRoomManager chatRoomManager;
+    private ConversationHandler conversationHandler;
 
     @FXML
-    private ImageView loupeButton;
+    private ImageView loupeButton, autonomicWindowButton, disconnectButton;
 
     @FXML
     private TextField loupeField;
@@ -75,11 +78,41 @@ public class MainController implements Initializable, DataInitializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.fxmlLoader = new FxmlLoaderTemplate();
 
+        addAutonomicWindowAction();
+        addDisconnectChatAction();
         addControllPanelButtonsActions();
         addButtonActions();
         sendMessageAction();
         searchingAction();
         contactDisplay(new ArrayList<>(Arrays.asList("Adaś", "Karol", "Alek", "Tosiek")));
+    }
+
+    private void addAutonomicWindowAction() {
+        Image inactive = new Image("/img/max.png");
+        Image active = new Image("/img/max-active.png");
+
+        autonomicWindowButton.setCursor(Cursor.HAND);
+        autonomicWindowButton.setOnMouseEntered(event -> autonomicWindowButton.setImage(active));
+        autonomicWindowButton.setOnMouseExited(event -> autonomicWindowButton.setImage(inactive));
+        autonomicWindowButton.setOnMouseClicked(event -> popupChatWindow());
+    }
+
+    private void addDisconnectChatAction() {
+        Image inactive = new Image("/img/disconnect.png");
+        Image active = new Image("/img/disconnect-active.png");
+
+        disconnectButton.setCursor(Cursor.HAND);
+        disconnectButton.setOnMouseEntered(event -> disconnectButton.setImage(active));
+        disconnectButton.setOnMouseExited(event -> disconnectButton.setImage(inactive));
+        disconnectButton.setOnMouseClicked(event -> disconnectChat());
+    }
+
+    private void popupChatWindow() {
+        //TODO
+    }
+
+    private void disconnectChat() {
+        //TODO
     }
 
     @Override
@@ -88,6 +121,17 @@ public class MainController implements Initializable, DataInitializable {
         this.chatRoomManager = DefaultRoomManager.getInstance(user);
 
         usernameField.setText(user.getUsername());
+
+        if (chatRoomManager.isConnected()) {
+            chatPane.setText("Pokój: " + chatRoomManager.getRoomTarget());
+            conversationHandler = ConversationHandler.getInstance(chatRoomManager.getRoomTarget(), 100);
+            conversationHandler.setWebsocketReceiver(this);
+        }
+
+        else {
+            chatPane.setText("DISCONNECTED");
+        }
+
     }
 
     private void addButtonActions() {
@@ -128,7 +172,7 @@ public class MainController implements Initializable, DataInitializable {
     private void send() {
         String text = messageField.getText();
 
-        if (text.length() == 1) {
+        if (text.isEmpty() || text.length() == 1) {
             return;
         }
 
@@ -139,7 +183,7 @@ public class MainController implements Initializable, DataInitializable {
 
         try {
             chatRoomManager.postMessage(text);
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             String exceptionText = e.getMessage();
             new Alerts().websocketClosed(exceptionText);
         }
@@ -200,6 +244,20 @@ public class MainController implements Initializable, DataInitializable {
         lookForRoom.setOnMouseClicked(event -> fxmlLoader.loadSameStageWithData(FxmlLoaderTemplate.SceneType.ROOM_SEARCH, user, event));
 
         newRoom.setOnMouseClicked(event -> fxmlLoader.loadSameStageWithData(FxmlLoaderTemplate.SceneType.ROOM_CREATION, user, event));
+    }
+
+    @Override
+    public void actionOnMessage(ChatMessage chatMessage) {
+        Label label = new Label();
+        label.setWrapText(true);
+        label.getStyleClass().add("message");
+
+        label.setText(chatMessage.getSendTime() + "\n" + chatMessage.getUsernmame() + " said:         " + chatMessage.getContent());
+
+        Platform.runLater(() -> {
+            chatWindow.getChildren().add(label);
+            chatWindowMoving();
+        });
     }
 
 }
