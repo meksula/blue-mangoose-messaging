@@ -1,13 +1,11 @@
 package com.meksula.chat.controller;
 
 import com.meksula.chat.domain.chat.ChatRoomManager;
+import com.meksula.chat.domain.room.ChatForm;
 import com.meksula.chat.domain.room.ChatRoom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,6 +29,12 @@ public class ChatRoomController {
     @ResponseStatus(HttpStatus.OK)
     public List<ChatRoom> chatRoomSet() {
         return chatRoomManager.getRoomSet();
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.OK)
+    public ChatRoom createChatRoom(@RequestBody ChatForm chatForm) {
+        return chatRoomManager.registerChatWrapper(chatForm);
     }
 
 }

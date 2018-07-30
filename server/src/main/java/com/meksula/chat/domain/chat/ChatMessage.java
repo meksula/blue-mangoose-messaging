@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.*;
+
 /**
  * @Author
  * Karol Meksuła
@@ -12,12 +14,17 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@Entity
+@Table(name = "messages")
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class ChatMessage extends Message {
-    private String roomTarget;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @Override
     public String toString() {
-        return "[RoomTarget:] " + roomTarget + ", [author:] " + super.getUsernmame() + ", [content:] " + super.getContent();
+        return "[RoomTarget:] " + super.getRoomTarget() + ", [author:] " + super.getUsernmame() + ", [content:] " + super.getContent();
     }
 }

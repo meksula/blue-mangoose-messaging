@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
+/**
+ * @Author
+ * Karol Meksuła
+ * 27-07-2018
+ * */
+
 @Controller
 @RequestMapping("/download")
 public class DownloadClient {

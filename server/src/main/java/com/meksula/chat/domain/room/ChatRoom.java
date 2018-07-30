@@ -32,9 +32,6 @@ public class ChatRoom {
     private int people;
     private boolean passwordRequired;
     private LocalDateTime creationDate;
-
-    @JsonIgnore
-    @Transient
     private String password;
 
     public ChatRoom(String name, ApplicationUser user, boolean passwordRequired) {

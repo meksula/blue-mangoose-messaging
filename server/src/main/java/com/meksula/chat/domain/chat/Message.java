@@ -14,6 +14,7 @@ import lombok.Setter;
 @Setter
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public abstract class Message {
+    private String roomTarget;
     private String usernmame;
     private String content;
     private String sendTime;

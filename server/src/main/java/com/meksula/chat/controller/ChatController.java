@@ -1,11 +1,11 @@
 package com.meksula.chat.controller;
 
 import com.meksula.chat.domain.chat.ChatMessage;
+import com.meksula.chat.domain.chat.ChatRoomManager;
 import com.meksula.chat.domain.chat.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
 
 /**
@@ -16,23 +16,16 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class ChatController {
-    private SimpMessageSendingOperations messaging;
+    private ChatRoomManager chatRoomManager;
 
     @Autowired
-    public void setMessaging(SimpMessageSendingOperations messaging) {
-        this.messaging = messaging;
+    public void setChatRoomManager(ChatRoomManager chatRoomManager) {
+        this.chatRoomManager = chatRoomManager;
     }
-
-    private Message lastMessage;
 
     @MessageMapping("/main")
     public Message defaultChat(@Payload ChatMessage chatMessage) {
-        lastMessage = chatMessage;
-
-        System.out.println("Nowa wiadomość: " + chatMessage.toString());
-
-        messaging.convertAndSend("/topic/" + chatMessage.getRoomTarget(), lastMessage);
-
+        chatRoomManager.receiveMessage(chatMessage);
         return chatMessage;
     }
 
