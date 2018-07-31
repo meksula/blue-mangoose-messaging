@@ -1,4 +1,4 @@
-package com.meksula.chat.domain.chat;
+package com.meksula.chat.domain.chat.dto;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.Getter;

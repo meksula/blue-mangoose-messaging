@@ -1,5 +1,9 @@
-package com.meksula.chat.domain.chat;
+package com.meksula.chat.domain.chat.impl;
 
+import com.meksula.chat.domain.chat.ChatRoomManager;
+import com.meksula.chat.domain.chat.ChatWrapper;
+import com.meksula.chat.domain.chat.ChatWrapperFactory;
+import com.meksula.chat.domain.chat.dto.Message;
 import com.meksula.chat.domain.room.ChatForm;
 import com.meksula.chat.domain.room.ChatRoom;
 import com.meksula.chat.repository.ChatRoomRepository;
@@ -54,9 +58,9 @@ public class BasicChatRoomManager implements ChatRoomManager {
     @Override
     public ChatRoom registerChatWrapper(ChatForm chatForm) {
         ChatWrapper chatWrapper = chatWrapperFactory.buildChatWrapper(chatForm);
-        roomMap.put(chatWrapper.chatRoom.getName(), chatWrapper);
+        roomMap.put(chatWrapper.getChatRoom().getName(), chatWrapper);
 
-        return chatWrapper.chatRoom;
+        return chatWrapper.getChatRoom();
     }
 
     @Override
@@ -67,7 +71,7 @@ public class BasicChatRoomManager implements ChatRoomManager {
     @Override
     public List<ChatRoom> getRoomSet() {
         List<ChatRoom> roomList = new ArrayList<>();
-        roomMap.forEach((k,v) -> roomList.add(v.chatRoom));
+        roomMap.forEach((k,v) -> roomList.add(v.getChatRoom()));
 
         return roomList;
     }

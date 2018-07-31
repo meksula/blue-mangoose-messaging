@@ -1,8 +1,10 @@
-package com.meksula.chat.domain.chat;
+package com.meksula.chat.domain.chat.dto;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.persistence.MappedSuperclass;
 
 /**
  * @Author
@@ -12,6 +14,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@MappedSuperclass
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public abstract class Message {
     private String roomTarget;

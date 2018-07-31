@@ -1,5 +1,6 @@
 package com.meksula.chat.domain.chat
 
+import com.meksula.chat.domain.chat.impl.ChatWrapperFactoryImpl
 import spock.lang.Specification
 
 /**
@@ -16,8 +17,5 @@ class ChatWrapperFactoryImplTest extends Specification {
         factory = new ChatWrapperFactoryImpl()
     }
 
-    def 'should build correctly' () {
-
-    }
 
 }

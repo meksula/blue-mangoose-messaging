@@ -1,8 +1,8 @@
 package com.meksula.chat.controller;
 
-import com.meksula.chat.domain.chat.ChatMessage;
+import com.meksula.chat.domain.chat.dto.ChatMessage;
 import com.meksula.chat.domain.chat.ChatRoomManager;
-import com.meksula.chat.domain.chat.Message;
+import com.meksula.chat.domain.chat.dto.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;

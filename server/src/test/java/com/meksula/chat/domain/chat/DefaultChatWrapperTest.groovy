@@ -1,5 +1,8 @@
 package com.meksula.chat.domain.chat
 
+import com.meksula.chat.domain.chat.dto.ChatMessage
+import com.meksula.chat.domain.chat.dto.Message
+import com.meksula.chat.domain.chat.impl.DefaultChatWrapper
 import spock.lang.Specification
 
 import java.time.LocalDateTime

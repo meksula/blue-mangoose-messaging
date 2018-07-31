@@ -1,5 +1,7 @@
-package com.meksula.chat.domain.chat;
+package com.meksula.chat.domain.chat.impl;
 
+import com.meksula.chat.domain.chat.ChatWrapper;
+import com.meksula.chat.domain.chat.ChatWrapperFactory;
 import com.meksula.chat.domain.room.ChatForm;
 import com.meksula.chat.domain.room.ChatRoom;
 import com.meksula.chat.repository.ChatRoomRepository;
@@ -43,7 +45,6 @@ public class ChatWrapperFactoryImpl implements ChatWrapperFactory {
         chatRoom.setPasswordRequired(chatForm.isPasswordRequired());
         chatRoom.setPassword(chatForm.getPassword());
         chatRoom.setCreationDate(LocalDateTime.now());
-
         return chatRoom;
     }
 

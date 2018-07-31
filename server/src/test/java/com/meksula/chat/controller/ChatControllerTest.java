@@ -9,8 +9,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.meksula.chat.domain.chat.ChatMessage;
-import com.meksula.chat.domain.chat.Message;
+import com.meksula.chat.domain.chat.dto.ChatMessage;
+import com.meksula.chat.domain.chat.dto.Message;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
