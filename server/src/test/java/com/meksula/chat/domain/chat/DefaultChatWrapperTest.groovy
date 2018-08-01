@@ -99,7 +99,7 @@ class DefaultChatWrapperTest extends Specification {
 
     }
 
-    def fakeMessages(int size) {
+    void fakeMessages(int size) {
         for (int i = 0; i < size; i++) {
             ChatMessage message = new ChatMessage()
             message.setId(i)
