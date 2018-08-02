@@ -20,6 +20,8 @@ public interface ChatRoomManager {
 
     void removeChatWrapper(String name);
 
+    ChatWrapper getChatWrapper(String key);
+
     List<ChatRoom> getRoomSet();
 
     Map<String, ChatWrapper> getChatMap();

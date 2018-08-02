@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.*;
 
 /**
@@ -59,6 +60,7 @@ public class BasicChatRoomManager implements ChatRoomManager {
     public ChatRoom registerChatWrapper(ChatForm chatForm) {
         ChatWrapper chatWrapper = chatWrapperFactory.buildChatWrapper(chatForm);
         roomMap.put(chatWrapper.getChatRoom().getName(), chatWrapper);
+        chatRoomRepository.save(chatWrapper.getChatRoom());
 
         return chatWrapper.getChatRoom();
     }
@@ -66,6 +68,17 @@ public class BasicChatRoomManager implements ChatRoomManager {
     @Override
     public void removeChatWrapper(String name) {
         roomMap.remove(name);
+    }
+
+    @Override
+    public ChatWrapper getChatWrapper(String key) {
+        ChatWrapper wrapper = roomMap.get(key);
+
+        if (wrapper == null) {
+            throw new EntityNotFoundException("There is no ChatWrapper with this key : " + key);
+        }
+
+        return wrapper;
     }
 
     @Override

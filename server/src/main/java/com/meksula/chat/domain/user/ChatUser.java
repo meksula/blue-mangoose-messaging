@@ -2,7 +2,6 @@ package com.meksula.chat.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,7 +26,7 @@ import java.util.*;
 public class ChatUser implements UserDetails, Serializable, ApplicationUser {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private long userId;
 
     private String username;
@@ -39,10 +38,6 @@ public class ChatUser implements UserDetails, Serializable, ApplicationUser {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "authorities", joinColumns = @JoinColumn(name = "userId"))
     private Set<String> authorities;
-
-    @JsonManagedReference
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "chatUser", cascade = CascadeType.ALL)
-    private Set<Contact> contactsBook;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -84,14 +79,6 @@ public class ChatUser implements UserDetails, Serializable, ApplicationUser {
     @Override
     public boolean isEnabled() {
         return enable;
-    }
-
-    public void addContact(Contact contact) {
-        contactsBook.add(contact);
-    }
-
-    public Set<Contact> getContacts() {
-        return contactsBook;
     }
 
 }
