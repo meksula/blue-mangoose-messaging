@@ -1,13 +1,17 @@
 package com.bluemangoose.client.controller;
 
+import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.controller.loader.FxmlLoader;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
 import com.bluemangoose.client.logic.reader.DefaultSettingsManager;
 import com.bluemangoose.client.logic.reader.SettingReader;
 import com.bluemangoose.client.logic.web.ApiPath;
+import com.bluemangoose.client.logic.web.exchange.HttpServerConnector;
+import com.bluemangoose.client.logic.web.exchange.HttpServerConnectorImpl;
 import com.bluemangoose.client.logic.web.impl.UserCredentialExchange;
 import com.bluemangoose.client.model.alert.Alerts;
 import com.bluemangoose.client.model.personal.LoginCredential;
+import com.bluemangoose.client.model.personal.ProfilePreferences;
 import com.bluemangoose.client.model.personal.User;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -58,6 +62,9 @@ public class LoginController implements Initializable {
             if (access()) {
                 LoginController.username = usernameField.getText();
                 User user = fetchUser();
+                ProfilePreferences profilePreferences = fetchProfile();
+                SessionCache.getInstance().setUser(user);
+                SessionCache.getInstance().setProfilePreferences(profilePreferences);
                 fxmlLoader.loadSameStageWithData(FxmlLoaderTemplate.SceneType.MAIN, user, event);
             }
             else {
@@ -65,6 +72,10 @@ public class LoginController implements Initializable {
             }
 
         });
+    }
+
+    private ProfilePreferences fetchProfile() {
+        return new HttpServerConnectorImpl<>(ProfilePreferences.class).get(ApiPath.PROFILE);
     }
 
     private boolean access() {
@@ -77,7 +88,7 @@ public class LoginController implements Initializable {
     }
 
     private User fetchUser() {
-        ApiPath apiPath = ApiPath.PROFILE;
+        ApiPath apiPath = ApiPath.USER_HANDLE;
         apiPath.username = usernameField.getText();
         return userCredentialExchange.retrieveProfile(apiPath);
     }

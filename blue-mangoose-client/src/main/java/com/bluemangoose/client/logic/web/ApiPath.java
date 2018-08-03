@@ -21,10 +21,22 @@ public enum ApiPath {
             return buildUrl("api/v1/login");
         }
     },
+    USER_HANDLE {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/user");
+        }
+    },
     PROFILE {
         @Override
         public String getPath() {
             return buildUrl("api/v1/profile");
+        }
+    },
+    AVATAR {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/profile/avatar");
         }
     },
     VERIFICATION {

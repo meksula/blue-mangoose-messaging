@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="607.0" prefWidth="665.0" styleClass="background" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bluemangoose.client.controller.MainController">
    <children>
@@ -28,8 +29,11 @@
             <Image url="@../img/send-inactive.png" />
          </image>
       </ImageView>
-      <Label fx:id="usernameField" layoutX="220.0" layoutY="14.0" prefHeight="16.0" prefWidth="213.0" styleClass="username" stylesheets="@../style.css" />
-      <VBox layoutX="502.0" layoutY="14.0" prefHeight="155.0" prefWidth="151.0" spacing="7.0">
+      <Label fx:id="usernameField" layoutX="232.0" layoutY="14.0" prefHeight="20.0" prefWidth="201.0" styleClass="username" stylesheets="@../style.css" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
+      <VBox layoutX="502.0" layoutY="14.0" prefHeight="80.0" prefWidth="151.0" spacing="7.0">
          <children>
             <Label fx:id="settingButton" prefHeight="16.0" prefWidth="157.0" styleClass="menu_button" text="Ustawienia" />
             <Label fx:id="newRoom" layoutX="10.0" layoutY="10.0" prefHeight="16.0" prefWidth="157.0" styleClass="menu_button" text="Nowy pokój" />
@@ -56,14 +60,24 @@
             <Image url="@../img/user.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="autonomicWindowButton" fitHeight="20.0" fitWidth="25.0" layoutX="220.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="autonomicWindowButton" fitHeight="20.0" fitWidth="25.0" layoutX="594.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../img/max.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="disconnectButton" fitHeight="20.0" fitWidth="25.0" layoutX="253.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="disconnectButton" fitHeight="20.0" fitWidth="25.0" layoutX="631.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../img/disconnect.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="bell" fitHeight="20.0" fitWidth="25.0" layoutX="200.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/bell-inactive.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="messageAlert" fitHeight="20.0" fitWidth="25.0" layoutX="200.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/message-received-inactive.png" />
          </image>
       </ImageView>
    </children>

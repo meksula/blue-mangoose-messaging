@@ -2,6 +2,8 @@ package com.bluemangoose.client.logic.web.exchange;
 
 import com.bluemangoose.client.logic.web.ApiPath;
 
+import java.io.File;
+
 /**
  * @Author
  * Karol Meksuła
@@ -16,4 +18,6 @@ public interface HttpServerConnector<T> {
     T put();
 
     T get(ApiPath apiPath);
+
+    T putFile(ApiPath apiPath, File picture);
 }

@@ -4,11 +4,16 @@ import com.bluemangoose.client.logic.web.ApiPath;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
 import javax.ws.rs.client.*;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.MessageBodyWriter;
+import java.io.File;
 
 /**
  * @Author
@@ -56,12 +61,34 @@ public class HttpServerConnectorImpl<T> implements HttpServerConnector<T> {
         return response.readEntity(type);
     }
 
+    @Override
+    public T putFile(ApiPath apiPath, File picture) {
+        final String contentType = "multipart/mixed";
+
+        Client client = ClientBuilder.newBuilder().
+                register(MultiPartFeature.class).withConfig(HttpServerConnectorImpl.clientConfig).build();
+        WebTarget target = client.target(apiPath.getPath());
+        target.register(MultiPartFeature.class);
+
+        MultiPart multiPart = new MultiPart();
+
+        FileDataBodyPart imgBodyPart = new FileDataBodyPart("pic", picture,
+                MediaType.APPLICATION_OCTET_STREAM_TYPE);
+
+        multiPart.bodyPart(imgBodyPart);
+
+        Response response = target.request(MediaType.APPLICATION_JSON_TYPE)
+                .put(Entity.entity(multiPart, contentType));
+
+        return response.readEntity(type);
+    }
+
     private Invocation.Builder clientPrepare(ApiPath apiPath) {
         if (clientConfig == null) {
             clientConfig = new ClientConfig();
         }
 
-        Client client = ClientBuilder.newClient(clientConfig);
+        Client client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
         WebTarget webTarget = client.target(apiPath.getPath());
 
         return webTarget.request(MediaType.APPLICATION_JSON_TYPE);

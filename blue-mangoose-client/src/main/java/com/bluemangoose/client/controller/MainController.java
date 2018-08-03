@@ -1,5 +1,6 @@
 package com.bluemangoose.client.controller;
 
+import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.controller.loader.DataInitializable;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
 import com.bluemangoose.client.controller.loader.FxmlLoader;
@@ -9,6 +10,7 @@ import com.bluemangoose.client.logic.web.socket.ChatMessage;
 import com.bluemangoose.client.logic.web.socket.ConversationHandler;
 import com.bluemangoose.client.logic.web.socket.WebsocketReceiver;
 import com.bluemangoose.client.model.alert.Alerts;
+import com.bluemangoose.client.model.personal.Contact;
 import com.bluemangoose.client.model.personal.User;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -23,10 +25,7 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * @Author
@@ -84,7 +83,9 @@ public class MainController implements Initializable, DataInitializable, Websock
         addButtonActions();
         sendMessageAction();
         searchingAction();
-        contactDisplay(new ArrayList<>(Arrays.asList("Adaś", "Karol", "Alek", "Tosiek")));
+        contactDisplay(SessionCache.getInstance().getProfilePreferences().getContactsBook());
+
+        usernameField.setText(SessionCache.getInstance().getProfilePreferences().getProfileUsername());
     }
 
     private void addAutonomicWindowAction() {
@@ -119,8 +120,6 @@ public class MainController implements Initializable, DataInitializable, Websock
     public void initData(Object data) {
         this.user = (User) data;
         this.chatRoomManager = DefaultRoomManager.getInstance(user);
-
-        usernameField.setText(user.getUsername());
 
         if (chatRoomManager.isConnected()) {
             chatPane.setText("Pokój: " + chatRoomManager.getRoomTarget());
@@ -210,13 +209,13 @@ public class MainController implements Initializable, DataInitializable, Websock
         }
     }
 
-    private void contactDisplay(List<String> contacts) {
+    private void contactDisplay(Set<Contact> contacts) {
 
-        for (String contact : contacts) {
+        for (Contact contact : contacts) {
             Label label = new Label();
             label.getStyleClass().add("contact");
 
-            label.setText(contact);
+            label.setText(contact.getUsername());
             contactsVbox.getChildren().add(label);
         }
 
@@ -252,6 +251,7 @@ public class MainController implements Initializable, DataInitializable, Websock
         label.setWrapText(true);
         label.getStyleClass().add("message");
 
+        //TODO tu trzeba zmienić sposób wyświetlania wiadomości
         label.setText(chatMessage.getSendTime() + "\n" + chatMessage.getUsernmame() + " said:         " + chatMessage.getContent());
 
         Platform.runLater(() -> {

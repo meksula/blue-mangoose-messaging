@@ -64,4 +64,11 @@ public class Alerts {
         alert.setHeaderText(exceptionText);
         alert.showAndWait();
     }
+
+    public void settingsError() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Błąd wysłania");
+        alert.setHeaderText("Nastąpił niespodziewany błąd.\nNiestety, nie można wysłać nowych ustawień.");
+        alert.showAndWait();
+    }
 }
