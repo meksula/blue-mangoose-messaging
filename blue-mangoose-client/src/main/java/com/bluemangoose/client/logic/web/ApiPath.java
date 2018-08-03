@@ -1,5 +1,7 @@
 package com.bluemangoose.client.logic.web;
 
+import com.bluemangoose.client.Main;
+
 /**
  * @Author
  * Karol Meksuła
@@ -10,19 +12,19 @@ public enum ApiPath {
     REGISTRATION {
         @Override
         public String getPath() {
-            return "http://51.38.129.50:8060/api/v1/registration";
+            return buildUrl("api/v1/registration");
         }
     },
     LOGIN {
         @Override
         public String getPath() {
-            return "http://51.38.129.50:8060/api/v1/login";
+            return buildUrl("api/v1/login");
         }
     },
     PROFILE {
         @Override
         public String getPath() {
-            return "http://51.38.129.50:8060/api/v1/profile/" + username;
+            return buildUrl("api/v1/profile");
         }
     },
     VERIFICATION {
@@ -39,15 +41,18 @@ public enum ApiPath {
 
         @Override
         public String getPath() {
-            return "http://51.38.129.50:8060//api/v1/verification/" + userId + "/" + code;
+            return buildUrl("api/v1/verification/" + userId + "/" + code);
         }
     },
     CHAT_ROOM_LIST {
         @Override
         public String getPath() {
-            return "http://51.38.129.50:8060/api/v1/room/list";
+            return buildUrl("api/v1/room/list");
         }
     };
+
+    final String LOCALHOST = "http://localhost:8060/";
+    final String REMOTE = "http://51.38.129.50:8060/";
 
     public String username;
 
@@ -56,5 +61,17 @@ public enum ApiPath {
     }
 
     public abstract String getPath();
+
+    public String buildUrl(final String PATH) {
+        if (Main.runMode == null || Main.runMode.isEmpty() || Main.runMode.equals("remote")) {
+            return REMOTE + PATH;
+        }
+
+        else if (Main.runMode.equals("localhost")) {
+            return LOCALHOST + PATH;
+        }
+
+        return REMOTE + PATH;
+    }
 
 }
