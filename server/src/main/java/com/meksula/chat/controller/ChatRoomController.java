@@ -48,7 +48,7 @@ public class ChatRoomController {
         return chatRoomManager.registerChatWrapper(chatForm);
     }
 
-    @PostMapping
+    @PostMapping("/messages/all")
     @ResponseStatus(HttpStatus.OK)
     public List<Message> getAllMessagesInRoom(@RequestBody ChatAccess chatAccess) throws ChatAccessException {
         ChatWrapper chatWrapper = chatRoomManager.getChatWrapper(chatAccess.getChatName());

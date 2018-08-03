@@ -21,7 +21,7 @@ public class FormValidator implements RegistrationValidator {
     public boolean access(RegistrationForm registrationForm) {
         this.chatUserForm = (ChatUserForm) registrationForm;
 
-        return usernameMatch() && passwordMatch() && emailMatch();
+        return usernameMatch() && passwordMatch() && passwordEquivalent(registrationForm) && emailMatch();
     }
 
     private boolean usernameMatch() {
@@ -30,6 +30,10 @@ public class FormValidator implements RegistrationValidator {
 
     private boolean passwordMatch() {
         return usernameMatch();
+    }
+
+    private boolean passwordEquivalent(RegistrationForm registrationForm) {
+        return registrationForm.getPassword().equals(registrationForm.getPasswordConfirmation());
     }
 
     private boolean emailMatch() {

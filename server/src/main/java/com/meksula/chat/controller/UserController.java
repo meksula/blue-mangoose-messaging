@@ -65,7 +65,7 @@ public class UserController {
         return authentication.isAuthenticated();
     }
 
-    @GetMapping("/profile/{username}")
+    @GetMapping("/user/{username}")
     @ResponseStatus(HttpStatus.OK)
     public ChatUser getChatUser(@PathVariable("username") String username) {
         //TODO dodatkowa weryfikacja
