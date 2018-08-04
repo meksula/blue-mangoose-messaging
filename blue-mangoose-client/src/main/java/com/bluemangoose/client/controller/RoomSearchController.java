@@ -48,7 +48,7 @@ public class RoomSearchController implements Initializable, DataInitializable {
     public void initData(Object data) {
         this.user = (User) data;
 
-        this.chatRoomManager = DefaultRoomManager.getInstance(user);
+        this.chatRoomManager = DefaultRoomManager.getInstance();
         this.roomList = chatRoomManager.fetchChatRoomList();
         drawRooms(0, ROOM_AMOUNT);
     }

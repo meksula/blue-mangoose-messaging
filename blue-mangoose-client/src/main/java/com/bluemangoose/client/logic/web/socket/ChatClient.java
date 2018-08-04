@@ -1,5 +1,6 @@
 package com.bluemangoose.client.logic.web.socket;
 
+import com.bluemangoose.client.logic.web.ApiPath;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
@@ -12,7 +13,6 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
  * */
 
 public class ChatClient {
-    private static String URL = "ws://51.38.129.50:8060/chat";
     private WebSocketClient client;
     private WebSocketStompClient stompClient;
     private MyStompSessionHandler sessionHandler;
@@ -25,7 +25,7 @@ public class ChatClient {
     }
 
     public MyStompSessionHandler connect() {
-        stompClient.connect(URL, sessionHandler);
+        stompClient.connect(ApiPath.SOCKET.getPath(), sessionHandler);
         stompClient.start();
         return sessionHandler;
     }

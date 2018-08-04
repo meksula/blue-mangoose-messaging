@@ -28,6 +28,11 @@
     -fx-text-fill: #f8f0e0;
 }
 
+.own_message {
+    -fx-font-size: 12;
+    -fx-text-fill: #d4f88e;
+}
+
 .contact {
     -fx-font-size: 12;
     -fx-font-style: italic;

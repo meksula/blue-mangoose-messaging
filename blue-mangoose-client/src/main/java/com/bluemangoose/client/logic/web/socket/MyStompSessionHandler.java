@@ -1,7 +1,6 @@
 package com.bluemangoose.client.logic.web.socket;
 
-import com.bluemangoose.client.controller.LoginController;
-import com.bluemangoose.client.logic.web.ApiPath;
+import com.bluemangoose.client.controller.cache.SessionCache;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -45,8 +44,12 @@ public class MyStompSessionHandler extends StompSessionHandlerAdapter {
     public void handleFrame(StompHeaders headers, Object payload) {
         ChatMessage message = (ChatMessage) payload;
 
-        if (!message.getUsernmame().equals(LoginController.username)) {
-            conversationHandler.insertMessage(message);
+        try {
+            if (!message.getUsernmame().equals(SessionCache.getInstance().getProfilePreferences().getProfileUsername())) {
+                conversationHandler.insertMessage(message);
+            }
+        } catch (Exception e) {
+            return;
         }
 
     }

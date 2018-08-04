@@ -19,7 +19,7 @@
       <Label layoutX="43.0" layoutY="104.0" text="Zabezpieczyć hasłem?" textFill="WHITE" />
       <CheckBox fx:id="securedCheckBox" layoutX="207.0" layoutY="103.0" mnemonicParsing="false" />
       <PasswordField fx:id="passwordField" layoutX="274.0" layoutY="99.0" />
-      <Label layoutX="43.0" layoutY="166.0" text="Nazwa (opcjonalnie)" textFill="WHITE" />
+      <Label layoutX="43.0" layoutY="166.0" text="Nazwa pokoju" textFill="WHITE" />
       <TextField fx:id="chatNameField" layoutX="274.0" layoutY="161.0" />
       <Button fx:id="createRoom" layoutX="281.0" layoutY="469.0" mnemonicParsing="false" text="Utwórz pokój" />
     </children>

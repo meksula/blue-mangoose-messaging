@@ -1,8 +1,15 @@
 package com.bluemangoose.client.logic.web.socket;
 
+import com.bluemangoose.client.controller.cache.SessionCache;
+import com.bluemangoose.client.logic.web.ApiPath;
+import com.bluemangoose.client.logic.web.exchange.HttpServerConnectorImpl;
+import com.bluemangoose.client.model.dto.ChatAccess;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +45,18 @@ public class ConversationHandler {
 
     public ChatMessage peekLast() {
         return messages.get(messages.size() - 1);
+    }
+
+    public void fetchLastMessages() throws IOException {
+        ChatAccess chatAccess = new ChatAccess();
+        chatAccess.setUsername(SessionCache.getInstance().getProfilePreferences().getProfileUsername());
+        chatAccess.setChatName(roomTarget);
+        chatAccess.setSecured(false);
+        chatAccess.setPassword("");
+        SessionCache.getInstance().setChatAccess(chatAccess);
+
+        String json = new HttpServerConnectorImpl<>(String.class).post(chatAccess, ApiPath.MESSAGES_LAST);
+        this. messages = new ObjectMapper().readValue(json, new TypeReference<List<ChatMessage>>(){});
     }
 
 }

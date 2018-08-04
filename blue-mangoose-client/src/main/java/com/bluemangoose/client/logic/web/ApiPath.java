@@ -10,6 +10,17 @@ import com.bluemangoose.client.controller.cache.SessionCache;
  * */
 
 public enum ApiPath {
+    SOCKET {
+        @Override
+        public String getPath() {
+            if (Main.runMode.equals("remote")) {
+                return "ws://51.38.129.50:8060/chat";
+            }
+            else {
+                return "ws://localhost:8060/chat";
+            }
+        }
+    },
     REGISTRATION {
         @Override
         public String getPath() {
@@ -67,6 +78,18 @@ public enum ApiPath {
         @Override
         public String getPath() {
             return buildUrl("api/v1/room/list");
+        }
+    },
+    CHAT_ROOM_CREATE {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/room");
+        }
+    },
+    MESSAGES_LAST {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/room/messages/1");
         }
     };
 

@@ -1,13 +1,12 @@
 package com.bluemangoose.client.logic.web.impl;
 
-import com.bluemangoose.client.controller.MainController;
+import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.logic.web.ApiPath;
 import com.bluemangoose.client.logic.web.ChatRoomManager;
 import com.bluemangoose.client.logic.web.exchange.HttpServerConnector;
 import com.bluemangoose.client.logic.web.exchange.HttpServerConnectorImpl;
 import com.bluemangoose.client.logic.web.socket.*;
 import com.bluemangoose.client.model.dto.ChatRoom;
-import com.bluemangoose.client.model.personal.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,15 +27,12 @@ public class DefaultRoomManager implements ChatRoomManager {
     private MyStompSessionHandler sessionHandler;
     private String roomTarget;
     private boolean isConnected;
-    private static User user;
-    private WebsocketReceiver websocketReceiver;
 
     private DefaultRoomManager() {
         this.connector = new HttpServerConnectorImpl<>(String.class);
     }
 
-    public static DefaultRoomManager getInstance(User user) {
-        DefaultRoomManager.user = user;
+    public static DefaultRoomManager getInstance() {
         return singletonInstance;
     }
 
@@ -70,7 +66,7 @@ public class DefaultRoomManager implements ChatRoomManager {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setRoomTarget(roomTarget);
         chatMessage.setContent(text);
-        chatMessage.setUsernmame(user.getUsername());
+        chatMessage.setUsernmame(SessionCache.getInstance().getProfilePreferences().getProfileUsername());
         chatMessage.setSendTime(String.valueOf(LocalDateTime.now()));
 
         if (isConnected) {
@@ -84,6 +80,11 @@ public class DefaultRoomManager implements ChatRoomManager {
     @Override
     public boolean isConnected() {
         return isConnected;
+    }
+
+    @Override
+    public void disconnect() {
+        sessionHandler.disconect();
     }
 
     @Override

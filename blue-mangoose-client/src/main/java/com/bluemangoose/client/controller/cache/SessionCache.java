@@ -1,5 +1,6 @@
 package com.bluemangoose.client.controller.cache;
 
+import com.bluemangoose.client.model.dto.ChatAccess;
 import com.bluemangoose.client.model.personal.ProfilePreferences;
 import com.bluemangoose.client.model.personal.User;
 import javafx.scene.image.Image;
@@ -26,4 +27,5 @@ public class SessionCache {
     private User user;
     private ProfilePreferences profilePreferences;
     private Image profilePicture;
+    private ChatAccess chatAccess;
 }

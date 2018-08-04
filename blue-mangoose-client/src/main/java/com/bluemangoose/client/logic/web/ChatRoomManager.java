@@ -19,6 +19,8 @@ public interface ChatRoomManager {
 
     boolean isConnected();
 
+    void disconnect();
+
     String getRoomTarget();
 
 }

@@ -13,15 +13,21 @@ import com.bluemangoose.client.model.alert.Alerts;
 import com.bluemangoose.client.model.personal.Contact;
 import com.bluemangoose.client.model.personal.User;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -76,6 +82,7 @@ public class MainController implements Initializable, DataInitializable, Websock
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.fxmlLoader = new FxmlLoaderTemplate();
+        chatWindow.setSpacing(3);
 
         addAutonomicWindowAction();
         addDisconnectChatAction();
@@ -113,28 +120,47 @@ public class MainController implements Initializable, DataInitializable, Websock
     }
 
     private void popupChatWindow() {
-        //TODO
+        fxmlLoader.loadNewStage(FxmlLoaderTemplate.SceneType.CHAT_DETACHED.getPath());
     }
 
     private void disconnectChat() {
-        //TODO
+        chatRoomManager.disconnect();
+        chatWindow.getChildren().clear();
+        chatPane.setText("DISCONNECTED");
     }
 
     @Override
     public void initData(Object data) {
         this.user = (User) data;
-        this.chatRoomManager = DefaultRoomManager.getInstance(user);
+        this.chatRoomManager = DefaultRoomManager.getInstance();
 
         if (chatRoomManager.isConnected()) {
             chatPane.setText("Pokój: " + chatRoomManager.getRoomTarget());
             conversationHandler = ConversationHandler.getInstance(chatRoomManager.getRoomTarget(), 100);
             conversationHandler.setWebsocketReceiver(this);
+            try {
+                conversationHandler.fetchLastMessages();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (conversationHandler.getMessages().size() > 0) {
+                displayExistingMessages();
+            }
         }
 
         else {
             chatPane.setText("DISCONNECTED");
         }
 
+    }
+
+    private void displayExistingMessages() {
+        conversationHandler.getMessages().forEach(chatMessage -> {
+            Label label = displayMessage(chatMessage.getContent());
+            chatWindow.getChildren().add(label);
+            chatWindowMoving();
+        });
     }
 
     private void addButtonActions() {
@@ -173,6 +199,8 @@ public class MainController implements Initializable, DataInitializable, Websock
     }
 
     private void send() {
+        chatWindowMoving();
+
         String text = messageField.getText();
 
         if (text.isEmpty() || text.length() == 1) {
@@ -182,7 +210,6 @@ public class MainController implements Initializable, DataInitializable, Websock
         Label message = displayMessage(text);
         chatWindow.getChildren().add(message);
         this.messageField.clear();
-        chatWindowMoving();
 
         try {
             chatRoomManager.postMessage(text);
@@ -193,24 +220,29 @@ public class MainController implements Initializable, DataInitializable, Websock
     }
 
     private Label displayMessage(String text) {
+        chatWindowMoving();
+
         Label label = new Label();
         label.setWrapText(true);
-        label.getStyleClass().add("message");
+        label.getStyleClass().add("own_message");
 
         LocalTime localTime = LocalTime.now();
-        String time = localTime.format(DateTimeFormatter.ofPattern("k:m:s"));
-        label.setText(time + "\n" + user.getUsername() + " said:         " + text);
+        String time = localTime.format(DateTimeFormatter.ofPattern("kk:mm:ss"));
+        label.setText(time + ", " +
+                SessionCache.getInstance().getProfilePreferences().getProfileUsername() + "\n> " + text);
+
         return label;
     }
 
     private void chatWindowMoving() {
         int amount = chatWindow.getChildren().size();
 
-        if (amount == 7) {
+        if (amount >= 9) {
             Label oldest = (Label) chatWindow.getChildren().get(0);
             messagesCache.add(oldest);
             chatWindow.getChildren().remove(0);
         }
+
     }
 
     private void contactDisplay(Set<Contact> contacts) {
@@ -255,8 +287,7 @@ public class MainController implements Initializable, DataInitializable, Websock
         label.setWrapText(true);
         label.getStyleClass().add("message");
 
-        //TODO tu trzeba zmienić sposób wyświetlania wiadomości
-        label.setText(chatMessage.getSendTime() + "\n" + chatMessage.getUsernmame() + " said:         " + chatMessage.getContent());
+        label.setText(chatMessage.getSendTime() + ", " + chatMessage.getUsernmame() + "\n> " + chatMessage.getContent());
 
         Platform.runLater(() -> {
             chatWindow.getChildren().add(label);

@@ -97,7 +97,7 @@ public class FxmlLoaderTemplate implements FxmlLoader {
             }
 
             @Override
-            protected String getPath() {
+            public String getPath() {
                 return "/templates/settings.fxml";
             }
         },
@@ -110,20 +110,20 @@ public class FxmlLoaderTemplate implements FxmlLoader {
             }
 
             @Override
-            protected String getPath() {
+            public String getPath() {
                 return "/templates/search_contacts.fxml";
             }
         },
 
         MAIN {
             @Override
-            protected void loadData(final FXMLLoader loader, final Object object) {
+            protected void loadData(final FXMLLoader loader, final Object object){
                 MainController controller = loader.getController();
                 controller.initData(object);
             }
 
             @Override
-            protected String getPath() {
+            public String getPath() {
                 return "/templates/main.fxml";
             }
         },
@@ -136,7 +136,7 @@ public class FxmlLoaderTemplate implements FxmlLoader {
             }
 
             @Override
-            protected String getPath() {
+            public String getPath() {
                 return "/templates/room_search.fxml";
             }
         },
@@ -149,14 +149,26 @@ public class FxmlLoaderTemplate implements FxmlLoader {
             }
 
             @Override
-            protected String getPath() {
+            public String getPath() {
                 return "/templates/room_new.fxml";
             }
+        },
+
+        CHAT_DETACHED {
+            @Override
+            protected void loadData(FXMLLoader loader, Object object) {
+            }
+
+            @Override
+            public String getPath() {
+                return "/templates/detached_chat.fxml";
+            }
+
         };
 
         protected abstract void loadData(final FXMLLoader loader, final Object object);
 
-        protected abstract String getPath();
+        public abstract String getPath();
     }
 
 }
