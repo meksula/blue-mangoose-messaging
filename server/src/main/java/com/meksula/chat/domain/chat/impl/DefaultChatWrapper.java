@@ -55,6 +55,10 @@ public class DefaultChatWrapper extends ChatWrapper {
             return Collections.emptyList();
         }
 
+        if (messages.size() <= PAGE_SIZE) {
+            return messages;
+        }
+
         int lastIndex = messages.size();
         int firstIndex = lastIndex - (pages * PAGE_SIZE);
 

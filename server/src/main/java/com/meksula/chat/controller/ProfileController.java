@@ -43,15 +43,22 @@ public class ProfileController {
                 .orElseThrow(() -> new EntityNotFoundException("Profile not found.\nUsername: " + chatUser.getUsername()));
     }
 
-    @PostMapping("/avatar")
+    @PutMapping("/avatar")
     @ResponseStatus(HttpStatus.CREATED)
-    public boolean setAvatar(@RequestParam("pic")MultipartFile multipartFile, Authentication authentication) {
+    public boolean setAvatar(@RequestParam("pic") MultipartFile multipartFile, Authentication authentication) {
+        System.out.println("Otrzymano zdjęcie.");
         return fileExchange.uploadPicture(multipartFile, (ChatUser) authentication.getPrincipal());
     }
 
     @GetMapping(value = "/avatar/{username}", produces = MediaType.IMAGE_JPEG_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public byte[] getAvatar(@PathVariable("username") String username) {
+        return fileExchange.getPicture(username);
+    }
+
+    @GetMapping(value = "/avatar/bytes/{username}")
+    @ResponseStatus(HttpStatus.OK)
+    public byte[] getAvatarBytes(@PathVariable("username") String username) {
         return fileExchange.getPicture(username);
     }
 

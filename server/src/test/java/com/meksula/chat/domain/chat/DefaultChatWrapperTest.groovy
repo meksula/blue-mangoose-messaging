@@ -96,7 +96,14 @@ class DefaultChatWrapperTest extends Specification {
         wrapper.getMessagesFromLastPages(1).size() == 10
         wrapper.getMessagesFromLastPages(1).get(0).content == "message29"
         wrapper.getMessagesFromLastPages(1).get(9).content == "message38"
+    }
 
+    def 'if is there less than 10 messages... test'() {
+        setup:
+        fakeMessages(2)
+
+        expect:
+        wrapper.getMessagesFromLastPages(1).size() == 2
     }
 
     void fakeMessages(int size) {

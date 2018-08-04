@@ -60,4 +60,16 @@ public class ChatRoomController {
         else throw new ChatAccessException("You have no right to read messages in this room.");
     }
 
+    @PostMapping("/messages/{packages}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Message> getLastMessagesInRoom(@RequestBody ChatAccess chatAccess, @PathVariable("packages") int packages) throws ChatAccessException {
+        ChatWrapper chatWrapper = chatRoomManager.getChatWrapper(chatAccess.getChatName());
+
+        if (chatAccessValidator.permit(chatAccess, chatWrapper.getChatRoom())) {
+            return chatWrapper.getMessagesFromLastPages(packages);
+        }
+
+        else throw new ChatAccessException("You have no right to read messages in this room.");
+    }
+
 }
