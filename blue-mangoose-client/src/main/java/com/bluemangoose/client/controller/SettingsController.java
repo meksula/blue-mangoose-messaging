@@ -68,7 +68,6 @@ public class SettingsController implements Initializable, DataInitializable {
     private void addPostAction() {
         post.setOnMouseClicked(event -> {
             if (picture == null) {
-                System.out.println("Picture is null.");
                 return;
             }
 

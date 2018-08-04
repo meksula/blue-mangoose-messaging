@@ -1,6 +1,11 @@
 package com.bluemangoose.client.logic.web.exchange;
 
+import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.logic.web.ApiPath;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.scene.image.Image;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -8,12 +13,15 @@ import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
+import javax.imageio.ImageIO;
 import javax.ws.rs.client.*;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.MessageBodyWriter;
-import java.io.File;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 
 /**
  * @Author
@@ -81,6 +89,17 @@ public class HttpServerConnectorImpl<T> implements HttpServerConnector<T> {
                 .put(Entity.entity(multiPart, contentType));
 
         return response.readEntity(type);
+    }
+
+    @Override
+    public Image getImage(ApiPath avatarGet) {
+        Client client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
+        WebTarget webTarget = client.target(avatarGet.getPath());
+        Response response = webTarget.request(MediaType.APPLICATION_OCTET_STREAM).get();
+        byte[] bytes = response.readEntity(byte[].class);
+
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        return new Image(inputStream);
     }
 
     private Invocation.Builder clientPrepare(ApiPath apiPath) {

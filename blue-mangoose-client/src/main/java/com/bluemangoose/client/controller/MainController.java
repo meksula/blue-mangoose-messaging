@@ -86,6 +86,10 @@ public class MainController implements Initializable, DataInitializable, Websock
         contactDisplay(SessionCache.getInstance().getProfilePreferences().getContactsBook());
 
         usernameField.setText(SessionCache.getInstance().getProfilePreferences().getProfileUsername());
+
+        if (SessionCache.getInstance().getProfilePicture() != null) {
+            userAvatar.setImage(SessionCache.getInstance().getProfilePicture());
+        }
     }
 
     private void addAutonomicWindowAction() {

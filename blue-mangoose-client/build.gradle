@@ -27,6 +27,7 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: '2.0.3.RELEASE'
 
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-multipart', version: '2.27'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
 
     compile files('libs/lombok-1.18.2.jar')
 

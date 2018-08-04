@@ -18,7 +18,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -65,6 +68,7 @@ public class LoginController implements Initializable {
                 ProfilePreferences profilePreferences = fetchProfile();
                 SessionCache.getInstance().setUser(user);
                 SessionCache.getInstance().setProfilePreferences(profilePreferences);
+                SessionCache.getInstance().setProfilePicture(fetchPicture());
                 fxmlLoader.loadSameStageWithData(FxmlLoaderTemplate.SceneType.MAIN, user, event);
             }
             else {
@@ -76,6 +80,10 @@ public class LoginController implements Initializable {
 
     private ProfilePreferences fetchProfile() {
         return new HttpServerConnectorImpl<>(ProfilePreferences.class).get(ApiPath.PROFILE);
+    }
+
+    private Image fetchPicture() {
+        return new HttpServerConnectorImpl<>(File.class).getImage(ApiPath.AVATAR_GET);
     }
 
     private boolean access() {

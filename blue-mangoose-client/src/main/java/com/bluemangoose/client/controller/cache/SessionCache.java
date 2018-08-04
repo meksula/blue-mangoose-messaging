@@ -2,10 +2,9 @@ package com.bluemangoose.client.controller.cache;
 
 import com.bluemangoose.client.model.personal.ProfilePreferences;
 import com.bluemangoose.client.model.personal.User;
+import javafx.scene.image.Image;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.File;
 
 /**
  * @Author
@@ -26,5 +25,5 @@ public class SessionCache {
 
     private User user;
     private ProfilePreferences profilePreferences;
-    private File profilePicture;
+    private Image profilePicture;
 }

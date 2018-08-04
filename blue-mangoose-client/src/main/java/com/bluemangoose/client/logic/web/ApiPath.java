@@ -1,6 +1,7 @@
 package com.bluemangoose.client.logic.web;
 
 import com.bluemangoose.client.Main;
+import com.bluemangoose.client.controller.cache.SessionCache;
 
 /**
  * @Author
@@ -37,6 +38,12 @@ public enum ApiPath {
         @Override
         public String getPath() {
             return buildUrl("api/v1/profile/avatar");
+        }
+    },
+    AVATAR_GET {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/profile/avatar/bytes/" + SessionCache.getInstance().getProfilePreferences().getProfileUsername());
         }
     },
     VERIFICATION {

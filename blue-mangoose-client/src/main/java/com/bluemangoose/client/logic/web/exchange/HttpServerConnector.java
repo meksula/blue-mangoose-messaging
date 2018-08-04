@@ -1,8 +1,10 @@
 package com.bluemangoose.client.logic.web.exchange;
 
 import com.bluemangoose.client.logic.web.ApiPath;
+import javafx.scene.image.Image;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @Author
@@ -20,4 +22,6 @@ public interface HttpServerConnector<T> {
     T get(ApiPath apiPath);
 
     T putFile(ApiPath apiPath, File picture);
+
+    Image getImage(ApiPath avatarGet) throws IOException;
 }
