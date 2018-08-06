@@ -1,5 +1,7 @@
 package com.bluemangoose.client.controller.cache;
 
+import com.bluemangoose.client.model.dto.ChatAccess;
+
 /**
  * @Author
  * Karol Meksuła
@@ -7,12 +9,22 @@ package com.bluemangoose.client.controller.cache;
  * */
 
 public class CurrentChatCache {
-    private static CurrentChatCache currentChatCache;
+    private static CurrentChatCache currentChatCache = new CurrentChatCache();
 
-    public CurrentChatCache() {}
+    private ChatAccess chatAccess;
+
+    private CurrentChatCache() {}
 
     public static CurrentChatCache getInstance() {
         return currentChatCache;
+    }
+
+    public void setChatAccess(ChatAccess chatAccess) {
+        this.chatAccess = chatAccess;
+    }
+
+    public ChatAccess getChatAccess() {
+        return chatAccess;
     }
 
 }

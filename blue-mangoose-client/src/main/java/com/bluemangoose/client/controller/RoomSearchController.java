@@ -1,10 +1,14 @@
 package com.bluemangoose.client.controller;
 
+import com.bluemangoose.client.controller.cache.CurrentChatCache;
+import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.controller.loader.DataInitializable;
 import com.bluemangoose.client.controller.loader.FxmlLoader;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
 import com.bluemangoose.client.logic.web.ChatRoomManager;
 import com.bluemangoose.client.logic.web.impl.DefaultRoomManager;
+import com.bluemangoose.client.model.alert.Alerts;
+import com.bluemangoose.client.model.dto.ChatAccess;
 import com.bluemangoose.client.model.dto.ChatRoom;
 import com.bluemangoose.client.model.personal.User;
 import javafx.fxml.FXML;
@@ -93,7 +97,7 @@ public class RoomSearchController implements Initializable, DataInitializable {
                 peopleNumVbox.getChildren().add(createLabel(String.valueOf(room.getPeople())));
                 passwordVbox.getChildren().add(createLabel(String.valueOf(room.isPasswordRequired())));
 
-                buttonList.getChildren().add(createJoinButton(String.valueOf(room.getId())).imageView);
+                buttonList.getChildren().add(createJoinButton(room).imageView);
             }
             count.incrementAndGet();
         });
@@ -105,30 +109,32 @@ public class RoomSearchController implements Initializable, DataInitializable {
         return label;
     }
 
-    private ImageButton createJoinButton(String roomId) {
+    private ImageButton createJoinButton(ChatRoom chatRoom) {
         Image inactive = new Image("/img/join-chat-inactive.png");
         Image active = new Image("/img/join-chat-active.png");
 
-        ImageButton imageButton = new ImageButton(roomId);
+        ImageButton imageButton = new ImageButton(chatRoom);
         ImageView imageView = imageButton.getImageView();
         imageView.setImage(inactive);
         imageView.setCursor(Cursor.HAND);
 
         imageView.setOnMouseEntered(event -> imageView.setImage(active));
         imageView.setOnMouseExited(event -> imageView.setImage(inactive));
-        imageView.setOnMouseClicked(event -> joinRoom(imageButton.roomId));
+        imageView.setOnMouseClicked(event -> joinRoom(imageButton.getChatRoom()));
 
         return imageButton;
     }
 
-    private void joinRoom(String id) {
-        String roomTarget = roomList.stream()
-                .filter(r -> r.getId() == Long.valueOf(id))
-                .findFirst()
-                .orElseThrow(IllegalArgumentException::new)
-                .getName();
+    private void joinRoom(ChatRoom chatRoom) {
+        if (chatRoom.isPasswordRequired()) {
+            String entered = new Alerts().enterPassword();
+            ChatAccess chatAccess = chatAccessBuild(chatRoom, entered);
+            CurrentChatCache.getInstance().setChatAccess(chatAccess);
+        } else {
+            chatAccessBuild(chatRoom, null);
+        }
 
-        boolean isJoined = chatRoomManager.joinRoom(roomTarget);
+        boolean isJoined = chatRoomManager.joinRoom(chatRoom.getName());
 
         if (!isJoined) {
             return;
@@ -137,13 +143,29 @@ public class RoomSearchController implements Initializable, DataInitializable {
         loader.loadSameStageWithData(FxmlLoaderTemplate.SceneType.MAIN, user, back);
     }
 
-    class ImageButton {
-        private ImageView imageView;
-        private String roomId;
+    private ChatAccess chatAccessBuild(ChatRoom chatRoom, String enteredPassword) {
+        String username = SessionCache.getInstance().getProfilePreferences().getProfileUsername();
 
-        public ImageButton(String roomId) {
-            this.roomId = roomId;
+        ChatAccess access = new ChatAccess();
+        access.setUsername(username);
+        access.setSecured(chatRoom.isPasswordRequired());
+        access.setPassword(enteredPassword);
+        access.setChatName(chatRoom.getName());
+
+        return access;
+    }
+
+    class ImageButton {
+        private ChatRoom chatRoom;
+        private ImageView imageView;
+
+        public ImageButton(ChatRoom chatRoom) {
+            this.chatRoom = chatRoom;
             this.imageView = new ImageView();
+        }
+
+        public ChatRoom getChatRoom() {
+            return chatRoom;
         }
 
         public ImageView getImageView() {

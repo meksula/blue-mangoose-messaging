@@ -30,8 +30,4 @@ public class ChatClient {
         return sessionHandler;
     }
 
-    public void disconnect() {
-        stompClient.stop();
-    }
-
 }

@@ -16,6 +16,7 @@ public class ChatForm {
     private String creatorUsername;
     private boolean passwordRequired;
     private String password;
+    private int capacity;
 
     @JsonCreator
     public ChatForm(@JsonProperty("name") String name, @JsonProperty("creatorUsername") String creatorUsername,
@@ -26,9 +27,14 @@ public class ChatForm {
         this.password = password;
     }
 
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
     @Override
     public String toString() {
         return name + ", " + creatorUsername;
     }
+
 }
 

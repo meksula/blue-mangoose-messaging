@@ -19,8 +19,13 @@
       <Label layoutX="43.0" layoutY="104.0" text="Zabezpieczyć hasłem?" textFill="WHITE" />
       <CheckBox fx:id="securedCheckBox" layoutX="207.0" layoutY="103.0" mnemonicParsing="false" />
       <PasswordField fx:id="passwordField" layoutX="274.0" layoutY="99.0" />
-      <Label layoutX="43.0" layoutY="166.0" text="Nazwa pokoju" textFill="WHITE" />
-      <TextField fx:id="chatNameField" layoutX="274.0" layoutY="161.0" />
+      <Label layoutX="43.0" layoutY="218.0" text="Nazwa pokoju" textFill="WHITE" />
+      <TextField fx:id="chatNameField" layoutX="274.0" layoutY="213.0" />
       <Button fx:id="createRoom" layoutX="281.0" layoutY="469.0" mnemonicParsing="false" text="Utwórz pokój" />
+      <PasswordField fx:id="passwordConfirmationField" layoutX="274.0" layoutY="149.0" />
+      <Label layoutX="274.0" layoutY="83.0" text="Hasło" textFill="WHITE" />
+      <Label layoutX="274.0" layoutY="133.0" text="Powtórz" textFill="WHITE" />
+      <Label layoutX="45.0" layoutY="275.0" text="Liczba miejsc" textFill="WHITE" />
+      <TextField fx:id="roomCapacity" layoutX="274.0" layoutY="270.0" prefHeight="26.0" prefWidth="52.0" />
     </children>
 </AnchorPane>

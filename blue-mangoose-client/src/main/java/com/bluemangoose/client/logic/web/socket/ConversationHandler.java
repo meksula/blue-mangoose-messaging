@@ -1,6 +1,6 @@
 package com.bluemangoose.client.logic.web.socket;
 
-import com.bluemangoose.client.controller.cache.SessionCache;
+import com.bluemangoose.client.controller.cache.CurrentChatCache;
 import com.bluemangoose.client.logic.web.ApiPath;
 import com.bluemangoose.client.logic.web.exchange.HttpServerConnectorImpl;
 import com.bluemangoose.client.model.dto.ChatAccess;
@@ -48,12 +48,7 @@ public class ConversationHandler {
     }
 
     public void fetchLastMessages() throws IOException {
-        ChatAccess chatAccess = new ChatAccess();
-        chatAccess.setUsername(SessionCache.getInstance().getProfilePreferences().getProfileUsername());
-        chatAccess.setChatName(roomTarget);
-        chatAccess.setSecured(false);
-        chatAccess.setPassword("");
-        SessionCache.getInstance().setChatAccess(chatAccess);
+        ChatAccess chatAccess = CurrentChatCache.getInstance().getChatAccess();
 
         String json = new HttpServerConnectorImpl<>(String.class).post(chatAccess, ApiPath.MESSAGES_LAST);
         this. messages = new ObjectMapper().readValue(json, new TypeReference<List<ChatMessage>>(){});

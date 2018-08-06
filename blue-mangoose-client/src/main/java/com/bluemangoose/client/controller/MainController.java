@@ -141,7 +141,7 @@ public class MainController implements Initializable, DataInitializable, Websock
             try {
                 conversationHandler.fetchLastMessages();
             } catch (IOException e) {
-                e.printStackTrace();
+                new Alerts().error("Błędne hasło!", "Podane hasło jest nieprawidłowe.\nSpróbuj ponownie.", "");
             }
 
             if (conversationHandler.getMessages().size() > 0) {

@@ -2,8 +2,10 @@ package com.bluemangoose.client.model.alert;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextInputDialog;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @Author
@@ -71,4 +73,21 @@ public class Alerts {
         alert.setHeaderText("Nastąpił niespodziewany błąd.\nNiestety, nie można wysłać nowych ustawień.");
         alert.showAndWait();
     }
+
+    public void error(String title, String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    public String enterPassword() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Wpisz hasło");
+        dialog.setHeaderText("Wpisz hasło do pokoju:");
+        Optional<String> password = dialog.showAndWait();
+        return password.orElse(null);
+    }
+
 }
