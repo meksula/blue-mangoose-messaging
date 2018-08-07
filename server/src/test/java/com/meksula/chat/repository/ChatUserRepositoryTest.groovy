@@ -16,12 +16,14 @@ class ChatUserRepositoryTest extends Specification {
 
     void setup() {
         chatUser1 = new ChatUser()
+        chatUser1.username = "user1"
         chatUser1.password = "i23dm23mid"
         chatUser1.email = "karol.mail@gmail.com"
 
         chatUser2 = new ChatUser()
-        chatUser1.password = "i23dm23mid"
-        chatUser1.email = "karol.mail@gmail.com"
+        chatUser2.username = "user2"
+        chatUser2.password = "i23dm23mid"
+        chatUser2.email = "karol.mail@gmail.com"
 
         chatUserRepository.save(chatUser1)
         chatUserRepository.save(chatUser2)
@@ -29,11 +31,28 @@ class ChatUserRepositoryTest extends Specification {
 
     def 'entities should be saved'() {
         expect:
-        chatUserRepository.findAll().size() == 2
+        chatUserRepository.findAll().size() >= 2
+    }
+
+    def 'native SQL query should work correctly'() {
+        setup:
+        ChatUser user1 = new ChatUser()
+        user1.setUsername("karol3k093")
+
+        ChatUser user2 = new ChatUser()
+        user2.setUsername("edi293jd")
+
+        chatUserRepository.saveAll([user1, user2])
+
+        expect:
+        chatUserRepository.findMatching("^ed").size() == 1
+
+        cleanup:
+        chatUserRepository.deleteAll([user1, user2])
     }
 
     def cleanup() {
-        chatUserRepository.deleteAll()
+        chatUserRepository.deleteAll([chatUser1, chatUser2])
     }
 
 }

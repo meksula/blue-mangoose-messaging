@@ -1,5 +1,6 @@
 package com.meksula.chat.controller;
 
+import com.meksula.chat.domain.user.ContactFind;
 import com.meksula.chat.domain.user.search.UserSearcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ public class ContactSearchController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public Set<Map<Long, String>> lookForUser(@RequestBody String phrase) {
+    public Set<ContactFind> lookForUser(@RequestBody String phrase) {
         return userSearcher.findMatching(phrase);
     }
 

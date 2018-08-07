@@ -1,12 +1,12 @@
 package com.meksula.chat.domain.user.search;
 
-import com.meksula.chat.domain.user.ChatUser;
+import com.meksula.chat.domain.user.ContactFind;
 import com.meksula.chat.repository.ChatUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author
@@ -18,6 +18,7 @@ import java.util.*;
 public class DefaultUserSearcher implements UserSearcher {
     private ChatUserRepository chatUserRepository;
     private Long userId;
+    private List<String> patterns;
 
     @Autowired
     public void setChatUserRepository(ChatUserRepository chatUserRepository) {
@@ -25,20 +26,27 @@ public class DefaultUserSearcher implements UserSearcher {
     }
 
     @Override
-    public Set<Map<Long, String>> findMatching(String phrase) {
-        ChatUser chatUser;
+    public Set<ContactFind> findMatching(String phrase) {
+        Set<ContactFind> contactsMatch = new HashSet<>();
 
         if (searchByUserId(phrase) != null) {
-            chatUser = chatUserRepository.findByUserId(userId)
-                    .orElseThrow(() -> new EntityNotFoundException("Not found user with this arg: " + phrase));
+            chatUserRepository.findByUserId(userId)
+                    .ifPresent(chatUser ->
+                            contactsMatch.add(new ContactFind(chatUser.getUserId(), chatUser.getUsername())));
+
+        } else {
+            chatUserRepository.findByUsername(phrase)
+                    .ifPresent(user ->
+                            contactsMatch.add(new ContactFind(user.getUserId(), user.getUsername())));
+
+            if (contactsMatch.isEmpty()) {
+                this.patterns = designatePattern(phrase);
+
+                advancedSearch(contactsMatch, phrase, 0);
+            }
         }
 
-        else {
-            chatUser = chatUserRepository.findByUsername(phrase)
-                    .orElseThrow(() -> new EntityNotFoundException("Not found user with this arg: " + phrase));;
-        }
-
-        return mapToSet(chatUser);
+        return contactsMatch;
     }
 
     private Long searchByUserId(String phrase) {
@@ -50,26 +58,26 @@ public class DefaultUserSearcher implements UserSearcher {
         }
     }
 
-    private Set<Map<Long, String>> mapToSet(ChatUser chatUser) {
-        Set<Map<Long, String>> set = new HashSet<>();
-        Map<Long, String> map = new HashMap<>();
+    private Set<ContactFind> advancedSearch(Set<ContactFind> contactsMatch, String phrase, int counter) {
 
-        map.put(chatUser.getUserId(), chatUser.getUsername());
-        set.add(map);
+        Set<ContactFind> contactFinds = chatUserRepository.findMatching(patterns.get(counter))
+                .stream()
+                .map(chatUser -> new ContactFind(chatUser.getUserId(), chatUser.getUsername()))
+                .collect(Collectors.toSet());
 
-        return set;
+        if (contactsMatch.isEmpty() && counter < patterns.size()) {
+            advancedSearch(contactsMatch, phrase, counter);
+        }
+
+        return contactFinds;
     }
 
-    private Set<Map<Long, String>> mapToSet(List<ChatUser> chatUserList) {
-        Set<Map<Long, String>> set = new HashSet<>();
+    private List<String> designatePattern(String phrase) {
+        List<String> patterns = new ArrayList<>();
+        
+        //TODO
 
-        chatUserList.forEach(chatUser -> {
-            Map<Long, String> map = new HashMap<>();
-            map.put(chatUser.getUserId(), chatUser.getUsername());
-            set.add(map);
-        });
-
-        return set;
+        return patterns;
     }
 
 }
