@@ -42,7 +42,7 @@ public class DefaultUserSearcher implements UserSearcher {
             if (contactsMatch.isEmpty()) {
                 this.patterns = designatePattern(phrase);
 
-                advancedSearch(contactsMatch, phrase, 0);
+                return advancedSearch(contactsMatch, 0);
             }
         }
 
@@ -58,25 +58,37 @@ public class DefaultUserSearcher implements UserSearcher {
         }
     }
 
-    private Set<ContactFind> advancedSearch(Set<ContactFind> contactsMatch, String phrase, int counter) {
-
-        Set<ContactFind> contactFinds = chatUserRepository.findMatching(patterns.get(counter))
+    /**
+     * Recursive invoke, when contactsMatch is still empty
+     * */
+    private Set<ContactFind> advancedSearch(Set<ContactFind> contactsMatch, int counter) {
+        Set<ContactFind> contactFinds = chatUserRepository.findMatching(patterns.get(counter).trim())
                 .stream()
                 .map(chatUser -> new ContactFind(chatUser.getUserId(), chatUser.getUsername()))
                 .collect(Collectors.toSet());
 
         if (contactsMatch.isEmpty() && counter < patterns.size()) {
-            advancedSearch(contactsMatch, phrase, counter);
+            if (counter >= patterns.size() - 1) {
+                return contactFinds;
+            }
+            counter++;
+            advancedSearch(contactsMatch, counter);
         }
 
         return contactFinds;
     }
 
+    /**
+     * Notice that lower/upper cases are ignore by default here
+     * */
     private List<String> designatePattern(String phrase) {
         List<String> patterns = new ArrayList<>();
-        
-        //TODO
 
+        String phrasePiece = phrase.toLowerCase().substring(0, 4);
+        String phrasePiece2 = phrasePiece.toLowerCase().substring(0, 3);
+        String phrasePiece3 = phrasePiece.toLowerCase().substring(0, 2);
+
+        patterns.addAll(Arrays.asList("^" + phrasePiece, "^" + phrasePiece2, "^" + phrasePiece3));
         return patterns;
     }
 

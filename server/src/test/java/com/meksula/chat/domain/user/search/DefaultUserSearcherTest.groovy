@@ -61,8 +61,44 @@ class DefaultUserSearcherTest extends Specification {
     /**
      * Above method should test correct way to design most accurate regex
      * */
-    def 'userSearcher should find few matched entities'() {
 
+    def 'userSearcher should find one entity without paying attention to case size'() {
+        setup: "save few entities"
+        def usernameUpperCases = "KazikG209"
+        def user4 = new ChatUser()
+        user4.setUsername(usernameUpperCases) // username should contain upper cases
+        def user5 = new ChatUser()
+        user5.setUsername("some_insignificant")
+        def user6 = new ChatUser()
+        user6.setUsername("some_insignificant")
+        chatUserRepository.saveAll([user4, user5, user6])
+
+        when:
+        chatUserRepository.findByUsername(usernameUpperCases) //should not found anything
+
+        then: "here I'd changed case's size `compare with @param usernameUpperCases`"
+        userSearcher.findMatching("kazikg209").size() == 1
+
+        cleanup:
+        chatUserRepository.deleteAll([user4, user5, user6])
+    }
+
+    def 'userSearcher should find few matched entities similar to few first letters'() {
+        setup:
+        def user100 = new ChatUser()
+        user100.setUsername("kazikg209")
+        def user101 = new ChatUser()
+        user101.setUsername("kazek2000")
+        def user102 = new ChatUser()
+        user102.setUsername("kamilek2343")
+        chatUserRepository.saveAll([user100, user101, user102])
+
+        expect: "searcher should match another but similar entities, from 4 entities searcher should match only 2"
+        userSearcher.findMatching("kazi394939").size() == 2
+        chatUserRepository.findMatching("^kaz").size() == 3
+
+        cleanup:
+        chatUserRepository.deleteAll([user100, user101, user102])
     }
 
     void cleanup() {
