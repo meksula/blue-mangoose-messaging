@@ -7,11 +7,11 @@ package com.meksula.chat.domain.user.social;
  * */
 
 public interface SocialManager {
-    Notification inviteToFriends(String username);
+    Notification inviteToFriends(Object principal, String friendsUsername);
 
-    Notification removeFriend(String friendsUsername);
+    Notification removeFriend(Object principal, String friendsUsername);
 
-    Notification blockChatUser(String chatUserUsername);
+    Notification blockChatUser(Object principal, String chatUserUsername);
 
-    void invitationRespond(Long invitationId, boolean respond);
+    void invitationRespond(Object principal, Long invitationId, boolean respond);
 }

@@ -1,6 +1,7 @@
 package com.meksula.chat.domain.user.social;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.meksula.chat.domain.user.Contact;
 import com.meksula.chat.domain.user.ProfilePreferences;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +17,6 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@MappedSuperclass
 @Table(name = "contact_notifications")
 public class ContactAddNotification extends Notification {
 
@@ -35,5 +35,7 @@ public class ContactAddNotification extends Notification {
     public ContactAddNotification(String title, String message) {
         super(title, message);
     }
+
+    public ContactAddNotification() {}
 
 }

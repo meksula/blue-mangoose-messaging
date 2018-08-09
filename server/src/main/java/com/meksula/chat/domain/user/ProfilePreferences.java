@@ -2,6 +2,7 @@ package com.meksula.chat.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.meksula.chat.domain.user.social.ContactAddNotification;
 import com.meksula.chat.domain.user.social.Notification;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,6 +37,6 @@ public class ProfilePreferences {
 
     @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "profilePreferences", cascade = CascadeType.ALL)
-    private List<Notification> notifications;
+    private List<ContactAddNotification> notifications;
 
 }
