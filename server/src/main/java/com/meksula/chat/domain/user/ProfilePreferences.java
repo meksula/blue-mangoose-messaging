@@ -1,6 +1,7 @@
 package com.meksula.chat.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.meksula.chat.domain.user.social.ContactAddNotification;
 import com.meksula.chat.domain.user.social.Notification;
@@ -38,5 +39,23 @@ public class ProfilePreferences {
     @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "profilePreferences", cascade = CascadeType.ALL)
     private List<ContactAddNotification> notifications;
+
+    @Transient
+    @JsonIgnore
+    public void addContact(Contact contact) {
+        contactsBook.add(contact);
+    }
+
+    @Transient
+    @JsonIgnore
+    public void addContactAddNotification(ContactAddNotification notification) {
+        notifications.add(notification);
+    }
+
+    @Transient
+    @JsonIgnore
+    public void removeNotification(ContactAddNotification notification) {
+        notifications.remove(notification);
+    }
 
 }

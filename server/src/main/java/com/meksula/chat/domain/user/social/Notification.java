@@ -13,7 +13,7 @@ import javax.persistence.MappedSuperclass;
 
 @Getter
 @MappedSuperclass
-public abstract class Notification {
+public class Notification {
     private String title;
     private String message;
     private String initDate;

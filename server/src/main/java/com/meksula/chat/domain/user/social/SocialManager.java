@@ -13,5 +13,5 @@ public interface SocialManager {
 
     Notification blockChatUser(Object principal, String chatUserUsername);
 
-    void invitationRespond(Object principal, Long invitationId, boolean respond);
+    Notification invitationResponse(Object principal, long invitationId, boolean response);
 }

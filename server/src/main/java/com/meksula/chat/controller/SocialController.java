@@ -40,9 +40,17 @@ public class SocialController {
     }
 
     @PostMapping("/invitation")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public Notification inviteUserToFriend(Authentication auth, @RequestBody String friendsUsername) {
         return socialManager.inviteToFriends(auth.getPrincipal(), friendsUsername);
+    }
+
+    @PostMapping("/invitation/response/{notificationId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Notification responseToInvitation(Authentication auth,
+                                             @PathVariable("notificationId") long notificationId,
+                                             boolean decission) {
+        return socialManager.invitationResponse(auth.getPrincipal(), notificationId, decission);
     }
 
 }
