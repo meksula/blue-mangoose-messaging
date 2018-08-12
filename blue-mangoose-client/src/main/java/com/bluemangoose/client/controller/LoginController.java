@@ -6,7 +6,6 @@ import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
 import com.bluemangoose.client.logic.reader.DefaultSettingsManager;
 import com.bluemangoose.client.logic.reader.SettingReader;
 import com.bluemangoose.client.logic.web.ApiPath;
-import com.bluemangoose.client.logic.web.exchange.HttpServerConnector;
 import com.bluemangoose.client.logic.web.exchange.HttpServerConnectorImpl;
 import com.bluemangoose.client.logic.web.impl.UserCredentialExchange;
 import com.bluemangoose.client.model.alert.Alerts;
@@ -21,7 +20,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -83,7 +81,13 @@ public class LoginController implements Initializable {
     }
 
     private Image fetchPicture() {
-        return new HttpServerConnectorImpl<>(File.class).getImage(ApiPath.AVATAR_GET);
+        Image image = new HttpServerConnectorImpl<>(File.class).getImage(ApiPath.AVATAR_GET);
+
+        if (image.isError()) {
+            image = new Image("/img/user.png");
+        }
+
+        return image;
     }
 
     private boolean access() {

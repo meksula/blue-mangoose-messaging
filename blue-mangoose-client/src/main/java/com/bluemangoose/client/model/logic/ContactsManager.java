@@ -1,6 +1,6 @@
 package com.bluemangoose.client.model.logic;
 
-import com.bluemangoose.client.model.dto.Contact;
+import com.bluemangoose.client.model.dto.ContactFind;
 
 /**
  * @Author
@@ -9,5 +9,5 @@ import com.bluemangoose.client.model.dto.Contact;
  * */
 
 public interface ContactsManager {
-    void addContact(Contact contact);
+    void addContact(ContactFind contact);
 }

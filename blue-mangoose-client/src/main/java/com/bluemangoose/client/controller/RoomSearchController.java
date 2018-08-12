@@ -126,13 +126,15 @@ public class RoomSearchController implements Initializable, DataInitializable {
     }
 
     private void joinRoom(ChatRoom chatRoom) {
+        ChatAccess chatAccess;
         if (chatRoom.isPasswordRequired()) {
             String entered = new Alerts().enterPassword();
-            ChatAccess chatAccess = chatAccessBuild(chatRoom, entered);
-            CurrentChatCache.getInstance().setChatAccess(chatAccess);
+            chatAccess = chatAccessBuild(chatRoom, entered);
         } else {
-            chatAccessBuild(chatRoom, null);
+            chatAccess = chatAccessBuild(chatRoom, null);
         }
+
+        CurrentChatCache.getInstance().setChatAccess(chatAccess);
 
         boolean isJoined = chatRoomManager.joinRoom(chatRoom.getName());
 

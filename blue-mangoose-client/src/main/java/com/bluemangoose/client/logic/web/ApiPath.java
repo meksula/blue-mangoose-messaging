@@ -91,6 +91,18 @@ public enum ApiPath {
         public String getPath() {
             return buildUrl("api/v1/room/messages/1");
         }
+    },
+    CHAT_USERS_SEARCH {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/social/contact");
+        }
+    },
+    CHAT_USER_INVITATION {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/social/invitation");
+        }
     };
 
     final String LOCALHOST = "http://localhost:8060/";

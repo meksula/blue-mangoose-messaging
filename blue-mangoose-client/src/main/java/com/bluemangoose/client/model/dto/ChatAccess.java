@@ -18,4 +18,9 @@ public class ChatAccess {
     private String username;
     private boolean isSecured;
     private String password;
+
+    @Override
+    public String toString() {
+        return "Chatname: " + chatName + ", " + username + ", " + isSecured + ", " + password;
+    }
 }

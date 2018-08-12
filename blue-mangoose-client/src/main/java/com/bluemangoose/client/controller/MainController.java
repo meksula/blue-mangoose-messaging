@@ -13,14 +13,9 @@ import com.bluemangoose.client.model.alert.Alerts;
 import com.bluemangoose.client.model.personal.Contact;
 import com.bluemangoose.client.model.personal.User;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Bounds;
-import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -97,6 +92,7 @@ public class MainController implements Initializable, DataInitializable, Websock
         if (SessionCache.getInstance().getProfilePicture() != null) {
             userAvatar.setImage(SessionCache.getInstance().getProfilePicture());
         }
+
     }
 
     private void addAutonomicWindowAction() {
@@ -142,6 +138,7 @@ public class MainController implements Initializable, DataInitializable, Websock
                 conversationHandler.fetchLastMessages();
             } catch (IOException e) {
                 new Alerts().error("Błędne hasło!", "Podane hasło jest nieprawidłowe.\nSpróbuj ponownie.", "");
+                e.printStackTrace();
             }
 
             if (conversationHandler.getMessages().size() > 0) {
@@ -157,7 +154,7 @@ public class MainController implements Initializable, DataInitializable, Websock
 
     private void displayExistingMessages() {
         conversationHandler.getMessages().forEach(chatMessage -> {
-            Label label = displayMessage(chatMessage.getContent());
+            Label label = displayForeignMessage(chatMessage);
             chatWindow.getChildren().add(label);
             chatWindowMoving();
         });
@@ -234,6 +231,20 @@ public class MainController implements Initializable, DataInitializable, Websock
         return label;
     }
 
+    private Label displayForeignMessage(ChatMessage chatMessage) {
+        chatWindowMoving();
+
+        Label label = new Label();
+        label.setWrapText(true);
+        label.getStyleClass().add("message");
+
+        LocalTime localTime = LocalTime.now();
+        String time = localTime.format(DateTimeFormatter.ofPattern("kk:mm:ss"));
+        label.setText(time + ", " + chatMessage.getUsernmame() + "\n> " + chatMessage.getContent());
+
+        return label;
+    }
+
     private void chatWindowMoving() {
         int amount = chatWindow.getChildren().size();
 
@@ -246,7 +257,6 @@ public class MainController implements Initializable, DataInitializable, Websock
     }
 
     private void contactDisplay(Set<Contact> contacts) {
-
         for (Contact contact : contacts) {
             Label label = new Label();
             label.getStyleClass().add("contact");

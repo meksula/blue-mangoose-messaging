@@ -1,7 +1,6 @@
 package com.bluemangoose.client.model.logic;
 
-import com.bluemangoose.client.model.dto.Contact;
-
+import com.bluemangoose.client.model.dto.ContactFind;
 import java.util.List;
 
 /**
@@ -11,5 +10,5 @@ import java.util.List;
  * */
 
 public interface ContactSearcher {
-    List<Contact> searchContacts(String tag);
+    List<ContactFind> searchContacts(String tag);
 }

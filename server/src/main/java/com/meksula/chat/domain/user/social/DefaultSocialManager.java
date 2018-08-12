@@ -1,5 +1,6 @@
 package com.meksula.chat.domain.user.social;
 
+import com.meksula.chat.domain.user.ChatUser;
 import com.meksula.chat.domain.user.Contact;
 import com.meksula.chat.domain.user.ProfilePreferences;
 import com.meksula.chat.repository.ContactAddNotificationRepository;
@@ -32,11 +33,13 @@ public class DefaultSocialManager implements SocialManager {
 
     @Override
     public Notification inviteToFriends(Object principal, String friendsUsername) {
+        ChatUser chatUser = (ChatUser) principal;
+
         ProfilePreferences invitationTarget = profilePreferencesRepository.findByProfileUsername(friendsUsername)
                 .orElseThrow(() -> new UsernameNotFoundException(friendsUsername));
 
-        ProfilePreferences currentUser = profilePreferencesRepository.findByProfileUsername(principal.toString())
-                .orElseThrow(() -> new UsernameNotFoundException(principal.toString()));
+        ProfilePreferences currentUser = profilePreferencesRepository.findByProfileUsername(chatUser.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException(chatUser.getUsername()));
 
         Notification notification = buildNotification(currentUser, invitationTarget);
         profilePreferencesRepository.save(invitationTarget);
