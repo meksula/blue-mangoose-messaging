@@ -11,6 +11,7 @@ import com.bluemangoose.client.logic.web.socket.ConversationHandler;
 import com.bluemangoose.client.logic.web.socket.WebsocketReceiver;
 import com.bluemangoose.client.model.alert.Alerts;
 import com.bluemangoose.client.model.personal.Contact;
+import com.bluemangoose.client.model.personal.ContactAddNotification;
 import com.bluemangoose.client.model.personal.User;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -42,7 +43,7 @@ public class MainController implements Initializable, DataInitializable, Websock
     private ConversationHandler conversationHandler;
 
     @FXML
-    private ImageView loupeButton, autonomicWindowButton, disconnectButton;
+    private ImageView loupeButton, autonomicWindowButton, disconnectButton, bell;
 
     @FXML
     private TextField loupeField;
@@ -85,6 +86,7 @@ public class MainController implements Initializable, DataInitializable, Websock
         addButtonActions();
         sendMessageAction();
         searchingAction();
+        addBellAction();
         contactDisplay(SessionCache.getInstance().getProfilePreferences().getContactsBook());
 
         usernameField.setText(SessionCache.getInstance().getProfilePreferences().getProfileUsername());
@@ -113,6 +115,26 @@ public class MainController implements Initializable, DataInitializable, Websock
         disconnectButton.setOnMouseEntered(event -> disconnectButton.setImage(active));
         disconnectButton.setOnMouseExited(event -> disconnectButton.setImage(inactive));
         disconnectButton.setOnMouseClicked(event -> disconnectChat());
+    }
+
+    private void addBellAction() {
+        Image active = new Image("/img/bell-active.png");
+        Image inactive = new Image("/img/bell-inactive.png");
+
+        List<ContactAddNotification> notifications = SessionCache.getInstance().getProfilePreferences().getNotifications();
+
+        notifications.forEach(k -> System.out.println(k.toString()));
+
+        if (notifications.size() == 0) {
+            bell.setImage(inactive);
+        }
+
+        else {
+            notifications.size();
+            bell.setImage(active);
+        }
+
+        bell.setOnMouseClicked(event -> new FxmlLoaderTemplate().loadNewStage("/templates/notifications.fxml"));
     }
 
     private void popupChatWindow() {

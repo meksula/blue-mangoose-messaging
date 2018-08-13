@@ -6,6 +6,10 @@
     -fx-text-fill: #f4f4ef;
 }
 
+.text_active {
+    -fx-text-fill: #62f485;
+}
+
 .username {
     -fx-text-fill: #f4f4ef;
     -fx-font-size: 16px;

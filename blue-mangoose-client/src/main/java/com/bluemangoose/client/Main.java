@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
     public static String runMode;
+    public static boolean isRunning;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -23,6 +24,8 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
+        primaryStage.setOnCloseRequest(event -> isRunning = false);
+        isRunning = true;
     }
 
     public static void main(String[]args) {

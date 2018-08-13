@@ -103,6 +103,12 @@ public enum ApiPath {
         public String getPath() {
             return buildUrl("api/v1/social/invitation");
         }
+    },
+    NOTIFICATION_FETCH {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/social/notifications");
+        }
     };
 
     final String LOCALHOST = "http://localhost:8060/";
