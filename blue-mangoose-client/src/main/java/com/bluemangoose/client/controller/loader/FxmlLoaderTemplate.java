@@ -37,6 +37,16 @@ public class FxmlLoaderTemplate implements FxmlLoader {
     }
 
     @Override
+    public void loadSameStage(String PATH, Node node) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(PATH));
+        Scene scene = sceneLoad(loader);
+
+        Stage stage = (Stage) node.getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    @Override
     public void loadNewStageWithData(final SceneType sceneType, final Object DATA) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(sceneType.getPath()));
         Scene scene = sceneLoad(loader);
@@ -164,6 +174,17 @@ public class FxmlLoaderTemplate implements FxmlLoader {
                 return "/templates/detached_chat.fxml";
             }
 
+        }, NOTIFICATION_DETACHED {
+            @Override
+            protected void loadData(FXMLLoader loader, Object object) {
+                DetachedNotificationController controller = loader.getController();
+                controller.initData(object);
+            }
+
+            @Override
+            public String getPath() {
+                return "/templates/detached_notification.fxml";
+            }
         };
 
         protected abstract void loadData(final FXMLLoader loader, final Object object);

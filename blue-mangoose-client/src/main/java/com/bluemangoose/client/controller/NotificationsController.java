@@ -1,11 +1,12 @@
 package com.bluemangoose.client.controller;
 
 import com.bluemangoose.client.controller.cache.SessionCache;
+import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
 import com.bluemangoose.client.model.personal.ContactAddNotification;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -20,6 +21,10 @@ import java.util.ResourceBundle;
  * 13-08-2018
  * */
 
+/**
+ * Remember that one scene can display max 13 notifications.
+ * */
+
 public class NotificationsController implements Initializable {
     private List<ContactAddNotification> notifications;
 
@@ -29,14 +34,11 @@ public class NotificationsController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.notifications = SessionCache.getInstance().getProfilePreferences().getNotifications();
+        notificationPanel.setSpacing(6);
+        deletePanel.setSpacing(15);
 
         addNotificationPanelAction();
     }
-
-    /**
-     * Tutaj dalej trzeba zaimplementować zachowanie po kliknięciu w powiadomienie.
-     * Co ma robić, odrzucać, akceptować itd.
-     * */
 
     private void addNotificationPanelAction() {
         if (notifications.size() == 0) {
@@ -54,16 +56,19 @@ public class NotificationsController implements Initializable {
     }
 
     private Label drawLabel(int i) {
-        Label label = new Label(notifications.get(i).getMessage());
+        ContactAddNotification notification = notifications.get(i);
+        Label label = new Label(notification.getTitle());
         label.setWrapText(true);
         final String INACTIVE = "text_label";
         final String ACTIVE = "text_active";
         label.getStyleClass().add(INACTIVE);
         notificationPanel.getChildren().add(label);
 
-        label.setOnMouseClicked(event -> {
-            //TODO po kliknięciu w powiadomiennie
-        });
+        Tooltip tooltip = new Tooltip();
+        tooltip.setText(notification.getMessage() + ",\n " + notification.getInitDate());
+        label.setTooltip(tooltip);
+
+        label.setOnMouseClicked(event -> notificationDialogue(notification));
 
         label.setOnMouseEntered(event -> {
             label.getStyleClass().clear();
@@ -85,7 +90,7 @@ public class NotificationsController implements Initializable {
         ImageView delete = new ImageView();
         delete.setImage(incative);
 
-        delete.setOnMouseClicked(event -> System.out.println("Szczegółowe informacje."));
+        delete.setOnMouseClicked(event -> removeNotification());
 
         delete.setOnMouseEntered(event -> delete.setImage(active));
         delete.setOnMouseExited(event -> delete.setImage(incative));
@@ -93,6 +98,14 @@ public class NotificationsController implements Initializable {
         deletePanel.getChildren().add(delete);
 
         return delete;
+    }
+
+    private void notificationDialogue(ContactAddNotification notification) {
+        new FxmlLoaderTemplate().loadSameStageWithData(FxmlLoaderTemplate.SceneType.NOTIFICATION_DETACHED, notification, deletePanel);
+    }
+
+    private void removeNotification() {
+        //TODO
     }
 
 }

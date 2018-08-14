@@ -14,6 +14,8 @@ public interface FxmlLoader {
 
     void loadSameStage(final String PATH, final Event event);
 
+    void loadSameStage(final String PATH, final Node node);
+
     void loadNewStageWithData(final FxmlLoaderTemplate.SceneType sceneType, final Object DATA);
 
     void loadSameStageWithData(final FxmlLoaderTemplate.SceneType sceneType, final Object DATA, final Event event);
