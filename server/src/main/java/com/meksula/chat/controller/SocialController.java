@@ -1,6 +1,6 @@
 package com.meksula.chat.controller;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.meksula.chat.domain.user.ChatUser;
 import com.meksula.chat.domain.user.ContactFind;
 import com.meksula.chat.domain.user.search.UserSearcher;
 import com.meksula.chat.domain.user.social.ContactAddNotification;
@@ -66,10 +66,18 @@ public class SocialController {
     @GetMapping("/notifications")
     @ResponseStatus(HttpStatus.OK)
     public List<ContactAddNotification> getNotifications(Authentication auth) {
-        String username = (String) auth.getPrincipal();
+        ChatUser chatUser = (ChatUser) auth.getPrincipal();
 
         //TODO mechanizm, który będzie sprawdzał czy są nowe powiadomienia.
-        return profilePreferencesRepository.findByProfileUsername(username).get().getNotifications();
+        return profilePreferencesRepository.findByProfileUsername(chatUser.getUsername()).get().getNotifications();
+    }
+
+    @DeleteMapping("/notifications/{notificationId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void removeNotification(@PathVariable("notificationId") long notificationId, Authentication authentication) {
+        ChatUser logged = (ChatUser) authentication.getPrincipal();
+
+        socialManager.removeNotification(logged, notificationId);
     }
 
 }

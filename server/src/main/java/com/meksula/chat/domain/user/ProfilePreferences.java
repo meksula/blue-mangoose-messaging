@@ -37,7 +37,7 @@ public class ProfilePreferences {
     private Set<Contact> contactsBook;
 
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "profilePreferences", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "profilePreferences", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<ContactAddNotification> notifications;
 
     @Transient
@@ -50,12 +50,6 @@ public class ProfilePreferences {
     @JsonIgnore
     public void addContactAddNotification(ContactAddNotification notification) {
         notifications.add(notification);
-    }
-
-    @Transient
-    @JsonIgnore
-    public void removeNotification(ContactAddNotification notification) {
-        notifications.remove(notification);
     }
 
 }

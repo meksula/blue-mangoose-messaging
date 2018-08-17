@@ -84,11 +84,17 @@ public class DefaultUserSearcher implements UserSearcher {
     private List<String> designatePattern(String phrase) {
         List<String> patterns = new ArrayList<>();
 
-        String phrasePiece = phrase.toLowerCase().substring(0, 4);
-        String phrasePiece2 = phrasePiece.toLowerCase().substring(0, 3);
-        String phrasePiece3 = phrasePiece.toLowerCase().substring(0, 2);
+        if (phrase.length() < 4) {
+            patterns.add(phrase);
+        }
 
-        patterns.addAll(Arrays.asList("^" + phrasePiece, "^" + phrasePiece2, "^" + phrasePiece3));
+        else {
+            String phrasePiece = phrase.toLowerCase().substring(0, 4);
+            String phrasePiece2 = phrasePiece.toLowerCase().substring(0, 3);
+            String phrasePiece3 = phrasePiece.toLowerCase().substring(0, 2);
+            patterns.addAll(Arrays.asList("^" + phrasePiece, "^" + phrasePiece2, "^" + phrasePiece3));
+        }
+
         return patterns;
     }
 

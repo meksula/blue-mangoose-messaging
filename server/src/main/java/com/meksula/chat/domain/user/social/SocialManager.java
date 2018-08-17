@@ -1,5 +1,7 @@
 package com.meksula.chat.domain.user.social;
 
+import com.meksula.chat.domain.user.ChatUser;
+
 /**
  * @Author
  * Karol Meksuła
@@ -14,4 +16,6 @@ public interface SocialManager {
     Notification blockChatUser(Object principal, String chatUserUsername);
 
     Notification invitationResponse(Object principal, long invitationId, boolean response);
+
+    void removeNotification(ChatUser chatUser, long notificationId);
 }

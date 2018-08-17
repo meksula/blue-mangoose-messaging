@@ -3,9 +3,9 @@ package com.meksula.chat.domain.user.social;
 import com.meksula.chat.domain.user.ChatUser;
 import com.meksula.chat.domain.user.Contact;
 import com.meksula.chat.domain.user.ProfilePreferences;
-import com.meksula.chat.repository.ContactAddNotificationRepository;
 import com.meksula.chat.repository.ProfilePreferencesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -18,17 +18,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class DefaultSocialManager implements SocialManager {
     private ProfilePreferencesRepository profilePreferencesRepository;
-    private ContactAddNotificationRepository contactAddNotificationRepository;
     private boolean decision;
 
     @Autowired
     public void setProfilePreferencesRepository(ProfilePreferencesRepository profilePreferencesRepository) {
         this.profilePreferencesRepository = profilePreferencesRepository;
-    }
-
-    @Autowired
-    public void setContactAddNotificationRepository(ContactAddNotificationRepository contactAddNotificationRepository) {
-        this.contactAddNotificationRepository = contactAddNotificationRepository;
     }
 
     @Override
@@ -72,9 +66,10 @@ public class DefaultSocialManager implements SocialManager {
     @Override
     public Notification invitationResponse(Object principal, long invitationId, boolean respond) {
         this.decision = respond;
+        ChatUser target = (ChatUser) principal;
 
-        ProfilePreferences user = profilePreferencesRepository.findByProfileUsername(principal.toString())
-                .orElseThrow(() -> new UsernameNotFoundException("Cannot find user with username: " + principal));
+        ProfilePreferences user = profilePreferencesRepository.findByProfileUsername(target.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("Cannot find user with username: " + target.getUsername()));
 
         ContactAddNotification notification = findNotificationById(user, invitationId);
 
@@ -88,6 +83,21 @@ public class DefaultSocialManager implements SocialManager {
         Notification notif = prepareNotifications(user, inviter);
         addContactsEachOtherAndSave(user, inviter);
         return notif;
+    }
+
+    @Override
+    public void removeNotification(ChatUser chatUser, long notificationId) {
+        ProfilePreferences profilePreferences = profilePreferencesRepository.findByProfileUsername(chatUser.getUsername())
+                .orElseThrow(() -> new AccessDeniedException("You have no access to remove notifications."));
+
+        profilePreferences.getNotifications()
+                .remove(profilePreferences.getNotifications()
+                        .stream()
+                        .filter(notification -> notification.getId() == notificationId)
+                        .findFirst()
+                        .orElse(null));
+
+        profilePreferencesRepository.save(profilePreferences);
     }
 
     private ContactAddNotification invitationReject(ProfilePreferences user, ProfilePreferences inviter) {
