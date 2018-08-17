@@ -10,13 +10,16 @@ import com.bluemangoose.client.logic.web.socket.ChatMessage;
 import com.bluemangoose.client.logic.web.socket.ConversationHandler;
 import com.bluemangoose.client.logic.web.socket.WebsocketReceiver;
 import com.bluemangoose.client.model.alert.Alerts;
+import com.bluemangoose.client.model.gui.ContactLabel;
 import com.bluemangoose.client.model.personal.Contact;
 import com.bluemangoose.client.model.personal.ContactAddNotification;
 import com.bluemangoose.client.model.personal.User;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -41,6 +44,7 @@ public class MainController implements Initializable, DataInitializable, Websock
     private FxmlLoader fxmlLoader;
     private ChatRoomManager chatRoomManager;
     private ConversationHandler conversationHandler;
+    private List<ContactLabel> contactLabels;
 
     @FXML
     private ImageView loupeButton, autonomicWindowButton, disconnectButton, bell;
@@ -78,11 +82,13 @@ public class MainController implements Initializable, DataInitializable, Websock
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.fxmlLoader = new FxmlLoaderTemplate();
+        this.contactLabels = new ArrayList<>();
+
         chatWindow.setSpacing(3);
 
         addAutonomicWindowAction();
         addDisconnectChatAction();
-        addControllPanelButtonsActions();
+        addControlPanelButtonsActions();
         addButtonActions();
         sendMessageAction();
         searchingAction();
@@ -122,8 +128,6 @@ public class MainController implements Initializable, DataInitializable, Websock
         Image inactive = new Image("/img/bell-inactive.png");
 
         List<ContactAddNotification> notifications = SessionCache.getInstance().getProfilePreferences().getNotifications();
-
-        notifications.forEach(k -> System.out.println(k.toString()));
 
         if (notifications.size() == 0) {
             bell.setImage(inactive);
@@ -279,14 +283,71 @@ public class MainController implements Initializable, DataInitializable, Websock
     }
 
     private void contactDisplay(Set<Contact> contacts) {
+        this.contactLabels = new ArrayList<>();
+
         for (Contact contact : contacts) {
             Label label = new Label();
-            label.getStyleClass().add("contact");
+            label.getStyleClass().add("contact_offline");
 
             label.setText(contact.getUsername());
             contactsVbox.getChildren().add(label);
+
+            ContactLabel contactLabel = new ContactLabel(label, contact);
+            contactLabelAction(contactLabel);
+            this.contactLabels.add(contactLabel);
+            statusUpdate();
         }
 
+    }
+
+    private void statusUpdate() {
+        contactLabels.forEach(contactLabel -> {
+            if (contactLabel.getContact().isOnline()) {
+                contactLabel.getLabel().getStyleClass().clear();
+                contactLabel.getLabel().getStyleClass().add("contact_online");
+            }
+        });
+    }
+
+    private String currentStyle;
+    private void contactLabelAction(ContactLabel contactLabel) {
+        contactLabel.getLabel().setOnMouseEntered(event -> {
+            try {
+                currentStyle = contactLabel.getLabel().getStyleClass().get(1);
+            } catch (IndexOutOfBoundsException ioobe) {
+                currentStyle = "contact_offline";
+            }
+
+            if (currentStyle.equals("contact_offline")) {
+                contactLabel.getLabel().getStyleClass().clear();
+                contactLabel.getLabel().getStyleClass().add("contact_offline_shine");
+                currentStyle = "contact_offline_shine";
+            }
+
+            if (currentStyle.equals("contact_online")) {
+                contactLabel.getLabel().getStyleClass().clear();
+                contactLabel.getLabel().getStyleClass().add("contact_online_shine");
+                currentStyle = "contact_online_shine";
+            }
+        });
+
+        contactLabel.getLabel().setOnMouseExited(event -> {
+            if (currentStyle.equals("contact_online_shine")) {
+                contactLabel.getLabel().getStyleClass().clear();
+                contactLabel.getLabel().getStyleClass().add("contact_online");
+            }
+
+            if (currentStyle.equals("contact_offline_shine")) {
+                contactLabel.getLabel().getStyleClass().clear();
+                contactLabel.getLabel().getStyleClass().add("contact_offline");
+            }
+        });
+
+        contactLabel.getLabel().setOnMouseClicked(cl -> openPrivateConversation());
+    }
+
+    private void openPrivateConversation() {
+        //TODO action after mouse button clicked at assigned label
     }
 
     private void searchingAction() {
@@ -305,7 +366,7 @@ public class MainController implements Initializable, DataInitializable, Websock
         fxmlLoader.loadNewStageWithData(FxmlLoaderTemplate.SceneType.SEARCH_CONTACTS, text);
     }
 
-    private void addControllPanelButtonsActions() {
+    private void addControlPanelButtonsActions() {
         settingButton.setOnMouseClicked(event -> fxmlLoader.loadSameStageWithData(FxmlLoaderTemplate.SceneType.SETTINGS, user, event));
 
         lookForRoom.setOnMouseClicked(event -> fxmlLoader.loadSameStageWithData(FxmlLoaderTemplate.SceneType.ROOM_SEARCH, user, event));

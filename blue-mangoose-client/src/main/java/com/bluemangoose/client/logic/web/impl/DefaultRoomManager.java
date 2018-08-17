@@ -84,6 +84,9 @@ public class DefaultRoomManager implements ChatRoomManager {
 
     @Override
     public void disconnect() {
+        if (sessionHandler == null) {
+            return;
+        }
         sessionHandler.disconect();
     }
 

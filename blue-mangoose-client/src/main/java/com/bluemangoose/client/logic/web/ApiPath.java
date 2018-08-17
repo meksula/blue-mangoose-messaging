@@ -109,18 +109,35 @@ public enum ApiPath {
         public String getPath() {
             return buildUrl("api/v1/social/notifications");
         }
+    },
+    CHAT_USER_INVITATION_RESPONSE {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/social/invitation/response/" + notificationId);
+        }
+    },
+    CHAT_USER_NOTIFICATION_REMOVE {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/social/notifications/" + notificationId);
+        }
     };
 
     final String LOCALHOST = "http://localhost:8060/";
     final String REMOTE = "http://51.38.129.50:8060/";
 
     public String username;
+    public long notificationId;
 
     public void setUsername(String username) {
         this.username = username;
     }
 
     public abstract String getPath();
+
+    public void setNotificationId(long notificationId) {
+        this.notificationId = notificationId;
+    }
 
     public String buildUrl(final String PATH) {
         if (Main.runMode == null || Main.runMode.isEmpty() || Main.runMode.equals("remote")) {

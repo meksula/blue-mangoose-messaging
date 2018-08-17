@@ -18,4 +18,9 @@ public class Contact {
 
     private long idOfContactUser;
     private String username;
+
+    /**
+     * Tell as if user is online (if `true`) or offline (if `false`)
+     * */
+    private boolean online;
 }

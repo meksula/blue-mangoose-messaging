@@ -2,15 +2,21 @@ package com.bluemangoose.client.controller;
 
 import com.bluemangoose.client.controller.loader.DataInitializable;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
+import com.bluemangoose.client.logic.web.ApiPath;
+import com.bluemangoose.client.logic.web.exchange.HttpServerConnector;
+import com.bluemangoose.client.logic.web.exchange.HttpServerConnectorImpl;
 import com.bluemangoose.client.model.personal.ContactAddNotification;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 /**
@@ -20,6 +26,7 @@ import java.util.ResourceBundle;
  * */
 
 public class DetachedNotificationController implements Initializable, DataInitializable {
+    private HttpServerConnector<String> httpServerConnector;
     private ContactAddNotification notification;
     private final String TITLE = "Tytuł: ";
     private final String DATE = "Data: ";
@@ -37,6 +44,8 @@ public class DetachedNotificationController implements Initializable, DataInitia
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.httpServerConnector = new HttpServerConnectorImpl<>(String.class);
+
         addButtonsAction();
     }
 
@@ -80,6 +89,10 @@ public class DetachedNotificationController implements Initializable, DataInitia
         accept.setOnMouseEntered(event -> accept.setImage(acceptActive));
         accept.setOnMouseExited(event -> accept.setImage(acceptInactive));
         accept.setOnMouseClicked(event -> acceptNotification());
+
+        new ArrayList<>(Arrays.asList(back, decline, accept))
+                .forEach(node -> node.setCursor(Cursor.HAND));
+
     }
 
     private void backToNotifications() {
@@ -91,7 +104,14 @@ public class DetachedNotificationController implements Initializable, DataInitia
     }
 
     private void acceptNotification() {
-        //TODO zaakceptowanie konsekwencji jakie niesie ze sobą powiadomienie
+        if (notification == null) {
+            return;
+        }
+
+        ApiPath apiPath = ApiPath.CHAT_USER_INVITATION_RESPONSE;
+        apiPath.setNotificationId(notification.getId());
+
+        httpServerConnector.post(Boolean.valueOf("true"), apiPath);
     }
 
 }

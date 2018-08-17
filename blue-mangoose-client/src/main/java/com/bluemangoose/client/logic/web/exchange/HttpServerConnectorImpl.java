@@ -23,8 +23,8 @@ import java.io.*;
 
 public class HttpServerConnectorImpl<T> implements HttpServerConnector<T> {
     private Class<T> type;
-    public static ClientConfig clientConfig;
-    public static String session;
+    private static ClientConfig clientConfig;
+    private static String session;
 
     public HttpServerConnectorImpl(Class<T> entityType) {
         this.type = entityType;
@@ -92,6 +92,11 @@ public class HttpServerConnectorImpl<T> implements HttpServerConnector<T> {
 
         InputStream inputStream = new ByteArrayInputStream(bytes);
         return new Image(inputStream);
+    }
+
+    @Override
+    public void delete(ApiPath apiPath) {
+        clientPrepare(apiPath).delete();
     }
 
     private Invocation.Builder clientPrepare(ApiPath apiPath) {

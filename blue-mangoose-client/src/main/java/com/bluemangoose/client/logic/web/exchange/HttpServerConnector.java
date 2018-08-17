@@ -24,4 +24,6 @@ public interface HttpServerConnector<T> {
     T putFile(ApiPath apiPath, File picture);
 
     Image getImage(ApiPath avatarGet) throws IOException;
+
+    void delete(ApiPath apiPath);
 }

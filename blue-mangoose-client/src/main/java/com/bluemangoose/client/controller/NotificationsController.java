@@ -2,6 +2,9 @@ package com.bluemangoose.client.controller;
 
 import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
+import com.bluemangoose.client.logic.web.ApiPath;
+import com.bluemangoose.client.logic.web.exchange.HttpServerConnector;
+import com.bluemangoose.client.logic.web.exchange.HttpServerConnectorImpl;
 import com.bluemangoose.client.model.personal.ContactAddNotification;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -27,6 +30,7 @@ import java.util.ResourceBundle;
 
 public class NotificationsController implements Initializable {
     private List<ContactAddNotification> notifications;
+    private HttpServerConnector<String> httpServerConnector;
 
     @FXML
     private VBox notificationPanel, deletePanel;
@@ -34,6 +38,8 @@ public class NotificationsController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.notifications = SessionCache.getInstance().getProfilePreferences().getNotifications();
+        this.httpServerConnector = new HttpServerConnectorImpl<>(String.class);
+
         notificationPanel.setSpacing(6);
         deletePanel.setSpacing(15);
 
@@ -47,7 +53,7 @@ public class NotificationsController implements Initializable {
 
         for (int i = 0; i < notifications.size(); i++) {
             Label label = drawLabel(i);
-            ImageView imageView = drawImageView();
+            ImageView imageView = drawImageView(notifications.get(i));
 
             deletePanel.getChildren().add(label);
             notificationPanel.getChildren().add(imageView);
@@ -83,17 +89,17 @@ public class NotificationsController implements Initializable {
         return label;
     }
 
-    private ImageView drawImageView() {
+    private ImageView drawImageView(ContactAddNotification notification) {
         Image active = new Image("/img/delete-active.png");
-        Image incative = new Image("/img/delete-inactive.png");
+        Image inacative = new Image("/img/delete-inactive.png");
 
         ImageView delete = new ImageView();
-        delete.setImage(incative);
+        delete.setImage(inacative);
 
-        delete.setOnMouseClicked(event -> removeNotification());
+        delete.setOnMouseClicked(event -> removeNotification(notification.getId()));
 
         delete.setOnMouseEntered(event -> delete.setImage(active));
-        delete.setOnMouseExited(event -> delete.setImage(incative));
+        delete.setOnMouseExited(event -> delete.setImage(inacative));
 
         deletePanel.getChildren().add(delete);
 
@@ -104,8 +110,10 @@ public class NotificationsController implements Initializable {
         new FxmlLoaderTemplate().loadSameStageWithData(FxmlLoaderTemplate.SceneType.NOTIFICATION_DETACHED, notification, deletePanel);
     }
 
-    private void removeNotification() {
-        //TODO
+    private void removeNotification(long notificationId) {
+        ApiPath apiPath = ApiPath.CHAT_USER_NOTIFICATION_REMOVE;
+        apiPath.setNotificationId(notificationId);
+        httpServerConnector.delete(apiPath);
     }
 
 }
