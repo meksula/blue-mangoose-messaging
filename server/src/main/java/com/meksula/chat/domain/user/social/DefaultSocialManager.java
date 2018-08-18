@@ -1,5 +1,6 @@
 package com.meksula.chat.domain.user.social;
 
+import com.meksula.chat.domain.user.ApplicationUser;
 import com.meksula.chat.domain.user.ChatUser;
 import com.meksula.chat.domain.user.Contact;
 import com.meksula.chat.domain.user.ProfilePreferences;
@@ -29,6 +30,10 @@ public class DefaultSocialManager implements SocialManager {
     public Notification inviteToFriends(Object principal, String friendsUsername) {
         ChatUser chatUser = (ChatUser) principal;
 
+        if (contactExist(chatUser, friendsUsername) || notificationExist(chatUser, friendsUsername)) {
+            return new Notification("Invitation exist", "Cannot invite user again!");
+        }
+
         ProfilePreferences invitationTarget = profilePreferencesRepository.findByProfileUsername(friendsUsername)
                 .orElseThrow(() -> new UsernameNotFoundException(friendsUsername));
 
@@ -39,6 +44,25 @@ public class DefaultSocialManager implements SocialManager {
         profilePreferencesRepository.save(invitationTarget);
 
         return notification;
+    }
+
+    /**
+     * User cannot invite another user if has its in current contacts
+     * */
+    private boolean contactExist(ApplicationUser inviter, String whom) {
+        return profilePreferencesRepository.findByProfileUsername(inviter.getUsername())
+                .get()
+                .getContactsBook()
+                .stream()
+                .anyMatch(contact -> contact.getUsername().equals(whom));
+    }
+
+    private boolean notificationExist(ApplicationUser inviter, String whom) {
+        return profilePreferencesRepository.findByProfileUsername(whom)
+                .orElseThrow(() -> new UsernameNotFoundException("Cannot invite user, because not exist!"))
+                .getNotifications()
+                .stream()
+                .anyMatch(notification -> notification.getInviterUsername().equals(inviter.getUsername()));
     }
 
     private ContactAddNotification buildNotification(ProfilePreferences currentUser, ProfilePreferences invitationTarget) {

@@ -30,4 +30,10 @@ public class Contact implements Serializable {
 
     private long idOfContactUser;
     private String username;
+
+    @Override
+    public String toString() {
+        return "ID:" + id + "| username: " + username + ", ContactsID: " + idOfContactUser;
+    }
+
 }

@@ -46,7 +46,6 @@ public class ProfileController {
     @PutMapping("/avatar")
     @ResponseStatus(HttpStatus.CREATED)
     public boolean setAvatar(@RequestParam("pic") MultipartFile multipartFile, Authentication authentication) {
-        System.out.println("Otrzymano zdjęcie.");
         return fileExchange.uploadPicture(multipartFile, (ChatUser) authentication.getPrincipal());
     }
 
