@@ -40,9 +40,12 @@ public class DefaultUserSearcher implements UserSearcher {
                             contactsMatch.add(new ContactFind(user.getUserId(), user.getUsername())));
 
             if (contactsMatch.isEmpty()) {
-                this.patterns = designatePattern(phrase);
+                if (phrase.length() > 0) {
+                    this.patterns = designatePattern(phrase);
+                    return advancedSearch(contactsMatch, 0);
+                }
 
-                return advancedSearch(contactsMatch, 0);
+                return contactsMatch;
             }
         }
 

@@ -5,6 +5,7 @@ import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
 import com.bluemangoose.client.logic.web.ApiPath;
 import com.bluemangoose.client.logic.web.exchange.HttpServerConnector;
 import com.bluemangoose.client.logic.web.exchange.HttpServerConnectorImpl;
+import com.bluemangoose.client.model.alert.Alerts;
 import com.bluemangoose.client.model.personal.ContactAddNotification;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -110,8 +111,9 @@ public class DetachedNotificationController implements Initializable, DataInitia
 
         ApiPath apiPath = ApiPath.CHAT_USER_INVITATION_RESPONSE;
         apiPath.setNotificationId(notification.getId());
-
         httpServerConnector.post(Boolean.valueOf("true"), apiPath);
+
+        backToNotifications();
     }
 
 }

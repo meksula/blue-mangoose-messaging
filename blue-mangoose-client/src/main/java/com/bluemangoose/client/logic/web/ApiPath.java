@@ -121,6 +121,12 @@ public enum ApiPath {
         public String getPath() {
             return buildUrl("api/v1/social/notifications/" + notificationId);
         }
+    },
+    LOGOUT {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/logout");
+        }
     };
 
     final String LOCALHOST = "http://localhost:8060/";

@@ -2,6 +2,7 @@ package com.bluemangoose.client.model.logic.impl;
 
 import com.bluemangoose.client.logic.web.ApiPath;
 import com.bluemangoose.client.logic.web.exchange.HttpServerConnectorImpl;
+import com.bluemangoose.client.model.alert.Alerts;
 import com.bluemangoose.client.model.dto.ContactFind;
 import com.bluemangoose.client.model.logic.ContactsManager;
 import com.bluemangoose.client.model.personal.ContactAddNotification;
@@ -14,18 +15,17 @@ import com.bluemangoose.client.model.personal.ContactAddNotification;
 
 public class ContactsManagerImpl implements ContactsManager {
 
-    /**
-     * TODO
-     * Teraz jestem na etapie realizacji procesu zapraszania.
-     * Zaproszenie dochodzi na serwer i przekazuje powiadomieie do innego użytkownika.
-     * (baza danych nie wyświetla UTF-8)
-     * Teraz zaimplementować dalszy proces dodawania do znajomych.
-     * */
-
     @Override
     public void addContact(ContactFind contact) {
-        new HttpServerConnectorImpl<>(ContactAddNotification.class)
+        ContactAddNotification notification = new HttpServerConnectorImpl<>(ContactAddNotification.class)
                 .post(new ContactSearch(contact.getUsername()), ApiPath.CHAT_USER_INVITATION);
+
+        if (notification.getTitle().equals("Invitation exist")) {
+            new Alerts().error("Kontakt istnieje", "Ten kontakt istnieje już w twojej książce kontaktów!", null);
+        }
+        else {
+            new Alerts().other("Wysłano zaproszenie", "Użytkownik otrzyma Twoje zaproszenie.", null);
+        }
     }
 
 }

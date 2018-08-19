@@ -12,4 +12,9 @@ public class ChatUserStatusUpdateDaemon implements StateUpdateDaemon {
     public void updateState(long userId) {
 
     }
+
+    @Override
+    public void updateStateOnce() {
+
+    }
 }

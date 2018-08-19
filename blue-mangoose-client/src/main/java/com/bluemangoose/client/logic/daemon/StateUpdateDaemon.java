@@ -8,4 +8,6 @@ package com.bluemangoose.client.logic.daemon;
 
 public interface StateUpdateDaemon {
     void updateState(long userId);
+
+    void updateStateOnce();
 }

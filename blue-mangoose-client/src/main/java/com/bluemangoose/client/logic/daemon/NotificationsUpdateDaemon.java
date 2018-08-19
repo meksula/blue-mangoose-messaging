@@ -8,6 +8,7 @@ import com.bluemangoose.client.model.personal.ContactAddNotification;
 import com.bluemangoose.client.model.personal.ProfilePreferences;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
  * 13-08-2018
  * */
 
+@Slf4j
 public class NotificationsUpdateDaemon implements StateUpdateDaemon {
     private ProfilePreferences profilePreferences;
     private HttpServerConnector<String> httpServerConnector;
@@ -44,14 +46,22 @@ public class NotificationsUpdateDaemon implements StateUpdateDaemon {
 
                 try {
                     Thread.sleep(15000);
+                    log.info("Thread is invoke: fetching notifications...");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         };
 
-        //Thread notifThread = new Thread(fetchNotifications);
-        //notifThread.start();
+        Thread notifThread = new Thread(fetchNotifications);
+        notifThread.start();
+    }
+
+    @Override
+    public void updateStateOnce() {
+        String responseJson = httpServerConnector.get(ApiPath.NOTIFICATION_FETCH);
+        List<ContactAddNotification> contactAddNotifications = parseJsonToList(responseJson);
+        profilePreferences.setNotifications(contactAddNotifications);
     }
 
     private List<ContactAddNotification> parseJsonToList(final String JSON) {

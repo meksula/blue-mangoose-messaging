@@ -2,6 +2,7 @@ package com.bluemangoose.client.controller;
 
 import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
+import com.bluemangoose.client.logic.daemon.NotificationsUpdateDaemon;
 import com.bluemangoose.client.logic.web.ApiPath;
 import com.bluemangoose.client.logic.web.exchange.HttpServerConnector;
 import com.bluemangoose.client.logic.web.exchange.HttpServerConnectorImpl;
@@ -114,6 +115,9 @@ public class NotificationsController implements Initializable {
         ApiPath apiPath = ApiPath.CHAT_USER_NOTIFICATION_REMOVE;
         apiPath.setNotificationId(notificationId);
         httpServerConnector.delete(apiPath);
+
+        new NotificationsUpdateDaemon(SessionCache.getInstance().getProfilePreferences()).updateStateOnce();
+        new FxmlLoaderTemplate().loadSameStage(FxmlLoaderTemplate.SceneType.NOTIFICATION_DETACHED.getPath(), notificationPanel);
     }
 
 }

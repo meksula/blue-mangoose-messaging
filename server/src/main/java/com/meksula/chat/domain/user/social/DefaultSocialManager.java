@@ -5,6 +5,7 @@ import com.meksula.chat.domain.user.ChatUser;
 import com.meksula.chat.domain.user.Contact;
 import com.meksula.chat.domain.user.ProfilePreferences;
 import com.meksula.chat.repository.ProfilePreferencesRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
  * 08-08-2018
  * */
 
+@Slf4j
 @Service
 public class DefaultSocialManager implements SocialManager {
     private ProfilePreferencesRepository profilePreferencesRepository;
@@ -31,6 +33,7 @@ public class DefaultSocialManager implements SocialManager {
         ChatUser chatUser = (ChatUser) principal;
 
         if (contactExist(chatUser, friendsUsername) || notificationExist(chatUser, friendsUsername)) {
+            log.info("Invitation just exist! Cannot invite user twice!");
             return new Notification("Invitation exist", "Cannot invite user again!");
         }
 
@@ -43,6 +46,7 @@ public class DefaultSocialManager implements SocialManager {
         Notification notification = buildNotification(currentUser, invitationTarget);
         profilePreferencesRepository.save(invitationTarget);
 
+        log.info("Invitation send correctly.");
         return notification;
     }
 
@@ -106,12 +110,34 @@ public class DefaultSocialManager implements SocialManager {
 
         Notification notif = prepareNotifications(user, inviter);
         addContactsEachOtherAndSave(user, inviter);
+
+        cleanOldNotification(inviter.getProfileUsername(), target.getUsername(), invitationId);
         return notif;
+    }
+
+    private void cleanOldNotification(String inviterUsername, String targetUsername, long invitationId) {
+        removeNotification(inviterUsername, invitationId);
+        removeNotification(targetUsername, invitationId);
     }
 
     @Override
     public void removeNotification(ChatUser chatUser, long notificationId) {
         ProfilePreferences profilePreferences = profilePreferencesRepository.findByProfileUsername(chatUser.getUsername())
+                .orElseThrow(() -> new AccessDeniedException("You have no access to remove notifications."));
+
+        profilePreferences.getNotifications()
+                .remove(profilePreferences.getNotifications()
+                        .stream()
+                        .filter(notification -> notification.getId() == notificationId)
+                        .findFirst()
+                        .orElse(null));
+
+        log.info("Notification with id: " + notificationId + " has just removed.");
+        profilePreferencesRepository.save(profilePreferences);
+    }
+
+    private void removeNotification(String username, long notificationId) {
+        ProfilePreferences profilePreferences = profilePreferencesRepository.findByProfileUsername(username)
                 .orElseThrow(() -> new AccessDeniedException("You have no access to remove notifications."));
 
         profilePreferences.getNotifications()

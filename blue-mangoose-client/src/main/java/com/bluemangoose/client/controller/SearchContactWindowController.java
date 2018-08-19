@@ -77,7 +77,7 @@ public class SearchContactWindowController implements Initializable, DataInitial
 
     }
 
-    public void addToContactsAction() {
+    private void addToContactsAction() {
         ObservableList<Node> addButtons = plusVbox.getChildren();
 
         for (Node button : addButtons) {

@@ -4,7 +4,6 @@ import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.controller.loader.FxmlLoader;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
 import com.bluemangoose.client.logic.daemon.NotificationsUpdateDaemon;
-import com.bluemangoose.client.logic.daemon.StateUpdateDaemon;
 import com.bluemangoose.client.logic.reader.DefaultSettingsManager;
 import com.bluemangoose.client.logic.reader.SettingReader;
 import com.bluemangoose.client.logic.web.ApiPath;
@@ -66,7 +65,14 @@ public class LoginController implements Initializable {
             if (access()) {
                 LoginController.username = usernameField.getText();
                 User user = fetchUser();
-                ProfilePreferences profilePreferences = fetchProfile();
+                ProfilePreferences profilePreferences;
+                try {
+                    profilePreferences = fetchProfile();
+                } catch (RuntimeException re) {
+                    new Alerts().error("Bład pobierania", "Nie można pobrać Twojego profilu z serwera.",
+                            "Prawdopodobnie Twój profil jest uszkodzony, albo serwer uległ awarii. Cierpliwości.");
+                    return;
+                }
                 SessionCache.getInstance().setUser(user);
                 SessionCache.getInstance().setProfilePreferences(profilePreferences);
                 SessionCache.getInstance().setProfilePicture(fetchPicture());
