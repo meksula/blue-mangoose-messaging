@@ -15,7 +15,6 @@ import com.bluemangoose.client.model.personal.Contact;
 import com.bluemangoose.client.model.personal.ContactAddNotification;
 import com.bluemangoose.client.model.personal.User;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -45,9 +44,10 @@ public class MainController implements Initializable, DataInitializable, Websock
     private ChatRoomManager chatRoomManager;
     private ConversationHandler conversationHandler;
     private List<ContactLabel> contactLabels;
+    private final int MAX_AMOUNT = 9;
 
     @FXML
-    private ImageView loupeButton, autonomicWindowButton, disconnectButton, bell;
+    private ImageView loupeButton, autonomicWindowButton, disconnectButton, bell, messageUp, messageDown;
 
     @FXML
     private TextField loupeField;
@@ -94,6 +94,8 @@ public class MainController implements Initializable, DataInitializable, Websock
         searchingAction();
         addBellAction();
         contactDisplay(SessionCache.getInstance().getProfilePreferences().getContactsBook());
+        scrollMessages();
+        messagesMoving();
 
         usernameField.setText(SessionCache.getInstance().getProfilePreferences().getProfileUsername());
 
@@ -101,6 +103,56 @@ public class MainController implements Initializable, DataInitializable, Websock
             userAvatar.setImage(SessionCache.getInstance().getProfilePicture());
         }
 
+    }
+
+    private void messagesMoving() {
+        Image current = messageUp.getImage();
+        messageUp.setOnMouseEntered(event -> messageUp.setImage(new Image("/img/message-up-active.png")));
+        messageUp.setOnMouseExited(event -> messageUp.setImage(current));
+        messageUp.setOnMouseClicked(event -> scrollUp(chatWindow.getChildren()));
+        messageUp.setCursor(Cursor.HAND);
+
+        Image current2 = messageDown.getImage();
+        messageDown.setOnMouseEntered(event -> messageDown.setImage(new Image("/img/message-down-active.png")));
+        messageDown.setOnMouseExited(event -> messageDown.setImage(current2));
+        messageDown.setOnMouseClicked(event -> scrollDown(chatWindow.getChildren()));
+        messageDown.setCursor(Cursor.HAND);
+    }
+
+    private void scrollMessages() {
+        chatPane.setOnScroll(event -> {
+            int currentAmount = chatWindow.getChildren().size();
+            double factor = event.getDeltaY();
+            List<Node> messages = chatWindow.getChildren();
+
+            if (factor > 0) {
+                scrollUp(messages);
+            } else if (currentAmount < MAX_AMOUNT) {
+                scrollDown(messages);
+            }
+
+        });
+
+    }
+
+    private void scrollUp(List<Node> messages) {
+        if (chatWindow.getChildren().size() <= MAX_AMOUNT && chatWindow.getChildren().size() > 0) {
+            messagesCache.add((Label) messages.get(0));
+            messages.remove(0);
+        }
+    }
+
+    private void scrollDown(List<Node> messages) {
+        if (chatWindow.getChildren().size() < MAX_AMOUNT && (messagesCache.size() - 1) >= 0) {
+            Label tmp = messagesCache.get(messagesCache.size() - 1);
+            messagesCache.remove(tmp);
+
+            List<Node> updatedMessages = new ArrayList<>();
+            updatedMessages.add(tmp);
+            updatedMessages.addAll(messages);
+            chatWindow.getChildren().clear();
+            chatWindow.getChildren().setAll(updatedMessages);
+        }
     }
 
     private void addAutonomicWindowAction() {

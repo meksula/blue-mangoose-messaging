@@ -75,5 +75,15 @@
             <Image url="@../img/message-received-inactive.png" />
          </image>
       </ImageView>
+      <ImageView fx:id="messageUp" fitHeight="20.0" fitWidth="25.0" layoutX="222.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/message-up-active.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="messageDown" fitHeight="20.0" fitWidth="25.0" layoutX="251.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/message-down-active.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>
