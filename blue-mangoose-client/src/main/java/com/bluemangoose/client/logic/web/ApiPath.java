@@ -127,6 +127,12 @@ public enum ApiPath {
         public String getPath() {
             return buildUrl("api/v1/logout");
         }
+    },
+    FRIENDS_ONLINE_STATUS {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/social/status/friends");
+        }
     };
 
     final String LOCALHOST = "http://localhost:8060/";

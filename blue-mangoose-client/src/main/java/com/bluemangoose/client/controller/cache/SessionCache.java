@@ -6,6 +6,9 @@ import javafx.scene.image.Image;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collections;
+import java.util.Map;
+
 /**
  * @Author
  * Karol Meksuła
@@ -27,4 +30,10 @@ public class SessionCache {
     private User user;
     private ProfilePreferences profilePreferences;
     private Image profilePicture;
+    private Map<String, Boolean> contactsStatus;
+
+    public synchronized void updateContactStatus(Map<String, Boolean> status) {
+        this.contactsStatus = Collections.synchronizedMap(status);
+    }
+
 }

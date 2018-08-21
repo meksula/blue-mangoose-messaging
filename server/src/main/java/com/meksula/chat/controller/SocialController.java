@@ -2,6 +2,7 @@ package com.meksula.chat.controller;
 
 import com.meksula.chat.domain.user.ChatUser;
 import com.meksula.chat.domain.user.ContactFind;
+import com.meksula.chat.domain.user.registry.StatusRegistry;
 import com.meksula.chat.domain.user.search.UserSearcher;
 import com.meksula.chat.domain.user.social.ContactAddNotification;
 import com.meksula.chat.domain.user.social.Notification;
@@ -13,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -27,6 +29,7 @@ public class SocialController {
     private UserSearcher userSearcher;
     private SocialManager socialManager;
     private ProfilePreferencesRepository profilePreferencesRepository;
+    private StatusRegistry statusRegistry;
 
     @Autowired
     public void setUserSearcher(UserSearcher userSearcher) {
@@ -41,6 +44,11 @@ public class SocialController {
     @Autowired
     public void setProfilePreferencesRepository(ProfilePreferencesRepository profilePreferencesRepository) {
         this.profilePreferencesRepository = profilePreferencesRepository;
+    }
+
+    @Autowired
+    public void setStatusRegistry(StatusRegistry statusRegistry) {
+        this.statusRegistry = statusRegistry;
     }
 
     @PostMapping("/contact")
@@ -78,6 +86,13 @@ public class SocialController {
         ChatUser logged = (ChatUser) authentication.getPrincipal();
 
         socialManager.removeNotification(logged, notificationId);
+    }
+
+    @GetMapping("/status/friends")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<String, Boolean> getMyContactStatus(Authentication authentication) {
+        ChatUser chatUser = (ChatUser) authentication.getPrincipal();
+        return statusRegistry.getContactStatus(chatUser.getUsername());
     }
 
 }

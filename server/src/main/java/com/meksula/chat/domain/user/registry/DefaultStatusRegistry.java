@@ -3,7 +3,6 @@ package com.meksula.chat.domain.user.registry;
 import com.meksula.chat.domain.user.ChatUser;
 import com.meksula.chat.repository.ProfilePreferencesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

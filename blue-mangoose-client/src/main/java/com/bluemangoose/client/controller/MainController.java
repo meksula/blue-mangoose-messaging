@@ -4,6 +4,7 @@ import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.controller.loader.DataInitializable;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
 import com.bluemangoose.client.controller.loader.FxmlLoader;
+import com.bluemangoose.client.logic.daemon.ChatUserStatusUpdateDaemon;
 import com.bluemangoose.client.logic.web.ChatRoomManager;
 import com.bluemangoose.client.logic.web.impl.DefaultRoomManager;
 import com.bluemangoose.client.logic.web.socket.ChatMessage;
@@ -30,6 +31,7 @@ import java.net.URL;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Author
@@ -37,7 +39,7 @@ import java.util.*;
  * 14-07-2018
  * */
 
-public class MainController implements Initializable, DataInitializable, WebsocketReceiver {
+public class MainController implements Initializable, DataInitializable, WebsocketReceiver, SceneRefresh {
     private List<Label> messagesCache = new ArrayList<>();
     private User user;
     private FxmlLoader fxmlLoader;
@@ -45,6 +47,7 @@ public class MainController implements Initializable, DataInitializable, Websock
     private ConversationHandler conversationHandler;
     private List<ContactLabel> contactLabels;
     private final int MAX_AMOUNT = 9;
+    private ChatUserStatusUpdateDaemon statusUpdateDaemon;
 
     @FXML
     private ImageView loupeButton, autonomicWindowButton, disconnectButton, bell, messageUp, messageDown;
@@ -74,9 +77,6 @@ public class MainController implements Initializable, DataInitializable, Websock
     private TextArea messageField;
 
     @FXML
-    private TitledPane contacts;
-
-    @FXML
     private TitledPane chatPane;
 
     @Override
@@ -99,8 +99,38 @@ public class MainController implements Initializable, DataInitializable, Websock
 
         usernameField.setText(SessionCache.getInstance().getProfilePreferences().getProfileUsername());
 
+        statusUpdateDaemon = new ChatUserStatusUpdateDaemon(this);
+        statusUpdateDaemon.updateState(SessionCache.getInstance().getProfilePreferences().getUserId());
+
         if (SessionCache.getInstance().getProfilePicture() != null) {
             userAvatar.setImage(SessionCache.getInstance().getProfilePicture());
+        }
+
+    }
+
+    @Override
+    public void initData(Object data) {
+        this.user = (User) data;
+        this.chatRoomManager = DefaultRoomManager.getInstance();
+
+        if (chatRoomManager.isConnected()) {
+            chatPane.setText("Pokój: " + chatRoomManager.getRoomTarget());
+            conversationHandler = ConversationHandler.getInstance(chatRoomManager.getRoomTarget(), 100);
+            conversationHandler.setWebsocketReceiver(this);
+            try {
+                conversationHandler.fetchLastMessages();
+            } catch (IOException e) {
+                new Alerts().error("Błędne hasło!", "Podane hasło jest nieprawidłowe.\nSpróbuj ponownie.", "");
+                e.printStackTrace();
+            }
+
+            if (conversationHandler.getMessages().size() > 0) {
+                displayExistingMessages();
+            }
+        }
+
+        else {
+            chatPane.setText("DISCONNECTED");
         }
 
     }
@@ -203,32 +233,6 @@ public class MainController implements Initializable, DataInitializable, Websock
         chatPane.setText("DISCONNECTED");
     }
 
-    @Override
-    public void initData(Object data) {
-        this.user = (User) data;
-        this.chatRoomManager = DefaultRoomManager.getInstance();
-
-        if (chatRoomManager.isConnected()) {
-            chatPane.setText("Pokój: " + chatRoomManager.getRoomTarget());
-            conversationHandler = ConversationHandler.getInstance(chatRoomManager.getRoomTarget(), 100);
-            conversationHandler.setWebsocketReceiver(this);
-            try {
-                conversationHandler.fetchLastMessages();
-            } catch (IOException e) {
-                new Alerts().error("Błędne hasło!", "Podane hasło jest nieprawidłowe.\nSpróbuj ponownie.", "");
-                e.printStackTrace();
-            }
-
-            if (conversationHandler.getMessages().size() > 0) {
-                displayExistingMessages();
-            }
-        }
-
-        else {
-            chatPane.setText("DISCONNECTED");
-        }
-
-    }
 
     private void displayExistingMessages() {
         conversationHandler.getMessages().forEach(chatMessage -> {
@@ -339,7 +343,13 @@ public class MainController implements Initializable, DataInitializable, Websock
 
         for (Contact contact : contacts) {
             Label label = new Label();
-            label.getStyleClass().add("contact_offline");
+
+            if (contact.isOnline()) {
+                label.getStyleClass().add("contact_online");
+            }
+            else {
+                label.getStyleClass().add("contact_offline");
+            }
 
             label.setText(contact.getUsername());
             contactsVbox.getChildren().add(label);
@@ -358,7 +368,26 @@ public class MainController implements Initializable, DataInitializable, Websock
                 contactLabel.getLabel().getStyleClass().clear();
                 contactLabel.getLabel().getStyleClass().add("contact_online");
             }
+            else {
+                contactLabel.getLabel().getStyleClass().clear();
+                contactLabel.getLabel().getStyleClass().add("contact_offline");
+            }
         });
+    }
+
+    @Override
+    public void refresh() {
+        Map<String, Boolean> currentStatus = SessionCache.getInstance().getContactsStatus();
+        currentStatus.forEach((key, value) ->
+                contactLabels
+                        .stream()
+                        .filter(contactLabel -> contactLabel.getContact().getUsername().equals(key))
+                        .findAny()
+                        .get()
+                        .getContact().setOnline(value)
+        );
+
+        statusUpdate();
     }
 
     private String currentStyle;
@@ -367,7 +396,12 @@ public class MainController implements Initializable, DataInitializable, Websock
             try {
                 currentStyle = contactLabel.getLabel().getStyleClass().get(1);
             } catch (IndexOutOfBoundsException ioobe) {
-                currentStyle = "contact_offline";
+                if (contactLabel.getContact().isOnline()) {
+                    currentStyle = "contact_online";
+                }
+                else {
+                    currentStyle = "contact_offline";
+                }
             }
 
             if (currentStyle.equals("contact_offline")) {
@@ -439,5 +473,6 @@ public class MainController implements Initializable, DataInitializable, Websock
             chatWindowMoving();
         });
     }
+
 
 }

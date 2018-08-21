@@ -3,6 +3,7 @@ package com.bluemangoose.client.controller;
 import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.controller.loader.FxmlLoader;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
+import com.bluemangoose.client.logic.daemon.ChatUserStatusUpdateDaemon;
 import com.bluemangoose.client.logic.daemon.NotificationsUpdateDaemon;
 import com.bluemangoose.client.logic.reader.DefaultSettingsManager;
 import com.bluemangoose.client.logic.reader.SettingReader;
