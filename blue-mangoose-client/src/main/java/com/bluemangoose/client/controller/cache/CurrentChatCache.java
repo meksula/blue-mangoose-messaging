@@ -2,6 +2,9 @@ package com.bluemangoose.client.controller.cache;
 
 import com.bluemangoose.client.logic.web.socket.ChatMessage;
 import com.bluemangoose.client.model.dto.ChatAccess;
+import javafx.scene.control.Label;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +15,8 @@ import java.util.List;
  * 03-08-2018
  * */
 
+@Getter
+@Setter
 public class CurrentChatCache {
     private static CurrentChatCache currentChatCache = new CurrentChatCache();
 
@@ -24,21 +29,5 @@ public class CurrentChatCache {
     }
 
     private List<ChatMessage> chatMessageList = new ArrayList<>();
-
-    public void setChatAccess(ChatAccess chatAccess) {
-        this.chatAccess = chatAccess;
-    }
-
-    public ChatAccess getChatAccess() {
-        return chatAccess;
-    }
-
-    public List<ChatMessage> getChatMessageList() {
-        return chatMessageList;
-    }
-
-    public void setChatMessageList(List<ChatMessage> chatMessageList) {
-        this.chatMessageList = chatMessageList;
-    }
-
+    private List<Label> messagesCache = new ArrayList<>();
 }

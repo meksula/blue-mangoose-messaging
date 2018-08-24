@@ -167,6 +167,8 @@ public class FxmlLoaderTemplate implements FxmlLoader {
         CHAT_DETACHED {
             @Override
             protected void loadData(FXMLLoader loader, Object object) {
+                DetachedChatController controller = loader.getController();
+                controller.initData(object);
             }
 
             @Override

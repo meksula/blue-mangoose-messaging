@@ -1,5 +1,6 @@
 package com.bluemangoose.client.controller;
 
+import com.bluemangoose.client.controller.cache.CurrentChatCache;
 import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.controller.loader.DataInitializable;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
@@ -7,29 +8,22 @@ import com.bluemangoose.client.controller.loader.FxmlLoader;
 import com.bluemangoose.client.logic.daemon.ChatUserStatusUpdateDaemon;
 import com.bluemangoose.client.logic.web.ChatRoomManager;
 import com.bluemangoose.client.logic.web.impl.DefaultRoomManager;
-import com.bluemangoose.client.logic.web.socket.ChatMessage;
 import com.bluemangoose.client.logic.web.socket.ConversationHandler;
-import com.bluemangoose.client.logic.web.socket.WebsocketReceiver;
-import com.bluemangoose.client.model.alert.Alerts;
+import com.bluemangoose.client.model.gui.ChatGuiManager;
 import com.bluemangoose.client.model.gui.ContactLabel;
 import com.bluemangoose.client.model.personal.Contact;
 import com.bluemangoose.client.model.personal.ContactAddNotification;
 import com.bluemangoose.client.model.personal.User;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 
-import java.io.IOException;
 import java.net.URL;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -38,39 +32,26 @@ import java.util.*;
  * 14-07-2018
  * */
 
-public class MainController implements Initializable, DataInitializable, WebsocketReceiver, SceneRefresh {
+public class MainController implements Initializable, DataInitializable, SceneRefresh {
     private List<Label> messagesCache = new ArrayList<>();
     private User user;
     private FxmlLoader fxmlLoader;
     private ChatRoomManager chatRoomManager;
     private ConversationHandler conversationHandler;
     private List<ContactLabel> contactLabels;
-    private final int MAX_AMOUNT = 9;
     private ChatUserStatusUpdateDaemon statusUpdateDaemon;
 
     @FXML
-    private ImageView loupeButton, autonomicWindowButton, disconnectButton, bell, messageUp, messageDown;
+    private ImageView loupeButton, autonomicWindowButton, disconnectButton, bell, messageUp, messageDown, userAvatar, postButton;
+
+    @FXML
+    private VBox contactsVbox, chatWindow;
+    
+    @FXML
+    private Label settingButton, newRoom, lookForRoom, usernameField;
 
     @FXML
     private TextField loupeField;
-
-    @FXML
-    private ImageView userAvatar;
-
-    @FXML
-    private VBox contactsVbox;
-
-    @FXML
-    private VBox chatWindow;
-
-    @FXML
-    private Label usernameField;
-    
-    @FXML
-    private Label settingButton, newRoom, lookForRoom;
-
-    @FXML
-    private ImageView postButton;
 
     @FXML
     private TextArea messageField;
@@ -86,15 +67,11 @@ public class MainController implements Initializable, DataInitializable, Websock
         chatWindow.setSpacing(3);
 
         addAutonomicWindowAction();
-        addDisconnectChatAction();
         addControlPanelButtonsActions();
         addButtonActions();
-        sendMessageAction();
         searchingAction();
         addBellAction();
         contactDisplay(SessionCache.getInstance().getProfilePreferences().getContactsBook());
-        scrollMessages();
-        messagesMoving();
 
         usernameField.setText(SessionCache.getInstance().getProfilePreferences().getProfileUsername());
 
@@ -111,77 +88,20 @@ public class MainController implements Initializable, DataInitializable, Websock
     public void initData(Object data) {
         this.user = (User) data;
         this.chatRoomManager = DefaultRoomManager.getInstance();
+        this.conversationHandler = ConversationHandler.getInstance(chatRoomManager.getRoomTarget(), 100);
 
-        if (chatRoomManager.isConnected()) {
-            chatPane.setText("Pokój: " + chatRoomManager.getRoomTarget());
-            conversationHandler = ConversationHandler.getInstance(chatRoomManager.getRoomTarget(), 100);
-            conversationHandler.setWebsocketReceiver(this);
-            try {
-                conversationHandler.fetchLastMessages();
-            } catch (IOException e) {
-                new Alerts().error("Błędne hasło!", "Podane hasło jest nieprawidłowe.\nSpróbuj ponownie.", "");
-                e.printStackTrace();
-            }
-
-            if (conversationHandler.getMessages().size() > 0) {
-                displayExistingMessages();
-            }
-        }
-
-        else {
-            chatPane.setText("DISCONNECTED");
-        }
-
-    }
-
-    private void messagesMoving() {
-        Image current = messageUp.getImage();
-        messageUp.setOnMouseEntered(event -> messageUp.setImage(new Image("/img/message-up-active.png")));
-        messageUp.setOnMouseExited(event -> messageUp.setImage(current));
-        messageUp.setOnMouseClicked(event -> scrollUp(chatWindow.getChildren()));
-        messageUp.setCursor(Cursor.HAND);
-
-        Image current2 = messageDown.getImage();
-        messageDown.setOnMouseEntered(event -> messageDown.setImage(new Image("/img/message-down-active.png")));
-        messageDown.setOnMouseExited(event -> messageDown.setImage(current2));
-        messageDown.setOnMouseClicked(event -> scrollDown(chatWindow.getChildren()));
-        messageDown.setCursor(Cursor.HAND);
-    }
-
-    private void scrollMessages() {
-        chatPane.setOnScroll(event -> {
-            int currentAmount = chatWindow.getChildren().size();
-            double factor = event.getDeltaY();
-            List<Node> messages = chatWindow.getChildren();
-
-            if (factor > 0) {
-                scrollUp(messages);
-            } else if (currentAmount < MAX_AMOUNT) {
-                scrollDown(messages);
-            }
-
-        });
-
-    }
-
-    private void scrollUp(List<Node> messages) {
-        if (chatWindow.getChildren().size() <= MAX_AMOUNT && chatWindow.getChildren().size() > 0) {
-            messagesCache.add((Label) messages.get(0));
-            messages.remove(0);
-        }
-    }
-
-    private void scrollDown(List<Node> messages) {
-        if (chatWindow.getChildren().size() < MAX_AMOUNT && (messagesCache.size() - 1) >= 0) {
-            Label tmp = messagesCache.get(messagesCache.size() - 1);
-            messagesCache.remove(tmp);
-
-            List<Node> updatedMessages = new ArrayList<>();
-            updatedMessages.add(tmp);
-            updatedMessages.addAll(messages);
-            chatWindow.getChildren().clear();
-            chatWindow.getChildren().setAll(updatedMessages);
-        }
+        new ChatGuiManager.ChatGuiManagerBuilder()
+                .conversationHandler(conversationHandler)
+                .messagesCache(messagesCache)
+                .postButton(postButton)
+                .messageField(messageField)
+                .disconnectButton(disconnectButton)
+                .messageUp(messageUp)
+                .messageDown(messageDown)
+                .chatPane(chatPane)
+                .chatWindow(chatWindow)
+                .build()
+                .initChatGui();
     }
 
     private void addAutonomicWindowAction() {
@@ -192,16 +112,6 @@ public class MainController implements Initializable, DataInitializable, Websock
         autonomicWindowButton.setOnMouseEntered(event -> autonomicWindowButton.setImage(active));
         autonomicWindowButton.setOnMouseExited(event -> autonomicWindowButton.setImage(inactive));
         autonomicWindowButton.setOnMouseClicked(event -> popupChatWindow());
-    }
-
-    private void addDisconnectChatAction() {
-        Image inactive = new Image("/img/disconnect.png");
-        Image active = new Image("/img/disconnect-active.png");
-
-        disconnectButton.setCursor(Cursor.HAND);
-        disconnectButton.setOnMouseEntered(event -> disconnectButton.setImage(active));
-        disconnectButton.setOnMouseExited(event -> disconnectButton.setImage(inactive));
-        disconnectButton.setOnMouseClicked(event -> disconnectChat());
     }
 
     private void addBellAction() {
@@ -223,22 +133,10 @@ public class MainController implements Initializable, DataInitializable, Websock
     }
 
     private void popupChatWindow() {
-        fxmlLoader.loadNewStage(FxmlLoaderTemplate.SceneType.CHAT_DETACHED.getPath());
-    }
-
-    private void disconnectChat() {
-        chatRoomManager.disconnect();
-        chatWindow.getChildren().clear();
-        chatPane.setText("DISCONNECTED");
-    }
-
-
-    private void displayExistingMessages() {
-        conversationHandler.getMessages().forEach(chatMessage -> {
-            Label label = displayForeignMessage(chatMessage);
-            chatWindow.getChildren().add(label);
-            chatWindowMoving();
-        });
+        if (chatRoomManager.getRoomTarget() != null) {
+            CurrentChatCache.getInstance().setMessagesCache(messagesCache);
+            fxmlLoader.loadNewStageWithData(FxmlLoaderTemplate.SceneType.CHAT_DETACHED, conversationHandler);
+        }
     }
 
     private void addButtonActions() {
@@ -256,84 +154,11 @@ public class MainController implements Initializable, DataInitializable, Websock
             });
         }
 
-        postButton.setOnMouseEntered(event -> {
-            postButton.setImage(new Image("/img/send-active.png"));
-        });
+        postButton.setOnMouseEntered(event ->
+            postButton.setImage(new Image("/img/send-active.png")));
 
-        postButton.setOnMouseExited(event -> {
-            postButton.setImage(new Image("/img/send-inactive.png"));
-        });
-
-    }
-
-    private void sendMessageAction() {
-        postButton.setOnMouseClicked(event -> send());
-
-        messageField.setOnKeyReleased(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                send();
-            }
-        });
-    }
-
-    private void send() {
-        chatWindowMoving();
-
-        String text = messageField.getText();
-
-        if (text.isEmpty() || text.length() == 1) {
-            return;
-        }
-
-        Label message = displayMessage(text);
-        chatWindow.getChildren().add(message);
-        this.messageField.clear();
-
-        try {
-            chatRoomManager.postMessage(text);
-        } catch (Exception e) {
-            String exceptionText = e.getMessage();
-            new Alerts().websocketClosed(exceptionText);
-        }
-    }
-
-    private Label displayMessage(String text) {
-        chatWindowMoving();
-
-        Label label = new Label();
-        label.setWrapText(true);
-        label.getStyleClass().add("own_message");
-
-        LocalTime localTime = LocalTime.now();
-        String time = localTime.format(DateTimeFormatter.ofPattern("kk:mm:ss"));
-        label.setText(time + ", " +
-                SessionCache.getInstance().getProfilePreferences().getProfileUsername() + "\n> " + text);
-
-        return label;
-    }
-
-    private Label displayForeignMessage(ChatMessage chatMessage) {
-        chatWindowMoving();
-
-        Label label = new Label();
-        label.setWrapText(true);
-        label.getStyleClass().add("message");
-
-        LocalTime localTime = LocalTime.now();
-        String time = localTime.format(DateTimeFormatter.ofPattern("kk:mm:ss"));
-        label.setText(time + ", " + chatMessage.getUsernmame() + "\n> " + chatMessage.getContent());
-
-        return label;
-    }
-
-    private void chatWindowMoving() {
-        int amount = chatWindow.getChildren().size();
-
-        if (amount >= 9) {
-            Label oldest = (Label) chatWindow.getChildren().get(0);
-            messagesCache.add(oldest);
-            chatWindow.getChildren().remove(0);
-        }
+        postButton.setOnMouseExited(event ->
+            postButton.setImage(new Image("/img/send-inactive.png")));
 
     }
 
@@ -458,20 +283,5 @@ public class MainController implements Initializable, DataInitializable, Websock
 
         newRoom.setOnMouseClicked(event -> fxmlLoader.loadSameStageWithData(FxmlLoaderTemplate.SceneType.ROOM_CREATION, user, event));
     }
-
-    @Override
-    public void actionOnMessage(ChatMessage chatMessage) {
-        Label label = new Label();
-        label.setWrapText(true);
-        label.getStyleClass().add("message");
-
-        label.setText(chatMessage.getSendTime() + ", " + chatMessage.getUsernmame() + "\n> " + chatMessage.getContent());
-
-        Platform.runLater(() -> {
-            chatWindow.getChildren().add(label);
-            chatWindowMoving();
-        });
-    }
-
 
 }
