@@ -24,7 +24,7 @@ public class ChatController {
     }
 
     @MessageMapping("/main")
-    public Message defaultChat(@Payload ChatMessage chatMessage) {
+    public Message mainChat(@Payload ChatMessage chatMessage) {
         chatRoomManager.receiveMessage(chatMessage);
         return chatMessage;
     }

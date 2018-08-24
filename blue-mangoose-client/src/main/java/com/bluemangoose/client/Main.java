@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
     public static String runMode;
-    public static boolean isRunning;
+    public static volatile boolean isRunning;
 
     @Override
     public void start(Stage primaryStage) throws Exception {

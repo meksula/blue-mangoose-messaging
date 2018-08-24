@@ -2,7 +2,7 @@
 # Notice that someone can steal your credentials
 
 setting_enabled=true;
-default_chat_room=default;
+default_chat_room=;
 
-saved_user=karoladmin2;
-password=karoladmin;
+saved_user=siniaczysko;
+password=siniaczysko;

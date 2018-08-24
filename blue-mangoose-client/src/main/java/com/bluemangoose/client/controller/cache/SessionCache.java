@@ -27,6 +27,8 @@ public class SessionCache {
         return sessionCache;
     }
 
+    private String typedUsername;
+    private String typedPassword;
     private User user;
     private ProfilePreferences profilePreferences;
     private Image profilePicture;

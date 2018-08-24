@@ -3,7 +3,6 @@ package com.bluemangoose.client.controller;
 import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.controller.loader.FxmlLoader;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
-import com.bluemangoose.client.logic.daemon.ChatUserStatusUpdateDaemon;
 import com.bluemangoose.client.logic.daemon.NotificationsUpdateDaemon;
 import com.bluemangoose.client.logic.reader.DefaultSettingsManager;
 import com.bluemangoose.client.logic.reader.SettingReader;
@@ -37,6 +36,7 @@ public class LoginController implements Initializable {
     private UserCredentialExchange userCredentialExchange;
     private SettingReader settingReader;
     public static String username;
+    private SessionCache sessionCache = SessionCache.getInstance();
 
     @FXML
     private TextField usernameField;
@@ -57,13 +57,15 @@ public class LoginController implements Initializable {
         this.settingReader = new DefaultSettingsManager();
         Map<String, String> settings = settingReader.loadSettings();
 
-        usernameField.setText(settings.get("prop2"));
-        passwordForm.setText(settings.get("prop3"));
+        usernameField.setText(settings.get("prop1"));
+        passwordForm.setText(settings.get("prop2"));
     }
 
     private void loginHandler() {
         loginConfirm.setOnMouseClicked(event -> {
             if (access()) {
+                sessionCache.setTypedUsername(usernameField.getText());
+                sessionCache.setTypedPassword(passwordForm.getText());
                 LoginController.username = usernameField.getText();
                 User user = fetchUser();
                 ProfilePreferences profilePreferences;
@@ -74,10 +76,10 @@ public class LoginController implements Initializable {
                             "Prawdopodobnie Twój profil jest uszkodzony, albo serwer uległ awarii. Cierpliwości.");
                     return;
                 }
-                SessionCache.getInstance().setUser(user);
-                SessionCache.getInstance().setProfilePreferences(profilePreferences);
-                SessionCache.getInstance().setProfilePicture(fetchPicture());
-                new NotificationsUpdateDaemon(profilePreferences).updateState(user.getUserId()); //daemon
+                sessionCache.setUser(user);
+                sessionCache.setProfilePreferences(profilePreferences);
+                sessionCache.setProfilePicture(fetchPicture());
+                new NotificationsUpdateDaemon(profilePreferences).updateState(user.getUserId());
                 fxmlLoader.loadSameStageWithData(FxmlLoaderTemplate.SceneType.MAIN, user, event);
             }
             else {

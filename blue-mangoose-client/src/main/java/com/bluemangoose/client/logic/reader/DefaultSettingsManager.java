@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
  * */
 
 public class DefaultSettingsManager implements SettingReader, SettingWriter {
+    private final String CURRENT_PATH = System.getProperty("user.dir");
 
     @Override
     public Map<String, String> loadSettings() {
@@ -59,8 +60,18 @@ public class DefaultSettingsManager implements SettingReader, SettingWriter {
 
     @Override
     public void updateSettings(SettingsProperties properties, String value) {
-        InputStream input = this.getClass().getClassLoader().getResourceAsStream("config.mng");
-        String output = readFile(input);
+        String output = "";
+
+        try {
+            InputStream existed = new FileInputStream(CURRENT_PATH + "/config.mng");
+            String outputExist = readFile(existed);
+            if (!outputExist.isEmpty()) {
+                output = outputExist;
+            }
+        } catch (FileNotFoundException e) {
+            InputStream input = this.getClass().getClassLoader().getResourceAsStream("config.mng");
+            output = readFile(input);
+        }
 
         String[] parts = output.split("\n");
         parts[properties.index()] = properties.property() + value + ";";
@@ -73,7 +84,7 @@ public class DefaultSettingsManager implements SettingReader, SettingWriter {
 
         BufferedWriter writer;
         try {
-            writer = new BufferedWriter(new FileWriter("config.mng"));
+            writer = new BufferedWriter(new FileWriter(CURRENT_PATH + "/config.mng"));
             writer.write(stringBuilder.toString());
             writer.close();
 

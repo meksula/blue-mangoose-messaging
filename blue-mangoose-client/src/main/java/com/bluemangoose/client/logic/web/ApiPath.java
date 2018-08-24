@@ -36,7 +36,7 @@ public enum ApiPath {
     USER_HANDLE {
         @Override
         public String getPath() {
-            return buildUrl("api/v1/user");
+            return buildUrl("api/v1/user/" + username);
         }
     },
     PROFILE {

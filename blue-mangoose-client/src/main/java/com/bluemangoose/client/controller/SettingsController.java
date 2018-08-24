@@ -1,8 +1,13 @@
 package com.bluemangoose.client.controller;
 
+import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.controller.loader.DataInitializable;
 import com.bluemangoose.client.controller.loader.FxmlLoader;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
+import com.bluemangoose.client.logic.reader.DefaultSettingsManager;
+import com.bluemangoose.client.logic.reader.SettingReader;
+import com.bluemangoose.client.logic.reader.SettingWriter;
+import com.bluemangoose.client.logic.reader.SettingsProperties;
 import com.bluemangoose.client.logic.web.ApiPath;
 import com.bluemangoose.client.logic.web.exchange.HttpServerConnectorImpl;
 import com.bluemangoose.client.model.alert.Alerts;
@@ -10,7 +15,9 @@ import com.bluemangoose.client.model.personal.User;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
@@ -27,12 +34,24 @@ public class SettingsController implements Initializable, DataInitializable {
     private FxmlLoader fxmlLoader;
     private User user;
     private File picture;
+    private SettingWriter settingWriter;
+    private SessionCache sessionCache = SessionCache.getInstance();
 
     @FXML
     private Label path;
 
     @FXML
-    private Button choosePicture, back, post;
+    private Button choosePicture, back, post, saveProfileData;
+
+    @FXML
+    private TextField defaultRoomName;
+
+    @FXML
+    private CheckBox invisibleStatus;
+
+    public SettingsController() {
+        this.settingWriter = new DefaultSettingsManager();
+    }
 
     @Override
     public void initData(Object data) {
@@ -45,6 +64,18 @@ public class SettingsController implements Initializable, DataInitializable {
         addChooseAction();
         addPostAction();
         addBackAction();
+        addSaveProfileAction();
+    }
+
+    private void addSaveProfileAction() {
+        saveProfileData.setOnMouseClicked(event -> {
+            String username = sessionCache.getTypedUsername();
+            String password = sessionCache.getTypedPassword();
+
+            settingWriter.updateSettings(SettingsProperties.SETTING_ENABLED, "true");
+            settingWriter.updateSettings(SettingsProperties.SAVED_USER, username);
+            settingWriter.updateSettings(SettingsProperties.PASSWORD, password);
+        });
     }
 
     private void addChooseAction() {
