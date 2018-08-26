@@ -4,6 +4,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="607.0" prefWidth="665.0" styleClass="background" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bluemangoose.client.controller.HomeController">
    <children>
@@ -23,10 +24,65 @@
          </image>
       </ImageView>
       <Label layoutY="585.0" text="Karol Meksuła 2018" textFill="WHITE" />
-      <ImageView fitHeight="168.0" fitWidth="641.0" layoutX="98.0" layoutY="-14.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../img/welcome.png" />
-         </image>
-      </ImageView>
+      <Label fx:id="b" layoutX="76.0" layoutY="14.0" text="B" textFill="WHITE">
+         <font>
+            <Font size="63.0" />
+         </font>
+      </Label>
+      <Label fx:id="l" layoutX="150.0" layoutY="14.0" text="l" textFill="WHITE">
+         <font>
+            <Font size="63.0" />
+         </font>
+      </Label>
+      <Label fx:id="u" layoutX="195.0" layoutY="14.0" text="u" textFill="WHITE">
+         <font>
+            <Font size="63.0" />
+         </font>
+      </Label>
+      <Label fx:id="e" layoutX="276.0" layoutY="14.0" text="e" textFill="WHITE">
+         <font>
+            <Font size="63.0" />
+         </font>
+      </Label>
+      <Label fx:id="m" layoutX="76.0" layoutY="90.0" text="M" textFill="WHITE">
+         <font>
+            <Font size="63.0" />
+         </font>
+      </Label>
+      <Label fx:id="a" layoutX="141.0" layoutY="97.0" text="a" textFill="WHITE">
+         <font>
+            <Font size="63.0" />
+         </font>
+      </Label>
+      <Label fx:id="n" layoutX="196.0" layoutY="97.0" text="n" textFill="WHITE">
+         <font>
+            <Font size="63.0" />
+         </font>
+      </Label>
+      <Label fx:id="g" layoutX="256.0" layoutY="90.0" text="g" textFill="WHITE">
+         <font>
+            <Font size="63.0" />
+         </font>
+      </Label>
+      <Label fx:id="o1" layoutX="313.0" layoutY="90.0" text="o" textFill="WHITE">
+         <font>
+            <Font size="63.0" />
+         </font>
+      </Label>
+      <Label fx:id="o2" layoutX="368.0" layoutY="90.0" text="o" textFill="WHITE">
+         <font>
+            <Font size="63.0" />
+         </font>
+      </Label>
+      <Label fx:id="s" layoutX="424.0" layoutY="97.0" text="s" textFill="WHITE">
+         <font>
+            <Font size="63.0" />
+         </font>
+      </Label>
+      <Label fx:id="e2" layoutX="481.0" layoutY="97.0" text="e" textFill="WHITE">
+         <font>
+            <Font size="63.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

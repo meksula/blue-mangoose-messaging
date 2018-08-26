@@ -6,6 +6,14 @@
     -fx-text-fill: #f4f4ef;
 }
 
+.anim_label {
+    -fx-text-fill: #6276f4;
+}
+
+.anim_label_shine {
+    -fx-text-fill: #83bbf4;
+}
+
 .text_active {
     -fx-text-fill: #62f485;
 }
