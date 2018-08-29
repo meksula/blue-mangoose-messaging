@@ -11,7 +11,7 @@
 
 <AnchorPane fx:id="pane" prefHeight="607.0" prefWidth="665.0" styleClass="background" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bluemangoose.client.controller.RoomSearchController">
     <children>
-        <Button fx:id="back" layoutX="307.0" layoutY="522.0" mnemonicParsing="false" text="Wróć" />
+        <Button fx:id="back" layoutX="307.0" layoutY="544.0" mnemonicParsing="false" text="Wróć" />
       <Label layoutX="23.0" layoutY="8.0" text="Wybierz pokój:" textFill="WHITE">
          <font>
             <Font size="29.0" />
@@ -46,5 +46,7 @@
       <Label layoutX="388.0" layoutY="62.0" text="lp" textFill="WHITE" />
       <Label layoutX="448.0" layoutY="62.0" text="Hasło" textFill="WHITE" />
       <Label layoutX="522.0" layoutY="62.0" text="Dołącz" textFill="WHITE" />
+      <HBox fx:id="pageStrip" layoutX="131.0" layoutY="515.0" prefHeight="16.0" prefWidth="396.0" spacing="15.0" />
+      <Label layoutX="63.0" layoutY="515.0" text="Strony:" textFill="WHITE" />
     </children>
 </AnchorPane>

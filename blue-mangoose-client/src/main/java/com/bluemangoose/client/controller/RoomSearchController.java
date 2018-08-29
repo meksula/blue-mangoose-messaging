@@ -18,12 +18,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Author
@@ -36,14 +36,19 @@ public class RoomSearchController implements Initializable, DataInitializable {
     private ChatRoomManager chatRoomManager;
     private List<ChatRoom> roomList;
     private User user;
-    private final int ROOM_AMOUNT = 15;
-    private int currentRoomPage = 0;
+    public final int BEG_CONST = 16;
+    public final int ROOM_AMOUNT = 15;
+    private int currentRoomPage = 1;
+    private VBox[] boxes;
 
     @FXML
     private Button back;
 
     @FXML
     private VBox buttonList, idVbox, authorVBox, peopleNumVbox, passwordVbox;
+
+    @FXML
+    private HBox pageStrip;
 
     @FXML
     private ImageView next;
@@ -60,6 +65,7 @@ public class RoomSearchController implements Initializable, DataInitializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         VBox[] room = {idVbox, authorVBox, peopleNumVbox, passwordVbox};
+        this.boxes = room;
 
         for (VBox vBox : room) {
             vBox.setSpacing(5);
@@ -69,18 +75,28 @@ public class RoomSearchController implements Initializable, DataInitializable {
         addNextStyle();
     }
 
+    private void clearRoomBox() {
+        for (VBox box : boxes) {
+            box.getChildren().clear();
+        }
+        buttonList.getChildren().clear();
+        pageStrip.getChildren().clear();
+    }
+
     private void addNextStyle() {
         Image active = new Image("/img/next-active.png");
         Image inactice = new Image("/img/next-inactive.png");
+        next.setCursor(Cursor.HAND);
 
         next.setOnMouseEntered(event -> next.setImage(active));
         next.setOnMouseExited(event -> next.setImage(inactice));
-        next.setOnMouseClicked(event -> nextRoomPage());
-    }
-
-    private void nextRoomPage() {
-        //TODO
-        currentRoomPage++;
+        next.setOnMouseClicked(event -> {
+            if (pages() > currentRoomPage) {
+                currentRoomPage++;
+                int[] index = computeIndexes();
+                drawRooms(index[0], index[1]);
+            }
+        });
     }
 
     private void addBackButtonAction() {
@@ -88,19 +104,69 @@ public class RoomSearchController implements Initializable, DataInitializable {
     }
 
     private void drawRooms(int begin, int end) {
-        AtomicInteger count = new AtomicInteger(0);
+        clearRoomBox();
+        roomsPagination();
 
-        roomList.forEach(room -> {
-            if (count.intValue() >= begin && count.intValue() < end) {
-                idVbox.getChildren().add(createLabel(String.valueOf(room.getName())));
-                authorVBox.getChildren().add(createLabel(room.getCreatorUsername()));
-                peopleNumVbox.getChildren().add(createLabel(String.valueOf(room.getPeople())));
-                passwordVbox.getChildren().add(createLabel(String.valueOf(room.isPasswordRequired())));
-
-                buttonList.getChildren().add(createJoinButton(room).imageView);
+        for (int i = begin; i < end; i++) {
+            ChatRoom room;
+            try {
+                room = roomList.get(i);
+            } catch (IndexOutOfBoundsException exception) {
+                break;
             }
-            count.incrementAndGet();
-        });
+
+            idVbox.getChildren().add(createLabel(String.valueOf(room.getName())));
+            authorVBox.getChildren().add(createLabel(room.getCreatorUsername()));
+            peopleNumVbox.getChildren().add(createLabel(String.valueOf(room.getPeople())));
+            passwordVbox.getChildren().add(createLabel(String.valueOf(room.isPasswordRequired())));
+
+            buttonList.getChildren().add(createJoinButton(room).imageView);
+        }
+
+    }
+
+    private void roomsPagination() {
+        int rooms = roomList.size();
+        int pages = (rooms / ROOM_AMOUNT) + 1;
+
+        for(int i = 1; i < (pages + 1); i++) {
+            Label pageIndicator = new Label(String.valueOf(i));
+            pageIndicator.getStyleClass().add("text_label");
+            pageIndicator.setCursor(Cursor.HAND);
+            pageStrip.getChildren().add(pageIndicator);
+
+            pageIndicator.setOnMouseEntered(event -> {
+                pageIndicator.getStyleClass().clear();
+                pageIndicator.getStyleClass().add("text_active");
+            });
+            pageIndicator.setOnMouseExited(event -> {
+                pageIndicator.getStyleClass().clear();
+                pageIndicator.getStyleClass().add("text_label");
+            });
+            pageIndicator.setOnMouseClicked(event -> {
+                int page = Integer.parseInt(pageIndicator.getText());
+
+                if (currentRoomPage == page) {
+                    return;
+                }
+
+                this.currentRoomPage = page;
+                int[] index = computeIndexes();
+
+                clearRoomBox();
+                drawRooms(index[0], index[1]);
+            });
+        }
+    }
+
+    private int pages() {
+        return (roomList.size() / ROOM_AMOUNT) + 1;
+    }
+
+    private int[] computeIndexes() {
+        int beginIndex = BEG_CONST * (currentRoomPage - 1);
+        int lastIndex = ROOM_AMOUNT + ((ROOM_AMOUNT * (currentRoomPage - 1)) + currentRoomPage);
+        return new int[] {beginIndex, lastIndex};
     }
 
     private Label createLabel(String text) {
@@ -161,16 +227,16 @@ public class RoomSearchController implements Initializable, DataInitializable {
         private ChatRoom chatRoom;
         private ImageView imageView;
 
-        public ImageButton(ChatRoom chatRoom) {
+        ImageButton(ChatRoom chatRoom) {
             this.chatRoom = chatRoom;
             this.imageView = new ImageView();
         }
 
-        public ChatRoom getChatRoom() {
+        ChatRoom getChatRoom() {
             return chatRoom;
         }
 
-        public ImageView getImageView() {
+        ImageView getImageView() {
             return imageView;
         }
 
