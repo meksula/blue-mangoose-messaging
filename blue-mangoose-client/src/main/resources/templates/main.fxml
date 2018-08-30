@@ -85,5 +85,10 @@
             <Image url="@../img/message-down-active.png" />
          </image>
       </ImageView>
+      <ImageView fx:id="mailbox" fitHeight="20.0" fitWidth="25.0" layoutX="200.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/mailbox_inactive.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>

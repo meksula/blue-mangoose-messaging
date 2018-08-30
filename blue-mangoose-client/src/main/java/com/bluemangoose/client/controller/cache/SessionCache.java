@@ -1,13 +1,13 @@
 package com.bluemangoose.client.controller.cache;
 
+import com.bluemangoose.client.model.dto.Mail;
 import com.bluemangoose.client.model.personal.ProfilePreferences;
 import com.bluemangoose.client.model.personal.User;
 import javafx.scene.image.Image;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author
@@ -33,6 +33,7 @@ public class SessionCache {
     private ProfilePreferences profilePreferences;
     private Image profilePicture;
     private Map<String, Boolean> contactsStatus;
+    private List<Mail> mailboxList;
 
     public synchronized void updateContactStatus(Map<String, Boolean> status) {
         this.contactsStatus = Collections.synchronizedMap(status);

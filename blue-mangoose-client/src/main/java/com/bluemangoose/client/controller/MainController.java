@@ -9,6 +9,7 @@ import com.bluemangoose.client.logic.daemon.ChatUserStatusUpdateDaemon;
 import com.bluemangoose.client.logic.web.ChatRoomManager;
 import com.bluemangoose.client.logic.web.impl.DefaultRoomManager;
 import com.bluemangoose.client.logic.web.socket.ConversationHandler;
+import com.bluemangoose.client.model.dto.Mail;
 import com.bluemangoose.client.model.gui.ChatGuiManager;
 import com.bluemangoose.client.model.gui.ContactLabel;
 import com.bluemangoose.client.model.personal.Contact;
@@ -25,9 +26,10 @@ import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * @Author
+ * @author
  * Karol Meksuła
  * 14-07-2018
  * */
@@ -40,9 +42,11 @@ public class MainController implements Initializable, DataInitializable, SceneRe
     private ConversationHandler conversationHandler;
     private List<ContactLabel> contactLabels;
     private ChatUserStatusUpdateDaemon statusUpdateDaemon;
+    private AtomicBoolean mailReceived = new AtomicBoolean(false);
 
     @FXML
-    private ImageView loupeButton, autonomicWindowButton, disconnectButton, bell, messageUp, messageDown, userAvatar, postButton;
+    private ImageView loupeButton, autonomicWindowButton, disconnectButton, bell, messageUp, messageDown,
+            userAvatar, postButton, mailbox;
 
     @FXML
     private VBox contactsVbox, chatWindow;
@@ -102,6 +106,21 @@ public class MainController implements Initializable, DataInitializable, SceneRe
                 .chatWindow(chatWindow)
                 .build()
                 .initChatGui();
+
+        mailboxUpdate();
+        addMailboxAction();
+    }
+
+    private void addMailboxAction() {
+        mailbox.setCursor(Cursor.HAND);
+        Image previous = mailbox.getImage();
+        Image active = new Image("/img/mailbox_interact.png");
+        mailbox.setOnMouseEntered(event -> mailbox.setImage(active));
+        mailbox.setOnMouseExited(event -> mailbox.setImage(previous));
+        mailbox.setOnMouseClicked(event -> {
+            this.mailReceived.set(false);
+            fxmlLoader.loadNewStage("/templates/mailbox.fxml");
+        });
     }
 
     private void addAutonomicWindowAction() {
@@ -212,44 +231,109 @@ public class MainController implements Initializable, DataInitializable, SceneRe
         );
 
         statusUpdate();
+
+        if (mailboxUpdate()) {
+            mailboxIconBlinking();
+        }
+    }
+
+    private void mailboxIconBlinking() {
+        Runnable blinking = new Runnable() {
+            Image first = new Image("/img/mailbox_inactive.png");
+            Image second = new Image("/img/mailbox_received.png");
+            Image third = new Image("/img/mailbox_received_blink.png");
+            Image[] icons = { first, second, third };
+            int counter = 0;
+
+            @Override
+            public void run() {
+                while (MainController.this.mailReceived.get()) {
+                    mailbox.setImage(icons[counter]);
+
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        MainController.this.mailReceived.set(false);
+                    }
+
+                    if (counter < 2) {
+                        counter++;
+                    } else {
+                        counter = 0;
+                    }
+                }
+            }
+        };
+
+        Thread blinkThread = new Thread(blinking);
+        blinkThread.setDaemon(true);
+        blinkThread.start();
+    }
+
+    /** TODO
+     * Metoda, której zadaniem będzie sprawdzanie czy stan wiadomości się zmienił,
+     * i jeśli tak, to aktualizacja widoku,
+     * Ma to działać w taki sposób, że wątek typu daemon będzie sobie co jakiś czas pobierał aktualny stan wiadomości,
+     * a następnie zapiszemy to w Singletonie SessionCache.class.
+     * Poniższa metoda sprawdza czy stan wiadomości się zmienił i ewentualnie aktualizuje widok
+     * */
+    private boolean mailboxUpdate() {
+        List<Mail> mailList = SessionCache.getInstance().getMailboxList();
+
+        if (mailList == null) {
+            return false;
+        }
+
+        for (Mail mail : mailList) {
+            if (mail.isMailRead()) {
+                mailReceived.set(true);
+                break;
+            }
+        }
+
+        return mailReceived.get();
     }
 
     private String currentStyle;
     private void contactLabelAction(ContactLabel contactLabel) {
+        final String CONT_ONLINE = "contact_online";
+        final String CONT_ONLINE_SH = "contact_online_shine";
+        final String CONT_OFFLINE = "contact_offline";
+        final String CONT_OFFLINE_SH = "contact_offline_shine";
         contactLabel.getLabel().setOnMouseEntered(event -> {
             try {
                 currentStyle = contactLabel.getLabel().getStyleClass().get(1);
             } catch (IndexOutOfBoundsException ioobe) {
                 if (contactLabel.getContact().isOnline()) {
-                    currentStyle = "contact_online";
+                    currentStyle = CONT_ONLINE;
                 }
                 else {
-                    currentStyle = "contact_offline";
+                    currentStyle = CONT_OFFLINE;
                 }
             }
 
-            if (currentStyle.equals("contact_offline")) {
+            if (currentStyle.equals(CONT_OFFLINE)) {
                 contactLabel.getLabel().getStyleClass().clear();
-                contactLabel.getLabel().getStyleClass().add("contact_offline_shine");
-                currentStyle = "contact_offline_shine";
+                contactLabel.getLabel().getStyleClass().add(CONT_OFFLINE_SH);
+                currentStyle = CONT_OFFLINE_SH;
             }
 
-            if (currentStyle.equals("contact_online")) {
+            if (currentStyle.equals(CONT_ONLINE)) {
                 contactLabel.getLabel().getStyleClass().clear();
-                contactLabel.getLabel().getStyleClass().add("contact_online_shine");
-                currentStyle = "contact_online_shine";
+                contactLabel.getLabel().getStyleClass().add(CONT_ONLINE_SH);
+                currentStyle = CONT_ONLINE_SH;
             }
         });
 
         contactLabel.getLabel().setOnMouseExited(event -> {
-            if (currentStyle.equals("contact_online_shine")) {
+            if (currentStyle.equals(CONT_ONLINE_SH)) {
                 contactLabel.getLabel().getStyleClass().clear();
-                contactLabel.getLabel().getStyleClass().add("contact_online");
+                contactLabel.getLabel().getStyleClass().add(CONT_ONLINE);
             }
 
-            if (currentStyle.equals("contact_offline_shine")) {
+            if (currentStyle.equals(CONT_OFFLINE_SH)) {
                 contactLabel.getLabel().getStyleClass().clear();
-                contactLabel.getLabel().getStyleClass().add("contact_offline");
+                contactLabel.getLabel().getStyleClass().add(CONT_OFFLINE);
             }
         });
 
