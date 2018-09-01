@@ -1,15 +1,13 @@
 package com.meksula.chat.domain.mailbox;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.meksula.chat.domain.registration.verification.CodeGenerator;
 import lombok.Getter;
 import org.joda.time.LocalDateTime;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 /**
  * @author
@@ -42,6 +40,11 @@ public class Letter implements Comparable<Letter> {
     private String title;
     private String content;
 
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "topicId", nullable = false)
+    private Topic topic;
+
     public Letter() {}
 
     private Letter(LetterBuilder builder) {
@@ -54,10 +57,15 @@ public class Letter implements Comparable<Letter> {
         this.unsealed = builder.unsealed;
         this.title = builder.title;
         this.content = builder.content;
+        this.topic = builder.topic;
     }
 
     public void setUnsealed(boolean unsealed) {
         this.unsealed = unsealed;
+    }
+
+    public void setTopic(Topic topic) {
+        this.topic = topic;
     }
 
     @Override
@@ -84,6 +92,7 @@ public class Letter implements Comparable<Letter> {
         private boolean unsealed;
         private String title;
         private String content;
+        private Topic topic;
 
         public LetterBuilder senderId(long senderId) {
             this.senderId = senderId;
@@ -122,6 +131,11 @@ public class Letter implements Comparable<Letter> {
 
         public LetterBuilder content(String content) {
             this.content = content;
+            return this;
+        }
+
+        public LetterBuilder topic(Topic topic) {
+            this.topic = topic;
             return this;
         }
 

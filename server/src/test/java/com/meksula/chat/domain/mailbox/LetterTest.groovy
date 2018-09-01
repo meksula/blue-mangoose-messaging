@@ -1,6 +1,8 @@
 package com.meksula.chat.domain.mailbox
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.meksula.chat.repository.LetterRepository
+import com.meksula.chat.repository.TopicRepository
 import org.joda.time.LocalDateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -18,6 +20,9 @@ class LetterTest extends Specification {
     @Autowired
     LetterRepository letterRepository
 
+    @Autowired
+    TopicRepository topicRepository
+
     String id = "d9821n3923xd2"
     long senderId = 345553
     String senderUsername = "zosia_samosia"
@@ -29,8 +34,12 @@ class LetterTest extends Specification {
     String content = "To tylko wiadomość testowa, nie martw się Zosiu."
 
     Letter letter
+    Topic topic
 
     def setup() {
+        topic = new Topic()
+        topicRepository.save(topic)
+
         letter = new Letter.LetterBuilder()
                 .senderId(senderId)
                 .senderUsername(senderUsername)
@@ -40,7 +49,9 @@ class LetterTest extends Specification {
                 .unsealed(unsealed)
                 .title(title)
                 .content(content)
+                .topic(topic)
                 .build()
+
         letter.id = id
     }
 
@@ -54,6 +65,7 @@ class LetterTest extends Specification {
         letter.isUnsealed() == unsealed
         letter.getTitle() == title
         letter.getContent() == content
+        println(new ObjectMapper().writeValueAsString(letter))
     }
 
     def "save to database test"() {
@@ -67,6 +79,7 @@ class LetterTest extends Specification {
 
     def cleanup() {
         letterRepository.delete(letter)
+        topicRepository.deleteAll()
     }
 
 }
