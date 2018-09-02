@@ -64,6 +64,17 @@ public class Topic {
         this.senderId = senderId;
     }
 
+    @Override
+    public int hashCode() {
+        return topicId.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Topic other = (Topic) obj;
+        return this.topicId.equals(other.getTopicId());
+    }
+
     static class TopicBuilder {
         private String topicId;
         private long senderId;
