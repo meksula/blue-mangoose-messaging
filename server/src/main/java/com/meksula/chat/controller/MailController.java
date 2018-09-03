@@ -115,13 +115,13 @@ public class MailController {
     * */
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/topic/newest/{topicId}/{topicSize}")
-    public Topic getNewestInTopic(@PathVariable("topicId") String topicId, @PathVariable("topicSize") int topicSize) {
+    public List<Letter> getNewestInTopic(@PathVariable("topicId") String topicId, @PathVariable("topicSize") int topicSize) {
         return topicBroker.getNewestInTopic(topicId, topicSize);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/topic/list")
-    public List<TopicShort> getTopicList(Authentication authentication) {
+    public List<TopicShortInfo> getTopicList(Authentication authentication) {
         ChatUser user = (ChatUser) authentication.getPrincipal();
         return topicIndex.getTopicListByUsername(user.getUsername());
     }

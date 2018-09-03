@@ -1,5 +1,7 @@
 package com.meksula.chat.domain.mailbox;
 
+import java.util.List;
+
 /**
  * @author
  * Karol Meksuła
@@ -9,7 +11,7 @@ package com.meksula.chat.domain.mailbox;
 public interface TopicBroker {
     Topic getTopic(String topicId);
 
-    Topic getNewestInTopic(String topicId, int topicSize);
+    List<Letter> getNewestInTopic(String topicId, int topicSize);
 
     Topic sendLetter(Letter letter, String topicId);
 

@@ -1,6 +1,7 @@
 package com.meksula.chat.domain.mailbox;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author
@@ -11,9 +12,11 @@ import java.util.List;
 public interface TopicIndex {
     boolean hasNewLetters(String username);
 
-    List<TopicShort> getTopicListByUsername(String username);
+    List<TopicShortInfo> getTopicListByUsername(String username);
 
     boolean isTopicExist();
 
     void indexTopic(Topic topic);
+
+    Map<String, Integer> indexReport();
 }

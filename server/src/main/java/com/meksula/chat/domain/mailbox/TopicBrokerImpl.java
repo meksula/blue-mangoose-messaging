@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author
@@ -35,12 +37,24 @@ public class TopicBrokerImpl implements TopicBroker {
 
     @Override
     public Topic getTopic(String topicId) {
-        return null;
+        return topicRepository.findById(topicId)
+                .orElseThrow(() -> new EntityNotFoundException("Exception: Topic not exist. ID: " + topicId));
     }
 
     @Override
-    public Topic getNewestInTopic(String topicId, int topicSize) {
-        return null;
+    public List<Letter> getNewestInTopic(String topicId, int currentTopicSize) {
+        Topic topic = topicRepository.findById(topicId)
+                .orElseThrow(() -> new EntityNotFoundException("Exception: Topic not exist. ID: " + topicId));
+        List<Letter> allLetters = topic.getLetters();
+        allLetters.sort(Letter::compareTo);
+
+        int last = allLetters.size() - 1;
+
+        try {
+            return allLetters.subList(currentTopicSize, last);
+        } catch (IndexOutOfBoundsException exception) {
+            return new ArrayList<>();
+        }
     }
 
     @Override
