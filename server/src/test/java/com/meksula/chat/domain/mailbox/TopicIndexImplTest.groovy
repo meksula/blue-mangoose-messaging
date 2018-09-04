@@ -2,6 +2,7 @@ package com.meksula.chat.domain.mailbox
 
 import com.meksula.chat.repository.LetterRepository
 import com.meksula.chat.repository.TopicRepository
+import groovy.util.logging.Slf4j
 import org.joda.time.LocalDateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -13,11 +14,15 @@ import spock.lang.Specification
  * 03-09-2018
  * */
 
+@Slf4j
 @SpringBootTest
 class TopicIndexImplTest extends Specification {
 
     @Autowired
     private TopicIndexImpl topicIndex
+
+    @Autowired
+    private TopicBrokerImpl topicBroker
 
     @Autowired
     private TopicRepository topicRepository
@@ -41,26 +46,60 @@ class TopicIndexImplTest extends Specification {
 
     def "topic short info index test"() {
         when:
-        saveToDatabaseEntities(5)
+        letter = new Letter.LetterBuilder()
+                .senderId(senderId)
+                .senderUsername(senderUsername)
+                .addresseeId(addresseeId)
+                .addresseeUsername(addresseeUsername)
+                .sendTime(sendTime)
+                .unsealed(unsealed)
+                .title(title)
+                .content(content)
+                .build()
+
+        def topic = topicBroker.createTopic("topic_title", letter)
         topicIndex.updateIndexes()
 
         then:
-        println(topicIndex.toString())
-
-        cleanup:
-        topicRepository.deleteAll()
-        letterRepository.deleteAll()
+        topicRepository.findById(topic.getTopicId())
+        def map = topicIndex.indexReport()
+        map.get(TopicIndexImpl.TOPIC_SHORT_SET) == 1
+        map.get(TopicIndexImpl.LETTER_INDEX) == 1
+        map.get(TopicIndexImpl.FRESH_LETTERS_BY_USERNAME) == 1
     }
 
-    def saveToDatabaseEntities(int amount) {
-        for (int i = 0; i < amount; i++) {
-            def topic = new Topic.TopicBuilder()
+    def "get Topic List by username"() {
+        when:
+        for (int i = 0; i < 10; i++) {
+            String addresse
+            if (i % 2 == 0) {
+                addresse = "First_user"
+            } else {
+                addresse = "Second_user"
+            }
+            letter = new Letter.LetterBuilder()
                     .senderId(senderId)
                     .senderUsername(senderUsername)
-                    .addresseId(addresseeId)
-                    .addresseeUsername(addresseeUsername)
+                    .addresseeId(addresseeId)
+                    .addresseeUsername(addresse)
+                    .sendTime(sendTime)
+                    .unsealed(unsealed)
+                    .title(title)
+                    .content(content)
                     .build()
+            topicBroker.createTopic("topic_title", letter)
+        }
+        topicIndex.updateIndexes()
 
+        then:
+        topicIndex.getTopicListByUsername("First_user").size() == 5
+        topicIndex.getTopicListByUsername("Second_user").size() == 5
+    }
+
+    def "is topic exist test"() {
+        when:
+        String topicId = ""
+        for (int i = 0; i < 10; i++) {
             letter = new Letter.LetterBuilder()
                     .senderId(senderId)
                     .senderUsername(senderUsername)
@@ -70,13 +109,18 @@ class TopicIndexImplTest extends Specification {
                     .unsealed(unsealed)
                     .title(title)
                     .content(content)
-                    .topic(topic)
                     .build()
+            def topic = topicBroker.createTopic("topic_title", letter)
 
-            letterRepository.save(letter)
-            topic.addLetter(letter)
-            topicRepository.save(topic)
+            if (i == 7) {
+                topicId = topic.getTopicId()
+            }
         }
+        topicIndex.updateIndexes()
+
+        then:
+        topicIndex.isTopicExist(topicId)
+        !topicIndex.isTopicExist(topicId + "bf")
     }
 
     def "hasNewLetters test - should has new letter"() {
@@ -84,7 +128,8 @@ class TopicIndexImplTest extends Specification {
     }
 
     def cleanup() {
-
+        topicRepository.deleteAll()
+        letterRepository.deleteAll()
     }
 
 }

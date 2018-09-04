@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author
@@ -16,10 +17,20 @@ import java.util.*;
 @Service
 @Slf4j
 public class TopicIndexImpl implements TopicIndex, TopicIndexer {
+
+    /**
+     * @param Set<TopicShortInfo> topicShortSet collects all topics's shorten information in memory. Topics has used
+     *                           before specified date are ignored.
+     * @param Map<TopicShortInfo, Boolean> collects information about new letters in current topic list (above)
+     * @param Map<String, Boolean> is mapping username to fresh message boolean flag.
+     * */
     private Set<TopicShortInfo> topicShortSet;
     private Map<TopicShortInfo, Boolean> letterIndex;
     private Map<String, Boolean> freshLettersByUsername;
     private TopicRepository topicRepository;
+    public static final String TOPIC_SHORT_SET = "topicShortSet";
+    public static final String LETTER_INDEX = "letterIndex";
+    public static final String FRESH_LETTERS_BY_USERNAME = "freshLettersByUsername";
 
     @Autowired
     public void setTopicRepository(TopicRepository topicRepository) {
@@ -33,27 +44,37 @@ public class TopicIndexImpl implements TopicIndex, TopicIndexer {
 
     @Override
     public List<TopicShortInfo> getTopicListByUsername(String username) {
-        return null;
+        return topicShortSet
+                .stream()
+                .filter(topicShortInfo -> topicShortInfo.getUsernameA().equals(username)
+                                       || topicShortInfo.getUsernameB().equals(username))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public boolean isTopicExist() {
-        //najpierw w indexie
-        //potem w razie czego sięgamy do bazy
-        return false;
+    public boolean isTopicExist(String topicId) {
+        return topicShortSet
+                .stream()
+                .anyMatch(topicShortInfo -> topicShortInfo.getTopicId().equals(topicId));
     }
 
     @Override
     public void indexTopic(Topic topic) {
-        //zaindeksuj odpowiednio
+        TopicShortInfo topicShortInfo = this.topicShort(topic);
+        topicShortSet.add(topicShortInfo);
+
+        letterIndex.put(topicShortInfo, Boolean.TRUE);
+
+        freshLettersByUsername.put(topicShortInfo.getUsernameA(), Boolean.TRUE);
+        freshLettersByUsername.put(topicShortInfo.getUsernameB(), Boolean.TRUE);
     }
 
     @Override
     public Map<String, Integer> indexReport() {
         Map<String, Integer> raport = new HashMap<>();
-        raport.put("topicShortSet", topicShortSet.size());
-        raport.put("letterIndex", letterIndex.size());
-        raport.put("freshLettersByUsername", freshLettersByUsername.size());
+        raport.put(TOPIC_SHORT_SET, topicShortSet.size());
+        raport.put(LETTER_INDEX, letterIndex.size());
+        raport.put(FRESH_LETTERS_BY_USERNAME, freshLettersByUsername.size());
         return raport;
     }
 
@@ -76,12 +97,7 @@ public class TopicIndexImpl implements TopicIndex, TopicIndexer {
         }
 
         topics.forEach(topic -> {
-            TopicShortInfo shortInfo = new TopicShortInfo();
-            shortInfo.setTitle(topic.getTitle());
-            shortInfo.setInitDate(topic.getInitTimestamp());
-            shortInfo.setUsernameA(topic.getSenderUsername());
-            shortInfo.setUsernameB(topic.getAddresseeUsername());
-
+            TopicShortInfo shortInfo = topicShort(topic);
             this.topicShortSet.add(shortInfo);
 
             topic.getLetters().forEach(letter -> {
@@ -94,6 +110,15 @@ public class TopicIndexImpl implements TopicIndex, TopicIndexer {
                 }
             });
         });
+    }
+
+    private TopicShortInfo topicShort(Topic topic) {
+        TopicShortInfo shortInfo = new TopicShortInfo(topic.getTopicId());
+        shortInfo.setTitle(topic.getTitle());
+        shortInfo.setInitDate(topic.getInitTimestamp());
+        shortInfo.setUsernameA(topic.getSenderUsername());
+        shortInfo.setUsernameB(topic.getAddresseeUsername());
+        return shortInfo;
     }
 
     @Override

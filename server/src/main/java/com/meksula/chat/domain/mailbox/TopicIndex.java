@@ -14,7 +14,7 @@ public interface TopicIndex {
 
     List<TopicShortInfo> getTopicListByUsername(String username);
 
-    boolean isTopicExist();
+    boolean isTopicExist(String topicId);
 
     void indexTopic(Topic topic);
 

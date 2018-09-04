@@ -59,7 +59,7 @@ public class TopicBrokerImpl implements TopicBroker {
 
     @Override
     public Topic sendLetter(Letter letter, String topicId) {
-        boolean isTopicExist = topicIndex.isTopicExist();
+        boolean isTopicExist = topicIndex.isTopicExist(topicId);
 
         if (!isTopicExist) {
             throw new EntityNotFoundException("There is no topic with id: " + topicId);

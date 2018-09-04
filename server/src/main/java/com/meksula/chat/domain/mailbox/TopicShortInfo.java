@@ -14,8 +14,14 @@ import lombok.Setter;
 @Setter
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class TopicShortInfo {
+    private String topicId;
     private String title;
     private String usernameA;
     private String usernameB;
     private String initDate;
+
+    public TopicShortInfo(String topicId) {
+        this.topicId = topicId;
+    }
+
 }
