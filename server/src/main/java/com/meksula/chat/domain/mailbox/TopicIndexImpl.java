@@ -37,6 +37,12 @@ public class TopicIndexImpl implements TopicIndex, TopicIndexer {
         this.topicRepository = topicRepository;
     }
 
+    public TopicIndexImpl() {
+        this.topicShortSet = new HashSet<>();
+        this.letterIndex = new HashMap<>();
+        this.freshLettersByUsername = new HashMap<>();
+    }
+
     @Override
     public boolean hasNewLetters(String username) {
         return freshLettersByUsername.get(username);
@@ -80,9 +86,6 @@ public class TopicIndexImpl implements TopicIndex, TopicIndexer {
 
     @Override
     public void createIndexes() {
-        this.topicShortSet = new HashSet<>();
-        this.letterIndex = new HashMap<>();
-        this.freshLettersByUsername = new HashMap<>();
         log.debug("Indexes created.");
         updateIndexes();
     }

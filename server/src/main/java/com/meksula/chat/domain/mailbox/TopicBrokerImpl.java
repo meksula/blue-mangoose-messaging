@@ -48,7 +48,12 @@ public class TopicBrokerImpl implements TopicBroker {
         List<Letter> allLetters = topic.getLetters();
         allLetters.sort(Letter::compareTo);
 
-        int last = allLetters.size() - 1;
+        int last;
+        if (allLetters.size() - 1 == 0) {
+            last = 1;
+        } else {
+            last = allLetters.size() - 1;
+        }
 
         try {
             return allLetters.subList(currentTopicSize, last);

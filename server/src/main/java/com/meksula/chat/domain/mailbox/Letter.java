@@ -71,7 +71,7 @@ public class Letter implements Comparable<Letter> {
     @Override
     public String toString() {
         return "ID: " + id + ", SENDER: " + senderUsername + ", ADDRESSEE: " + addresseeUsername
-                + ", TIME: " + sendTime + ", UNSEALED: " + unsealed;
+                + ", TIME: " + sendTime + ", UNSEALED: " + unsealed + ", TITLE: " + title;
     }
 
     @Override
