@@ -80,3 +80,12 @@
     -fx-font-style: italic;
     -fx-text-fill: #f8927b;
 }
+
+.shine_topic {
+    -fx-background-color: #040a45;
+    -fx-text-fill: #f8f0e0;
+}
+
+.background_topic {
+    -fx-text-fill: #f8f0e0;
+}
