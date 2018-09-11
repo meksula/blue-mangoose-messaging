@@ -89,3 +89,8 @@
 .background_topic {
     -fx-text-fill: #f8f0e0;
 }
+
+.letter {
+    -fx-text-fill: #f8f0e0;
+    -fx-border-color: white;
+}

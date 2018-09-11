@@ -3,6 +3,7 @@ package com.bluemangoose.client.model.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
 @Setter
 public class Topic {
     private String title;
-    private List<Letter> letters;
+    private List<Letter> letters = new ArrayList<>();
 
     public Topic() {}
 
@@ -23,5 +24,7 @@ public class Topic {
         this.title = title;
     }
 
-
+    public void addLetter(Letter letter) {
+        letters.add(letter);
+    }
 }

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -15,9 +18,35 @@
       </Label>
       <TitledPane animated="false" layoutX="18.0" layoutY="70.0" text="Tematy">
         <content>
-          <VBox fx:id="topicField" minHeight="0.0" minWidth="0.0" prefHeight="471.0" prefWidth="200.0" styleClass="background" stylesheets="@../style.css" />
+          <VBox fx:id="topicField" minHeight="0.0" minWidth="0.0" prefHeight="462.0" prefWidth="200.0" styleClass="background" stylesheets="@../style.css" />
         </content>
       </TitledPane>
-      <VBox fx:id="lettersField" layoutX="237.0" layoutY="70.0" prefHeight="498.0" prefWidth="503.0" />
+      <VBox fx:id="lettersField" layoutX="248.0" layoutY="70.0" prefHeight="488.0" prefWidth="492.0" />
+      <Label layoutX="18.0" layoutY="54.0" text="Liczba tematów:" textFill="WHITE" />
+      <Label fx:id="topicAmount" layoutX="132.0" layoutY="54.0" prefHeight="16.0" prefWidth="42.0" textFill="WHITE" />
+      <ImageView fx:id="newTopic" fitHeight="29.0" fitWidth="90.0" layoutX="421.0" layoutY="38.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/new-topic-inactive.png" />
+         </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ImageView>
+      <ImageView fx:id="removeTopic" fitHeight="29.0" fitWidth="90.0" layoutX="647.0" layoutY="37.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/remove-topic-inactive.png" />
+         </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ImageView>
+      <ImageView fx:id="responseTopic" fitHeight="29.0" fitWidth="90.0" layoutX="535.0" layoutY="37.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/response-topic-inactive.png" />
+         </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ImageView>
    </children>
 </AnchorPane>
