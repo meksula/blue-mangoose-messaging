@@ -14,12 +14,21 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class Letter {
-    private String authorUsername = "Kazik";
-    private String addresseeUsername = "Adresat";
+    private String date;
+    private String id;
+    private String title;
     private String content;
-    private String date = String.valueOf(LocalDateTime.now());
+    private long senderId;
+    private String senderUsername;
+    private long addresseeId;
+    private String addresseeUsername;
+    private LocalDateTime sendTime;
+    private boolean unsealed;
 
     public Letter(String content) {
         this.content = content;
     }
+
+    public Letter() {}
+
 }

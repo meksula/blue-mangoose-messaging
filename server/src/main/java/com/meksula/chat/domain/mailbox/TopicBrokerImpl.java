@@ -1,5 +1,6 @@
 package com.meksula.chat.domain.mailbox;
 
+import com.meksula.chat.domain.registration.verification.CodeGenerator;
 import com.meksula.chat.repository.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,6 +96,15 @@ public class TopicBrokerImpl implements TopicBroker {
         letter.setTopic(topic);
         topic.addLetter(letter);
         topicIndex.indexTopic(topic);
+
+        if (topic.getTopicId() == null || topic.getTopicId().isEmpty()) {
+            topic.setTopicId(CodeGenerator.generateCode(10));
+        }
+
+        if (letter.getId() == null || letter.getId().isEmpty()) {
+            letter.setId(CodeGenerator.generateCode(10));
+        }
+
         return topicRepository.save(topic);
     }
 

@@ -187,6 +187,18 @@ public class FxmlLoaderTemplate implements FxmlLoader {
             public String getPath() {
                 return "/templates/detached_notification.fxml";
             }
+
+        }, LETTER_EDITOR {
+            @Override
+            protected void loadData(FXMLLoader loader, Object object) {
+                SendLetterAlertController controller = loader.getController();
+                controller.initData(object);
+            }
+
+            @Override
+            public String getPath() {
+                return "/templates/new_letter.fxml";
+            }
         };
 
         protected abstract void loadData(final FXMLLoader loader, final Object object);

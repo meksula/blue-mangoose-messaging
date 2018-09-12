@@ -68,6 +68,10 @@ public class Letter implements Comparable<Letter> {
         this.topic = topic;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "ID: " + id + ", SENDER: " + senderUsername + ", ADDRESSEE: " + addresseeUsername

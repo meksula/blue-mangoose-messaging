@@ -133,6 +133,24 @@ public enum ApiPath {
         public String getPath() {
             return buildUrl("api/v1/social/status/friends");
         }
+    },
+    TOPIC_INFO {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/mail/topic/list");
+        }
+    },
+    CREATE_TOPIC {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/mail/topic/new/" + title);
+        }
+    },
+    WHOLE_TOPIC {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/mail/topic/" + topicId);
+        }
     };
 
     final String LOCALHOST = "http://localhost:8060/";
@@ -140,15 +158,25 @@ public enum ApiPath {
 
     public String username;
     public long notificationId;
+    public String title;
+    public String topicId;
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public abstract String getPath();
 
     public void setNotificationId(long notificationId) {
         this.notificationId = notificationId;
+    }
+
+    public void setTopicId(String topicId) {
+        this.topicId = topicId;
     }
 
     public String buildUrl(final String PATH) {

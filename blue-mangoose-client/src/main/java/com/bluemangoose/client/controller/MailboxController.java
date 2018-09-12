@@ -1,21 +1,26 @@
 package com.bluemangoose.client.controller;
 
+import com.bluemangoose.client.controller.cache.SessionCache;
+import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
+import com.bluemangoose.client.logic.web.mailbox.MailboxLetterExchange;
+import com.bluemangoose.client.logic.web.mailbox.MailboxLetterExchangeImpl;
+import com.bluemangoose.client.logic.web.mailbox.TopicShortInfo;
 import com.bluemangoose.client.model.dto.Letter;
 import com.bluemangoose.client.model.dto.Topic;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -26,13 +31,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public class MailboxController implements Initializable {
-    private List<Topic> topicList = new ArrayList<>();
+    private List<TopicShortInfo> topicList = new ArrayList<>();
     private List<Label> topicLetterList = new ArrayList<>();
     private List<Label> lettersLabelBufor = new ArrayList<>();
     private final int MAX = 8;
     private final int MAX_LETTERS = 3;
     private AtomicInteger topicCounter = new AtomicInteger();
     private AtomicInteger letterCounter = new AtomicInteger();
+    private MailboxLetterExchange mailboxLetterExchange = new MailboxLetterExchangeImpl();
+    private TopicShortInfo current;
 
     @FXML
     private VBox topicField;
@@ -48,25 +55,10 @@ public class MailboxController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Topic topic = new Topic("topic1 ");
-        Topic topic2 = new Topic("topic2");
-        Topic topic3 = new Topic("topic3");
-        Topic topic4 = new Topic("topic4");
-        Topic topic5 = new Topic("topic5");
-        Topic topic6 = new Topic("topic6");
-        Topic topic7 = new Topic("topic7");
-        Topic topic8 = new Topic("topic8");
-        Topic topic9 = new Topic("topic9");
-        Topic topic10 = new Topic("topic10");
-        Topic topic11 = new Topic("topic11");
-        topicList.addAll(Arrays.asList(topic, topic2, topic3, topic4, topic5, topic6, topic7, topic8, topic9, topic10, topic11));
-
-        for (int i = 0; i < 4; i++) {
-            topic2.addLetter(new Letter("Letter " + i + "|||" + "This is where our \"deep study\" of machine learning begins. We introduce some of the core building blocks and concepts that we will use throughout the remainder of this course: input space, action space, outcome space, prediction functions, loss functions, and hypothesis spaces. We present our first machine learning method: empirical risk minimization. We also highlight the issue of overfitting, which may occur when we find the empirical risk minimizer over too large a hypothesis space."));
-        }
-
-        for (int i = 0; i < 4; i++) {
-            topic4.addLetter(new Letter("Letter " + i+100 + "|||" + "This is where our \"deep study\" of machine learning begins. We introduce some of the core building blocks and concepts that we will use throughout the remainder of this course: input space, action space, outcome space, prediction functions, loss functions, and hypothesis spaces. We present our first machine learning method: empirical risk minimization. We also highlight the issue of overfitting, which may occur when we find the empirical risk minimizer over too large a hypothesis space."));
+        try {
+            topicList = new MailboxLetterExchangeImpl().getTopicsShortInfo();
+        } catch (IOException e) {
+            log.debug("Cannot receive shorten list of Topics. " + e.getCause());
         }
 
         lettersField.setSpacing(8);
@@ -87,7 +79,18 @@ public class MailboxController implements Initializable {
         newTopic.setOnMouseEntered(event -> newTopic.setImage(active));
         newTopic.setOnMouseExited(event -> newTopic.setImage(inactive));
         newTopic.setOnMouseClicked(event -> {
-
+            Letter letter = new Letter();
+            letter.setTitle("Trial topic");
+            letter.setContent("Przykładowy list");
+            letter.setSenderUsername(SessionCache.getInstance().getProfilePreferences().getProfileUsername());
+            letter.setAddresseeUsername("karoladmin");
+            letter.setDate(String.valueOf(LocalDateTime.now()));
+            try {
+                Topic created = mailboxLetterExchange.createTopic(letter);
+                System.out.println(created.getTitle() + ", " + created.getLetters());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
 
@@ -108,9 +111,10 @@ public class MailboxController implements Initializable {
 
         responseTopic.setOnMouseEntered(event -> responseTopic.setImage(active));
         responseTopic.setOnMouseExited(event -> responseTopic.setImage(inactive));
-        responseTopic.setOnMouseClicked(event -> {
-
-        });
+        responseTopic.setOnMouseClicked(event ->
+            new FxmlLoaderTemplate()
+                    .loadNewStageWithData(FxmlLoaderTemplate.SceneType.LETTER_EDITOR, assgignSeccondSide(current))
+        );
     }
 
     private void lettersFieldScrolling() {
@@ -129,8 +133,12 @@ public class MailboxController implements Initializable {
 
     private void displayMaxTopic() {
         for (int i = 0; i < MAX; i++) {
-            Label topicLabel = topicLetterList.get(i);
-            topicField.getChildren().add(topicLabel);
+            try {
+                Label topicLabel = topicLetterList.get(i);
+                topicField.getChildren().add(topicLabel);
+            } catch (IndexOutOfBoundsException exception) {
+                break;
+            }
         }
     }
 
@@ -139,7 +147,7 @@ public class MailboxController implements Initializable {
         topicList.forEach(this::createLabel);
     }
 
-    private void createLabel(Topic topic) {
+    private void createLabel(TopicShortInfo topic) {
         Label label = new Label();
         label.setMinWidth(180);
         label.setMinHeight(40);
@@ -159,12 +167,15 @@ public class MailboxController implements Initializable {
             label.getStyleClass().add("background_topic");
         });
 
-        label.setOnMouseClicked(event -> fetchLetters(topic));
+        label.setOnMouseClicked(event -> {
+            this.current = topic;
+            fetchLetters(topic);
+        });
         topicLetterList.add(label);
     }
 
-    private void fetchLetters(Topic topic) {
-        //TODO pobieranie listów z tematu
+    private void fetchLetters(TopicShortInfo topicShortInfo) {
+        Topic topic = mailboxLetterExchange.fetchTopic(topicShortInfo.getTopicId());
 
         createLettersLabel(topic.getLetters());
         drawLetters(0, MAX_LETTERS);
@@ -200,19 +211,29 @@ public class MailboxController implements Initializable {
         label.getStyleClass().add("letter");
         label.setMinWidth(490);
         label.setWrapText(true);
-        label.setText("Napisał: " + letter.getAuthorUsername() + ", data: " + letter.getDate() + "\n\n" + letter.getContent());
-
+        label.setText("Napisał: " + letter.getSenderUsername() + ", data: " + letter.getDate() + "\n\n" + letter.getContent());
         return label;
     }
 
-    private void addTextLabel(Topic topic, Label label) {
+    private void addTextLabel(TopicShortInfo topic, Label label) {
         String title;
         if (topic.getTitle().length() > 25) {
             title = topic.getTitle().substring(0, 25) + "...";
         } else {
             title = topic.getTitle();
         }
-        label.setText(title + "\nZ: Rozmówca" + "\n20-10-2018");  //TODO zmień to
+
+        String secondSide = assgignSeccondSide(topic);
+
+        label.setText(title + "\nZ: " + secondSide + "\n" + topic.getInitDate());
+    }
+
+    private String assgignSeccondSide(TopicShortInfo topic) {
+        if (topic.getUsernameA().equals(SessionCache.getInstance().getProfilePreferences().getProfileUsername())) {
+            return topic.getUsernameB();
+        } else {
+            return topic.getUsernameA();
+        }
     }
 
     private void topicListScrolling() {

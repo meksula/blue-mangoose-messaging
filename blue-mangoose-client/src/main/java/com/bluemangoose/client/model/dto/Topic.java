@@ -1,5 +1,6 @@
 package com.bluemangoose.client.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +16,13 @@ import java.util.List;
 @Getter
 @Setter
 public class Topic {
+    private String topicId;
+    private long senderId;
+    private String senderUsername;
+    private long addresseeId;
+    private String addresseeUsername;
+    private String initTimestamp;
+    private boolean overshadowed;
     private String title;
     private List<Letter> letters = new ArrayList<>();
 
@@ -27,4 +35,6 @@ public class Topic {
     public void addLetter(Letter letter) {
         letters.add(letter);
     }
+
+
 }

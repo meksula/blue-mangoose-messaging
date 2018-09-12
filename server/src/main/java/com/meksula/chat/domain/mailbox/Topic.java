@@ -56,6 +56,10 @@ public class Topic {
         this.letters.add(letter);
     }
 
+    public void setTopicId(String topicId) {
+        this.topicId = topicId;
+    }
+
     public void setAddresseeId(long addresseeId) {
         this.addresseeId = addresseeId;
     }
