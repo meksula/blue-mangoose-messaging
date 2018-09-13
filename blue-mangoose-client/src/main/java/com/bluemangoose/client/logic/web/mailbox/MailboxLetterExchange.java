@@ -19,5 +19,5 @@ public interface MailboxLetterExchange {
 
     Topic fetchTopic(String topicId);
 
-    Letter sendLetter(Letter letter);
+    Letter sendLetter(Letter letter, String topicId);
 }

@@ -57,8 +57,11 @@ public class MailboxLetterExchangeImpl implements MailboxLetterExchange {
     }
 
     @Override
-    public Letter sendLetter(Letter letter) {
-        return null;
+    public Letter sendLetter(Letter letter, String topicId) {
+        ApiPath apiPath = ApiPath.SEND_LETTER;
+        apiPath.setTopicId(topicId);
+        connector.post(letter, apiPath);
+        return letter;
     }
 
 }

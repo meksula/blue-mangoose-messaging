@@ -4,13 +4,16 @@ import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.controller.loader.DataInitializable;
 import com.bluemangoose.client.logic.web.mailbox.MailboxLetterExchange;
 import com.bluemangoose.client.logic.web.mailbox.MailboxLetterExchangeImpl;
+import com.bluemangoose.client.logic.web.mailbox.MailboxTemporaryCache;
 import com.bluemangoose.client.model.alert.Alerts;
 import com.bluemangoose.client.model.dto.Letter;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -60,7 +63,8 @@ public class SendLetterAlertController implements Initializable, DataInitializab
             }
 
             Letter letter = letterBuild();
-            mailboxLetterExchange.sendLetter(letter);
+            mailboxLetterExchange.sendLetter(letter, MailboxTemporaryCache.getCurrentTopic());
+            close(sendLetterButton);
         });
     }
 
@@ -70,18 +74,25 @@ public class SendLetterAlertController implements Initializable, DataInitializab
 
         cancelButton.setOnMouseEntered(event -> cancelButton.setImage(active));
         cancelButton.setOnMouseExited(event -> cancelButton.setImage(inactive));
-        cancelButton.setOnMouseClicked(event -> {});
+        cancelButton.setOnMouseClicked(event -> {
+            close(cancelButton);
+        });
     }
 
     private Letter letterBuild() {
         Letter letter = new Letter();
         letter.setContent(textArea.getText());
-        letter.setDate(LocalDateTime.now().toString());
+        letter.setSendTime(LocalDateTime.now());
         letter.setSenderUsername(SessionCache.getInstance().getProfilePreferences().getProfileUsername());
         letter.setAddresseeUsername(addresseUsername);
         letter.setUnsealed(false);
 
         return letter;
+    }
+
+    private void close(Node node) {
+        Stage stage = (Stage) node.getScene().getWindow();
+        stage.close();
     }
 
 }

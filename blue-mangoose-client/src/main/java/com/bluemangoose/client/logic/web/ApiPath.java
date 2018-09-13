@@ -151,6 +151,12 @@ public enum ApiPath {
         public String getPath() {
             return buildUrl("api/v1/mail/topic/" + topicId);
         }
+    },
+    SEND_LETTER {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/mail/topic/" + topicId);
+        }
     };
 
     final String LOCALHOST = "http://localhost:8060/";

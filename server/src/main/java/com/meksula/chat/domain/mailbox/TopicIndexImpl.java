@@ -67,7 +67,12 @@ public class TopicIndexImpl implements TopicIndex, TopicIndexer {
     @Override
     public void indexTopic(Topic topic) {
         TopicShortInfo topicShortInfo = this.topicShort(topic);
-        topicShortSet.add(topicShortInfo);
+
+        if (topicShortSet.contains(topicShortInfo)) {
+            log.debug("TopicShortSet contains received topic.");
+        } else {
+            topicShortSet.add(topicShortInfo);
+        }
 
         letterIndex.put(topicShortInfo, Boolean.TRUE);
 

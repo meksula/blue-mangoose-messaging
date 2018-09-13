@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class Letter {
-    private String date;
     private String id;
     private String title;
     private String content;

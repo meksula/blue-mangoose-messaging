@@ -4,7 +4,9 @@ import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
 import com.bluemangoose.client.logic.web.mailbox.MailboxLetterExchange;
 import com.bluemangoose.client.logic.web.mailbox.MailboxLetterExchangeImpl;
+import com.bluemangoose.client.logic.web.mailbox.MailboxTemporaryCache;
 import com.bluemangoose.client.logic.web.mailbox.TopicShortInfo;
+import com.bluemangoose.client.model.alert.Alerts;
 import com.bluemangoose.client.model.dto.Letter;
 import com.bluemangoose.client.model.dto.Topic;
 import javafx.fxml.FXML;
@@ -20,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -84,7 +87,7 @@ public class MailboxController implements Initializable {
             letter.setContent("Przykładowy list");
             letter.setSenderUsername(SessionCache.getInstance().getProfilePreferences().getProfileUsername());
             letter.setAddresseeUsername("karoladmin");
-            letter.setDate(String.valueOf(LocalDateTime.now()));
+            letter.setSendTime(LocalDateTime.now());
             try {
                 Topic created = mailboxLetterExchange.createTopic(letter);
                 System.out.println(created.getTitle() + ", " + created.getLetters());
@@ -111,10 +114,17 @@ public class MailboxController implements Initializable {
 
         responseTopic.setOnMouseEntered(event -> responseTopic.setImage(active));
         responseTopic.setOnMouseExited(event -> responseTopic.setImage(inactive));
-        responseTopic.setOnMouseClicked(event ->
+        responseTopic.setOnMouseClicked(event -> {
+            if (current == null) {
+                new Alerts().error("Błąd", "Wybierz temat.", "Nie wybrałeś żadnego tematu, na który" +
+                        " chcesz odpowiedzieć.");
+                return;
+            }
+
+            MailboxTemporaryCache.setCurrentTopic(current.getTopicId());
             new FxmlLoaderTemplate()
-                    .loadNewStageWithData(FxmlLoaderTemplate.SceneType.LETTER_EDITOR, assgignSeccondSide(current))
-        );
+                    .loadNewStageWithData(FxmlLoaderTemplate.SceneType.LETTER_EDITOR, assgignSeccondSide(current));
+        });
     }
 
     private void lettersFieldScrolling() {
@@ -211,7 +221,8 @@ public class MailboxController implements Initializable {
         label.getStyleClass().add("letter");
         label.setMinWidth(490);
         label.setWrapText(true);
-        label.setText("Napisał: " + letter.getSenderUsername() + ", data: " + letter.getDate() + "\n\n" + letter.getContent());
+        label.setText("Napisał: " + letter.getSenderUsername() + ", data: " + letter.getSendTime()
+                + "\n\n" + letter.getContent());
         return label;
     }
 

@@ -24,4 +24,15 @@ public class TopicShortInfo {
         this.topicId = topicId;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        TopicShortInfo foreign = (TopicShortInfo) obj;
+        return this.topicId.equals(foreign.getTopicId());
+    }
+
+    @Override
+    public int hashCode() {
+        return topicId.hashCode();
+    }
+
 }
