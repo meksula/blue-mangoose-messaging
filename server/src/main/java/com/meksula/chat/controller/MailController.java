@@ -126,4 +126,11 @@ public class MailController {
         return topicIndex.getTopicListByUsername(user.getUsername());
     }
 
+    @DeleteMapping("/topic/{topicId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteLetterOneSide(@PathVariable("topicId") String topicId, Authentication authentication) {
+        ChatUser chatUser = (ChatUser) authentication.getPrincipal();
+        topicBroker.deleteOneSide(chatUser, topicId);
+    }
+
 }

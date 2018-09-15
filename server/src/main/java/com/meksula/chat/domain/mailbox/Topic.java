@@ -52,6 +52,17 @@ public class Topic {
         this.title = topicBuilder.title;
     }
 
+    String[] changeConversationSides(String sideUsername) {
+        if (addresseeUsername.equals(sideUsername)) {
+            addresseeUsername = null;
+        }
+        if (senderUsername.equals(sideUsername)) {
+            senderUsername = null;
+        }
+
+        return new String[] {addresseeUsername, senderUsername};
+    }
+
     public void addLetter(Letter letter) {
         this.letters.add(letter);
     }

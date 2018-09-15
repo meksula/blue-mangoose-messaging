@@ -7,16 +7,18 @@ import com.bluemangoose.client.logic.web.mailbox.MailboxLetterExchangeImpl;
 import com.bluemangoose.client.logic.web.mailbox.MailboxTemporaryCache;
 import com.bluemangoose.client.model.alert.Alerts;
 import com.bluemangoose.client.model.dto.Letter;
+import com.bluemangoose.client.model.dto.Mail;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
+import org.joda.time.LocalDateTime;
 
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
 /**
@@ -64,6 +66,7 @@ public class SendLetterAlertController implements Initializable, DataInitializab
 
             Letter letter = letterBuild();
             mailboxLetterExchange.sendLetter(letter, MailboxTemporaryCache.getCurrentTopic());
+            MailboxTemporaryCache.getCurrentMailboxController().drawNewestLetter(letter);
             close(sendLetterButton);
         });
     }
@@ -82,7 +85,6 @@ public class SendLetterAlertController implements Initializable, DataInitializab
     private Letter letterBuild() {
         Letter letter = new Letter();
         letter.setContent(textArea.getText());
-        letter.setSendTime(LocalDateTime.now());
         letter.setSenderUsername(SessionCache.getInstance().getProfilePreferences().getProfileUsername());
         letter.setAddresseeUsername(addresseUsername);
         letter.setUnsealed(false);

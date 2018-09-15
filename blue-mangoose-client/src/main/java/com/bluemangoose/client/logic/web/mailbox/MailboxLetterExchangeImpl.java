@@ -52,6 +52,7 @@ public class MailboxLetterExchangeImpl implements MailboxLetterExchange {
         try {
             return mapper.readValue(result, Topic.class);
         } catch (IOException e) {
+            e.printStackTrace();
             return null;
         }
     }

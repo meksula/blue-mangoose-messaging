@@ -127,6 +127,18 @@ class TopicIndexImplTest extends Specification {
 
     }
 
+    def "delete from index test" () {
+        setup:
+        def id = "2m9d3293m"
+        def topic = new Topic()
+        topic.topicId = id
+        topicIndex.indexTopic(topic)
+        def topicShorten = new TopicShortInfo(id)
+
+        expect:
+        topicShorten == new TopicShortInfo(topicShorten.getTopicId())
+    }
+
     def cleanup() {
         topicRepository.deleteAll()
         letterRepository.deleteAll()

@@ -1,9 +1,9 @@
 package com.bluemangoose.client.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
+import org.joda.time.LocalDateTime;
 
 /**
  * @author
@@ -21,7 +21,11 @@ public class Letter {
     private String senderUsername;
     private long addresseeId;
     private String addresseeUsername;
-    private LocalDateTime sendTime;
+    private String sendTimestamp;
+
+    @JsonIgnore
+    private LocalDateTime parsedTimestamp;
+
     private boolean unsealed;
 
     public Letter(String content) {
@@ -30,4 +34,8 @@ public class Letter {
 
     public Letter() {}
 
+    @Override
+    public String toString() {
+        return "Title: " + title + "; Content: " + content + "; Send time: " + sendTimestamp;
+    }
 }

@@ -157,6 +157,12 @@ public enum ApiPath {
         public String getPath() {
             return buildUrl("api/v1/mail/topic/" + topicId);
         }
+    },
+    DELETE_TOPIC_ONE_SIDE {
+        @Override
+        public String getPath() {
+            return buildUrl("api/v1/mail/topic/" + topicId);
+        }
     };
 
     final String LOCALHOST = "http://localhost:8060/";

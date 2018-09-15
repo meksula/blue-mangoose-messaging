@@ -34,8 +34,10 @@ public class Letter implements Comparable<Letter> {
     private long addresseeId;
     private String addresseeUsername;
 
+    @JsonIgnore
     private LocalDateTime sendTime;
     private boolean unsealed;
+    private String sendTimestamp;
 
     private String title;
     private String content;
@@ -45,7 +47,9 @@ public class Letter implements Comparable<Letter> {
     @JoinColumn(name = "topicId", nullable = false)
     private Topic topic;
 
-    public Letter() {}
+    public Letter() {
+        setSendTimestamp();
+    }
 
     private Letter(LetterBuilder builder) {
         this.id = builder.id;
@@ -58,6 +62,14 @@ public class Letter implements Comparable<Letter> {
         this.title = builder.title;
         this.content = builder.content;
         this.topic = builder.topic;
+        setSendTimestamp();
+    }
+
+    void setSendTimestamp() {
+        if (sendTime == null) {
+            this.sendTime = LocalDateTime.now();
+        }
+        this.sendTimestamp = sendTime.toString();
     }
 
     public void setUnsealed(boolean unsealed) {

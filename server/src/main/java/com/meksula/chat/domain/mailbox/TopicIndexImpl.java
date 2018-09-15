@@ -90,6 +90,22 @@ public class TopicIndexImpl implements TopicIndex, TopicIndexer {
     }
 
     @Override
+    public void deleteOneSideOfConversation(String topicId, String username) {
+        if (topicShortSet.contains(new TopicShortInfo(topicId))) {
+            topicShortSet.iterator().forEachRemaining(topicShortInfo -> {
+                if (topicShortInfo.getTopicId().equals(topicId)) {
+                    if (topicShortInfo.getUsernameA().equals(username)) {
+                        topicShortInfo.setUsernameA("");
+                    }
+                    if (topicShortInfo.getUsernameB().equals(username)) {
+                        topicShortInfo.setUsernameB("");
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
     public void createIndexes() {
         log.debug("Indexes created.");
         updateIndexes();

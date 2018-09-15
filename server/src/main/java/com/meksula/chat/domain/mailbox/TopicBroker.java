@@ -1,5 +1,7 @@
 package com.meksula.chat.domain.mailbox;
 
+import com.meksula.chat.domain.user.ChatUser;
+
 import java.util.List;
 
 /**
@@ -16,4 +18,6 @@ public interface TopicBroker {
     Topic sendLetter(Letter letter, String topicId);
 
     Topic createTopic(String title, Letter initLetter);
+
+    void deleteOneSide(ChatUser chatUser, String topicId);
 }

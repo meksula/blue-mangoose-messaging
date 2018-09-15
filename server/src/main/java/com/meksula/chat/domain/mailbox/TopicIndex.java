@@ -19,4 +19,6 @@ public interface TopicIndex {
     void indexTopic(Topic topic);
 
     Map<String, Integer> indexReport();
+
+    void deleteOneSideOfConversation(String topicId, String username);
 }

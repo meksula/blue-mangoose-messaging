@@ -1,6 +1,7 @@
 package com.meksula.chat.domain.mailbox;
 
 import com.meksula.chat.domain.registration.verification.CodeGenerator;
+import com.meksula.chat.domain.user.ChatUser;
 import com.meksula.chat.repository.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -92,7 +93,17 @@ public class TopicBrokerImpl implements TopicBroker {
         return saveAndIndexTopic(topic, initLetter);
     }
 
+    @Override
+    public void deleteOneSide(ChatUser chatUser, String topicId) {
+        topicIndex.deleteOneSideOfConversation(topicId, chatUser.getUsername());
+        Topic topic = topicRepository.findById(topicId)
+                .orElseThrow(() -> new EntityNotFoundException("Topic not found [ID: " + topicId + "]"));
+        topic.changeConversationSides(chatUser.getUsername());
+        topicRepository.save(topic);
+    }
+
     private Topic saveAndIndexTopic(Topic topic, Letter letter) {
+        letter.setSendTimestamp();
         letter.setTopic(topic);
         topic.addLetter(letter);
         topicIndex.indexTopic(topic);

@@ -94,3 +94,10 @@
     -fx-text-fill: #f8f0e0;
     -fx-border-color: white;
 }
+
+.letter_shine {
+    -fx-text-fill: #f8f0e0;
+    -fx-border-color: #ff2418;
+    /*-fx-border-width: 7;*/
+    -fx-background-color: #393caa;
+}

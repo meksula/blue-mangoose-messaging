@@ -2,6 +2,8 @@ package com.bluemangoose.client.controller;
 
 import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
+import com.bluemangoose.client.logic.web.ApiPath;
+import com.bluemangoose.client.logic.web.exchange.HttpServerConnectorImpl;
 import com.bluemangoose.client.logic.web.mailbox.MailboxLetterExchange;
 import com.bluemangoose.client.logic.web.mailbox.MailboxLetterExchangeImpl;
 import com.bluemangoose.client.logic.web.mailbox.MailboxTemporaryCache;
@@ -13,16 +15,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
 
 import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -38,7 +39,7 @@ public class MailboxController implements Initializable {
     private List<Label> topicLetterList = new ArrayList<>();
     private List<Label> lettersLabelBufor = new ArrayList<>();
     private final int MAX = 8;
-    private final int MAX_LETTERS = 3;
+    private final int MAX_LETTERS = 5;
     private AtomicInteger topicCounter = new AtomicInteger();
     private AtomicInteger letterCounter = new AtomicInteger();
     private MailboxLetterExchange mailboxLetterExchange = new MailboxLetterExchangeImpl();
@@ -87,10 +88,8 @@ public class MailboxController implements Initializable {
             letter.setContent("Przykładowy list");
             letter.setSenderUsername(SessionCache.getInstance().getProfilePreferences().getProfileUsername());
             letter.setAddresseeUsername("karoladmin");
-            letter.setSendTime(LocalDateTime.now());
             try {
-                Topic created = mailboxLetterExchange.createTopic(letter);
-                System.out.println(created.getTitle() + ", " + created.getLetters());
+                mailboxLetterExchange.createTopic(letter);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -104,7 +103,15 @@ public class MailboxController implements Initializable {
         removeTopic.setOnMouseEntered(event -> removeTopic.setImage(active));
         removeTopic.setOnMouseExited(event -> removeTopic.setImage(inactive));
         removeTopic.setOnMouseClicked(event -> {
+            if (current == null) {
+                new Alerts().other("Usuwanie tematu", "Kliknij najpierw na odpowiedni temat, który chcesz usunąć.", null);
+                return;
+            }
 
+            ApiPath path = ApiPath.DELETE_TOPIC_ONE_SIDE;
+            path.topicId = current.getTopicId();
+            new HttpServerConnectorImpl<>(String.class).delete(path);
+            new Alerts().other("Usunięto", "Usunąłeś swoją konwersację.", null);
         });
     }
 
@@ -122,6 +129,7 @@ public class MailboxController implements Initializable {
             }
 
             MailboxTemporaryCache.setCurrentTopic(current.getTopicId());
+            MailboxTemporaryCache.setCurrentMailboxController(this);
             new FxmlLoaderTemplate()
                     .loadNewStageWithData(FxmlLoaderTemplate.SceneType.LETTER_EDITOR, assgignSeccondSide(current));
         });
@@ -187,8 +195,28 @@ public class MailboxController implements Initializable {
     private void fetchLetters(TopicShortInfo topicShortInfo) {
         Topic topic = mailboxLetterExchange.fetchTopic(topicShortInfo.getTopicId());
 
+        topic.getLetters().forEach(letter -> {
+            if (letter.getSendTimestamp() != null) {
+                LocalDateTime dateTime = LocalDateTime.parse(letter.getSendTimestamp());
+                letter.setParsedTimestamp(dateTime);
+            }
+        });
+
+        sortLetters(topic.getLetters());
         createLettersLabel(topic.getLetters());
         drawLetters(0, MAX_LETTERS);
+    }
+
+    private void sortLetters(List<Letter> letters) {
+        letters.sort((letter1, letter2) -> {
+            if (letter1.getParsedTimestamp().isAfter(letter2.getParsedTimestamp())) {
+                return 1;
+            }
+            else if (letter1.getParsedTimestamp().isBefore(letter2.getParsedTimestamp())) {
+                return -1;
+            }
+            return 0;
+        });
     }
 
     private void drawLetters(int from, int to) {
@@ -221,9 +249,27 @@ public class MailboxController implements Initializable {
         label.getStyleClass().add("letter");
         label.setMinWidth(490);
         label.setWrapText(true);
-        label.setText("Napisał: " + letter.getSenderUsername() + ", data: " + letter.getSendTime()
+        labelStyles(label);
+
+        String date = dateDisplayFormat(letter);
+        label.setText("Napisał: " + letter.getSenderUsername() + ", " + date
                 + "\n\n" + letter.getContent());
         return label;
+    }
+
+    private String dateDisplayFormat(Letter letter) {
+        if (letter.getSendTimestamp() == null) {
+            return  "Przed chwilą";
+        } else {
+            LocalDateTime dateTime = LocalDateTime.parse(letter.getSendTimestamp());
+            if (dateTime.getDayOfMonth() == LocalDateTime.now().getDayOfMonth()
+                    && dateTime.getMonthOfYear() == LocalDateTime.now().getMonthOfYear()) {
+                return  "Dziś o " + dateTime.getHourOfDay() + ":" + dateTime.getMinuteOfHour()
+                        + ":" + dateTime.getSecondOfMinute();
+            } else {
+                return  "data: " + dateTime.toString();
+            }
+        }
     }
 
     private void addTextLabel(TopicShortInfo topic, Label label) {
@@ -273,6 +319,22 @@ public class MailboxController implements Initializable {
                 }
             }
         }
+    }
+
+    private void labelStyles(Label label) {
+        label.setOnMouseEntered(event -> {
+            label.getStyleClass().clear();
+            label.getStyleClass().add("letter_shine");
+        });
+        label.setOnMouseExited(event -> {
+            label.getStyleClass().clear();
+            label.getStyleClass().add("letter");
+        });
+    }
+
+    void drawNewestLetter(Letter letter) {
+        Label lastLetter = letterLabelNew(letter);
+        lettersField.getChildren().add(lastLetter);
     }
 
 }
