@@ -7,6 +7,7 @@ import com.bluemangoose.client.logic.web.mailbox.MailboxLetterExchangeImpl;
 import com.bluemangoose.client.logic.web.mailbox.MailboxTemporaryCache;
 import com.bluemangoose.client.model.alert.Alerts;
 import com.bluemangoose.client.model.dto.Letter;
+import com.bluemangoose.client.model.dto.LetterCreator;
 import com.bluemangoose.client.model.dto.Mail;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -64,7 +65,7 @@ public class SendLetterAlertController implements Initializable, DataInitializab
                 return;
             }
 
-            Letter letter = letterBuild();
+            Letter letter = new LetterCreator().letterBuild(textArea.getText(), addresseUsername);
             mailboxLetterExchange.sendLetter(letter, MailboxTemporaryCache.getCurrentTopic());
             MailboxTemporaryCache.getCurrentMailboxController().drawNewestLetter(letter);
             close(sendLetterButton);
@@ -80,16 +81,6 @@ public class SendLetterAlertController implements Initializable, DataInitializab
         cancelButton.setOnMouseClicked(event -> {
             close(cancelButton);
         });
-    }
-
-    private Letter letterBuild() {
-        Letter letter = new Letter();
-        letter.setContent(textArea.getText());
-        letter.setSenderUsername(SessionCache.getInstance().getProfilePreferences().getProfileUsername());
-        letter.setAddresseeUsername(addresseUsername);
-        letter.setUnsealed(false);
-
-        return letter;
     }
 
     private void close(Node node) {

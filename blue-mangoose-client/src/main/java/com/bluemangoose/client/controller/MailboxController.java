@@ -82,18 +82,7 @@ public class MailboxController implements Initializable {
 
         newTopic.setOnMouseEntered(event -> newTopic.setImage(active));
         newTopic.setOnMouseExited(event -> newTopic.setImage(inactive));
-        newTopic.setOnMouseClicked(event -> {
-            Letter letter = new Letter();
-            letter.setTitle("Trial topic");
-            letter.setContent("Przykładowy list");
-            letter.setSenderUsername(SessionCache.getInstance().getProfilePreferences().getProfileUsername());
-            letter.setAddresseeUsername("karoladmin");
-            try {
-                mailboxLetterExchange.createTopic(letter);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        newTopic.setOnMouseClicked(event -> new FxmlLoaderTemplate().loadNewStage("/templates/new_topic.fxml"));
     }
 
     private void removeTopicAction() {
