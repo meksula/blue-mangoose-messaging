@@ -44,7 +44,7 @@ public class TitleAnimation {
 
     private void letterAction() {
         int index = counter.intValue();
-        int initX = index * 50;
+        double initX = index * 50;
 
         Label current = null;
         if (index < letters.length) {
@@ -55,7 +55,7 @@ public class TitleAnimation {
             shineLetters();
         }
 
-        while (current != null && current.getLayoutY() < 120) {
+        while (current != null && current.getLayoutY() < 100) {
             if (current.getStyleClass().size() == 0) {
                 current.getStyleClass().add("anim_label");
             } else {
@@ -63,6 +63,15 @@ public class TitleAnimation {
             }
 
             double y = current.getLayoutY();
+
+            if (current.getText().equals("l") || current.getText().equals("B")) {
+                initX = initX + 1;
+            }
+
+            if (current.getText().equals("a")) {
+                initX = initX + 0.6;
+            }
+
             current.setLayoutX(initX);
             current.setLayoutY(y + 10);
 

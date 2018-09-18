@@ -50,17 +50,20 @@ public class TopicCreationController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.mailboxLetterExchange = new MailboxLetterExchangeImpl();
         this.contactSet = SessionCache.getInstance().getProfilePreferences().getContactsBook();
-        addContacts(contactSet);
+        addContactsMenu(contactSet);
         sendButtonAction();
         sendButtonStyle();
     }
 
-    private void addContacts(Set<Contact> contactList) {
+    private void addContactsMenu(Set<Contact> contactList) {
         contactList.iterator().forEachRemaining(contact -> {
             this.addresseeUsername = contact.getUsername();
             MenuItem menuItem = new MenuItem(addresseeUsername);
+            menuItem.setOnAction(event -> {
+                this.addresseeUsername = menuItem.getText();
+                this.addresseeLabel.setText(addresseeUsername);
+            });
             menuContacts.getItems().add(menuItem);
-            menuItem.setOnAction(event -> this.addresseeLabel.setText(addresseeUsername));
         });
     }
 

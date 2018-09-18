@@ -11,20 +11,25 @@ import com.bluemangoose.client.logic.web.mailbox.TopicShortInfo;
 import com.bluemangoose.client.model.alert.Alerts;
 import com.bluemangoose.client.model.dto.Letter;
 import com.bluemangoose.client.model.dto.Topic;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -44,6 +49,7 @@ public class MailboxController implements Initializable {
     private AtomicInteger letterCounter = new AtomicInteger();
     private MailboxLetterExchange mailboxLetterExchange = new MailboxLetterExchangeImpl();
     private TopicShortInfo current;
+    private AtomicBoolean mailFetchFlag = new AtomicBoolean(true);
 
     @FXML
     private VBox topicField;
@@ -55,12 +61,12 @@ public class MailboxController implements Initializable {
     private Label topicAmount;
 
     @FXML
-    private ImageView responseTopic, removeTopic, newTopic;
+    private ImageView responseTopic, removeTopic, newTopic, refreshView;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            topicList = new MailboxLetterExchangeImpl().getTopicsShortInfo();
+            topicList = mailboxLetterExchange.getTopicsShortInfo();
         } catch (IOException e) {
             log.debug("Cannot receive shorten list of Topics. " + e.getCause());
         }
@@ -74,6 +80,8 @@ public class MailboxController implements Initializable {
         topicListScrolling();
         lettersFieldScrolling();
         topicAmount.setText(String.valueOf(topicLetterList.size()));
+
+        refreshTopicView();
     }
 
     private void newTopicAction() {
@@ -178,7 +186,8 @@ public class MailboxController implements Initializable {
             this.current = topic;
             fetchLetters(topic);
         });
-        topicLetterList.add(label);
+
+        this.topicLetterList.add(label);
     }
 
     private void fetchLetters(TopicShortInfo topicShortInfo) {
@@ -324,6 +333,25 @@ public class MailboxController implements Initializable {
     void drawNewestLetter(Letter letter) {
         Label lastLetter = letterLabelNew(letter);
         lettersField.getChildren().add(lastLetter);
+    }
+
+    private void refreshTopicView() {
+        Image inactive = refreshView.getImage();
+        Image active = new Image("/img/refresh-messages-active.png");
+        refreshView.setOnMouseEntered(event -> refreshView.setImage(active));
+        refreshView.setOnMouseExited(event -> refreshView.setImage(inactive));
+        refreshView.setOnMouseClicked(event -> {
+            try {
+                this.topicList = mailboxLetterExchange.getTopicsShortInfo();
+            } catch (IOException e) {
+                log.debug("Exception occured: MailboxLetterExchange cannot fetch last topics.");
+            }
+            topicLetterList.clear();
+            topicField.getChildren().clear();
+            drawTopics();
+            displayMaxTopic();
+        });
+
     }
 
 }

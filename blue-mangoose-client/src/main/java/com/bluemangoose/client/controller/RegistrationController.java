@@ -11,9 +11,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @Author
@@ -22,7 +25,11 @@ import java.util.ResourceBundle;
  * */
 
 public class RegistrationController implements Initializable {
+    public ImageView refresh;
+    public ImageView logo;
+
     private FxmlLoader fxmlLoader;
+    private AtomicBoolean anim = new AtomicBoolean(true);
 
     @FXML
     private TextField emailField;
@@ -40,10 +47,14 @@ public class RegistrationController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.fxmlLoader = new FxmlLoaderTemplate();
         setRegistrationAction();
+        refresh.setVisible(true);
     }
 
     private void setRegistrationAction() {
         registerButton.setOnMouseClicked(event -> {
+            if (anim.get())
+                waitAnim();
+
             boolean flag = executePostRequest();
 
             if (flag) {
@@ -53,8 +64,31 @@ public class RegistrationController implements Initializable {
                 new Alerts().registrationFailAlert("Flag is " + flag);
             }
 
+            this.anim.set(false);
             fxmlLoader.loadSameStage("/templates/home.fxml", event);
         });
+    }
+
+    private void waitAnim() {
+        Runnable runnable = () -> {
+            int c = 1;
+            while (anim.get()) {
+                Image in = new Image("/img/refresh-perp.png");
+                Image ac = new Image("/img/refresh-hor.png");
+                if (c % 2 == 0) {
+                    refresh.setImage(in);
+                } else refresh.setImage(ac);
+                c++;
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     private boolean executePostRequest() {

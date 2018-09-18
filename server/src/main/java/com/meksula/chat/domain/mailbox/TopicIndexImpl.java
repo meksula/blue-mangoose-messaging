@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -52,8 +54,9 @@ public class TopicIndexImpl implements TopicIndex, TopicIndexer {
     public List<TopicShortInfo> getTopicListByUsername(String username) {
         return topicShortSet
                 .stream()
-                .filter(topicShortInfo -> topicShortInfo.getUsernameA().equals(username)
-                                       || topicShortInfo.getUsernameB().equals(username))
+                .filter(topicShortInfo ->
+                    topicShortInfo.getUsernameA().equals(username)
+                            || topicShortInfo.getUsernameB().equals(username))
                 .collect(Collectors.toList());
     }
 

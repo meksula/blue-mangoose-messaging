@@ -1,6 +1,5 @@
 package com.bluemangoose.client.controller;
 
-import com.bluemangoose.client.controller.cache.SessionCache;
 import com.bluemangoose.client.controller.loader.DataInitializable;
 import com.bluemangoose.client.logic.web.mailbox.MailboxLetterExchange;
 import com.bluemangoose.client.logic.web.mailbox.MailboxLetterExchangeImpl;
@@ -8,16 +7,13 @@ import com.bluemangoose.client.logic.web.mailbox.MailboxTemporaryCache;
 import com.bluemangoose.client.model.alert.Alerts;
 import com.bluemangoose.client.model.dto.Letter;
 import com.bluemangoose.client.model.dto.LetterCreator;
-import com.bluemangoose.client.model.dto.Mail;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
-import org.joda.time.LocalDateTime;
 
 import java.net.URL;
 import java.util.ResourceBundle;

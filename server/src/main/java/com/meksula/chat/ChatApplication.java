@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Import;
 @Import({SecurityCustomConfiguration.class})
 @SpringBootApplication
 public class ChatApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(ChatApplication.class, args);
     }

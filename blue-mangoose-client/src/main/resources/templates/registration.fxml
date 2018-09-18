@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="607.0" prefWidth="665.0" styleClass="background" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bluemangoose.client.controller.RegistrationController">
+<AnchorPane fx:id="pane" prefHeight="607.0" prefWidth="665.0" styleClass="background" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bluemangoose.client.controller.RegistrationController">
     <children>
-        <ImageView fitHeight="226.0" fitWidth="293.0" layoutX="205.0" layoutY="-33.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="logo" fitHeight="226.0" fitWidth="293.0" layoutX="205.0" layoutY="-33.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../img/logo.png" />
             </image>
@@ -31,5 +31,8 @@
          </font>
       </Label>
       <Label layoutX="6.0" layoutY="585.0" text="Karol Meksuła 2018" textFill="WHITE" />
+      <ImageView fitHeight="113.0" fitWidth="129.0" layoutX="6.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
+      </ImageView>
+      <ImageView fx:id="refresh" fitHeight="113.0" fitWidth="134.0" layoutX="517.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
     </children>
 </AnchorPane>
