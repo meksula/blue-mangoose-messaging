@@ -6,11 +6,13 @@ import com.bluemangoose.client.logic.web.exchange.HttpServerConnectorImpl;
 import com.bluemangoose.client.model.dto.ChatAccess;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -51,7 +53,14 @@ public class ConversationHandler {
         ChatAccess chatAccess = CurrentChatCache.getInstance().getChatAccess();
 
         String json = new HttpServerConnectorImpl<>(String.class).post(chatAccess, ApiPath.MESSAGES_LAST);
-        this. messages = new ObjectMapper().readValue(json, new TypeReference<List<ChatMessage>>(){});
+        try {
+            this.messages = new ObjectMapper().readValue(json, new TypeReference<List<ChatMessage>>(){});
+        } catch (MismatchedInputException mie) {
+            ChatMessage chatMessage = new ChatMessage();
+            chatMessage.setUsernmame("ADMIN");
+            chatMessage.setContent("NIE MASZ PRAW DO BYCIA W TYM POKOJU. WSZYSTKO POZOSTANIE UKRYTE.");
+            this.messages = new ArrayList<>(Collections.singleton(chatMessage));
+        }
     }
 
 }

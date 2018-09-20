@@ -1,6 +1,8 @@
 package com.bluemangoose.client.logic.web.socket;
 
+import com.bluemangoose.client.controller.cache.CurrentChatCache;
 import com.bluemangoose.client.controller.cache.SessionCache;
+import com.bluemangoose.client.model.dto.ChatAccess;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -18,6 +20,7 @@ public class MyStompSessionHandler extends StompSessionHandlerAdapter {
     private StompSession session;
     private String roomTarget;
     private ConversationHandler conversationHandler;
+    private ChatAccess access = CurrentChatCache.getInstance().getChatAccess();
 
     public MyStompSessionHandler(String roomTarget) {
         this.roomTarget = roomTarget;
@@ -55,6 +58,7 @@ public class MyStompSessionHandler extends StompSessionHandlerAdapter {
     }
 
     public void postMessage(ChatMessage chatMessage) {
+        //TODO add some secure logic
         this.session.send("/app/main", chatMessage);
     }
 

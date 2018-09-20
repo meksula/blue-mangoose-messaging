@@ -221,6 +221,11 @@ public class ChatGuiManager implements ChatManager, WebsocketReceiver {
         label.setWrapText(true);
         label.getStyleClass().add("message");
 
+        if (chatMessage.getUsernmame().equals("ADMIN")) {
+            label.getStyleClass().clear();
+            label.getStyleClass().add("error");
+        }
+
         LocalTime localTime = LocalTime.now();
         String time = localTime.format(DateTimeFormatter.ofPattern("kk:mm:ss"));
         label.setText(time + ", " + chatMessage.getUsernmame() + "\n> " + chatMessage.getContent());

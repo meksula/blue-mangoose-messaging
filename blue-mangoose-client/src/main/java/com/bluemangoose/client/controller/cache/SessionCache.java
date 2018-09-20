@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @Author
@@ -34,9 +35,14 @@ public class SessionCache {
     private Image profilePicture;
     private Map<String, Boolean> contactsStatus;
     private List<Mail> mailboxList;
+    private AtomicBoolean lettersUnsealed = new AtomicBoolean(false);
 
     public synchronized void updateContactStatus(Map<String, Boolean> status) {
-        this.contactsStatus = Collections.synchronizedMap(status);
+        sessionCache.contactsStatus = Collections.synchronizedMap(status);
+    }
+
+    public synchronized void setLettersUnsealed(boolean state) {
+        sessionCache.lettersUnsealed.set(state);
     }
 
 }

@@ -6,6 +6,7 @@ import com.bluemangoose.client.controller.loader.DataInitializable;
 import com.bluemangoose.client.controller.loader.FxmlLoaderTemplate;
 import com.bluemangoose.client.controller.loader.FxmlLoader;
 import com.bluemangoose.client.logic.daemon.ChatUserStatusUpdateDaemon;
+import com.bluemangoose.client.logic.daemon.LetterStatusDaemon;
 import com.bluemangoose.client.logic.web.ChatRoomManager;
 import com.bluemangoose.client.logic.web.impl.DefaultRoomManager;
 import com.bluemangoose.client.logic.web.socket.ConversationHandler;
@@ -42,7 +43,8 @@ public class MainController implements Initializable, DataInitializable, SceneRe
     private ConversationHandler conversationHandler;
     private List<ContactLabel> contactLabels;
     private ChatUserStatusUpdateDaemon statusUpdateDaemon;
-    private AtomicBoolean mailReceived = new AtomicBoolean(false);
+    private LetterStatusDaemon letterStatusDaemon;
+    private AtomicBoolean mailReceived = SessionCache.getInstance().getLettersUnsealed();
 
     @FXML
     private ImageView loupeButton, autonomicWindowButton, disconnectButton, bell, messageUp, messageDown,
@@ -82,6 +84,9 @@ public class MainController implements Initializable, DataInitializable, SceneRe
         statusUpdateDaemon = new ChatUserStatusUpdateDaemon(this);
         statusUpdateDaemon.updateState(SessionCache.getInstance().getProfilePreferences().getUserId());
 
+        letterStatusDaemon = new LetterStatusDaemon(this);
+        letterStatusDaemon.updateState(SessionCache.getInstance().getProfilePreferences().getUserId());
+
         if (SessionCache.getInstance().getProfilePicture() != null) {
             userAvatar.setImage(SessionCache.getInstance().getProfilePicture());
         }
@@ -107,7 +112,6 @@ public class MainController implements Initializable, DataInitializable, SceneRe
                 .build()
                 .initChatGui();
 
-        mailboxUpdate();
         addMailboxAction();
     }
 
@@ -232,7 +236,7 @@ public class MainController implements Initializable, DataInitializable, SceneRe
 
         statusUpdate();
 
-        if (mailboxUpdate()) {
+        if (SessionCache.getInstance().getLettersUnsealed().get()) {
             mailboxIconBlinking();
         }
     }
@@ -268,30 +272,6 @@ public class MainController implements Initializable, DataInitializable, SceneRe
         Thread blinkThread = new Thread(blinking);
         blinkThread.setDaemon(true);
         blinkThread.start();
-    }
-
-    /** TODO
-     * Metoda, której zadaniem będzie sprawdzanie czy stan wiadomości się zmienił,
-     * i jeśli tak, to aktualizacja widoku,
-     * Ma to działać w taki sposób, że wątek typu daemon będzie sobie co jakiś czas pobierał aktualny stan wiadomości,
-     * a następnie zapiszemy to w Singletonie SessionCache.class.
-     * Poniższa metoda sprawdza czy stan wiadomości się zmienił i ewentualnie aktualizuje widok
-     * */
-    private boolean mailboxUpdate() {
-        List<Mail> mailList = SessionCache.getInstance().getMailboxList();
-
-        if (mailList == null) {
-            return false;
-        }
-
-        for (Mail mail : mailList) {
-            if (mail.isMailRead()) {
-                mailReceived.set(true);
-                break;
-            }
-        }
-
-        return mailReceived.get();
     }
 
     private String currentStyle;
