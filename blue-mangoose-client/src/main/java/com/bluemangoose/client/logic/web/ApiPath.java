@@ -13,11 +13,12 @@ public enum ApiPath {
     SOCKET {
         @Override
         public String getPath() {
-            if (Main.runMode.equals("remote")) {
-                return "ws://51.38.129.50:8060/chat";
+            if (Main.runMode.equals("local")) {
+                return "ws://localhost:8060/chat";
             }
             else {
-                return "ws://localhost:8060/chat";
+                return "ws://51.38.129.50:8060/chat";
+
             }
         }
     },

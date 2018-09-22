@@ -46,7 +46,7 @@ public class SecurityCustomConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/", "/download", "/app/**", "/chat/**", "/chat", "/api/v1/registration", "/api/v1/verification/**", "/error", "/logout").permitAll()
+                .antMatchers("/", "/download/**", "/app/**", "/chat/**", "/chat", "/api/v1/registration", "/api/v1/verification/**", "/error", "/logout").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

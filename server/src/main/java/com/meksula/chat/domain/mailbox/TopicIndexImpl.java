@@ -47,7 +47,13 @@ public class TopicIndexImpl implements TopicIndex, TopicIndexer {
 
     @Override
     public boolean hasNewLetters(String username) {
-        return freshLettersByUsername.get(username);
+        Boolean flag = freshLettersByUsername.get(username);
+
+        if (flag == null) {
+            return false;
+        }
+
+        else return flag;
     }
 
     @Override

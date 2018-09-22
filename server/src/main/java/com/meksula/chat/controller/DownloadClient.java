@@ -34,4 +34,18 @@ public class DownloadClient {
 
     }
 
+    @GetMapping(path = "/linux", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public void downloadFileLinux(HttpServletResponse response) throws IOException {
+        response.setContentType("application/jar");
+        response.setHeader("Content-Disposition", "attachment; filename=\"blue-mangoose-client-1.0-linux.deb\"");
+        FileInputStream inputStream = new FileInputStream(new File("/home/karol/download/blue-mangoose-client-1.0-linux.deb"));
+
+        int nRead;
+        while((nRead = inputStream.read()) != -1) {
+            response.getWriter().write(nRead);
+        }
+
+    }
+
 }

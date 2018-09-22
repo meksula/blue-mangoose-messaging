@@ -27,8 +27,13 @@ public class Main extends Application {
         primaryStage.setResizable(false);
         primaryStage.show();
         primaryStage.setOnCloseRequest(event -> {
-            isRunning = false;
-            logout();
+            try {
+                isRunning = false;
+                logout();
+            } catch (Exception ex) {
+                System.exit(0);
+            }
+
         });
         isRunning = true;
     }
@@ -38,7 +43,9 @@ public class Main extends Application {
     }
 
     public static void main(String[]args) {
-        Main.runMode = args[0];
+        if (args.length > 0) {
+            Main.runMode = args[0];
+        }
         launch(args);
     }
 
