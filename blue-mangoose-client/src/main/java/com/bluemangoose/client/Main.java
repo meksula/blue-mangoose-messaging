@@ -45,7 +45,7 @@ public class Main extends Application {
     public static void main(String[]args) {
         if (args.length > 0) {
             Main.runMode = args[0];
-        }
+        } else Main.runMode = "remote";
         launch(args);
     }
 
